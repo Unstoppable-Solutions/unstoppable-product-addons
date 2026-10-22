@@ -333,7 +333,7 @@ class UPAD_File_Upload {
         $nonce = isset( $_GET['nonce'] ) ? sanitize_text_field( $_GET['nonce'] ) : '';
 
         if ( ! wp_verify_nonce( $nonce, 'upad_download_' . $upload_hash ) ) {
-            wp_die( __( 'Invalid download link.', 'unstoppable-product-addons' ) );
+            wp_die( esc_html__( 'Invalid download link.', 'unstoppable-product-addons' ) );
         }
 
         global $wpdb;
@@ -344,7 +344,7 @@ class UPAD_File_Upload {
         ) );
 
         if ( ! $upload || ! file_exists( $upload->file_path ) ) {
-            wp_die( __( 'File not found.', 'unstoppable-product-addons' ) );
+            wp_die( esc_html__( 'File not found.', 'unstoppable-product-addons' ) );
         }
 
         // Check permissions
@@ -353,7 +353,7 @@ class UPAD_File_Upload {
             if ( $upload->order_id ) {
                 $order = wc_get_order( $upload->order_id );
                 if ( $order && $order->get_customer_id() !== get_current_user_id() ) {
-                    wp_die( __( 'You do not have permission to download this file.', 'unstoppable-product-addons' ) );
+                    wp_die( esc_html__( 'You do not have permission to download this file.', 'unstoppable-product-addons' ) );
                 }
             }
         }

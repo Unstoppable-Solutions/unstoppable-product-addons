@@ -1,9 +1,9 @@
-=== Unstoppable Product Addons for WooCommerce ===
+=== Unstoppable Product Addons ===
 Contributors: paramedic192
 Tags: woocommerce, product options, custom fields, addons, product addons
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -86,6 +86,12 @@ The plugin uses semantic HTML and minimal styling, so it works with most themes.
 5. Date picker on product page
 
 == Changelog ==
+
+= 1.0.2 =
+* Removed "Tested up to" from PHP header (now only in readme.txt per WordPress.org requirements)
+* Simplified plugin name to match text domain slug
+* Fixed escaping on wp_die() messages
+* Fixed integer escaping in migration preview
 
 = 1.0.1 =
 * Fixed translators comment positioning for WordPress.org compliance
