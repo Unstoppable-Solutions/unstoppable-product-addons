@@ -274,6 +274,7 @@ class UPAD_Inventory {
      */
     private function get_option( $option_id ) {
         global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->get_row( $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
             $option_id
@@ -286,6 +287,7 @@ class UPAD_Inventory {
     public function link_option_to_product( $option_id, $product_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->update(
             $wpdb->prefix . 'upad_addon_options',
             array( 'linked_product_id' => $product_id ),
@@ -301,6 +303,7 @@ class UPAD_Inventory {
     public function unlink_option( $option_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->update(
             $wpdb->prefix . 'upad_addon_options',
             array( 'linked_product_id' => null ),
@@ -316,6 +319,7 @@ class UPAD_Inventory {
     public function get_options_linked_to_product( $product_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->get_results( $wpdb->prepare(
             "SELECT o.*, a.title as addon_title 
              FROM {$wpdb->prefix}upad_addon_options o

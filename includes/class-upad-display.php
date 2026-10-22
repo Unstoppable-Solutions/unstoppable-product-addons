@@ -430,17 +430,20 @@ class UPAD_Display {
             }
         }
         
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $variation_attr and $condition_attrs are built from esc_attr() calls above.
         echo '<div class="upad-addon ' . esc_attr( $type_class ) . ' ' . esc_attr( $required_class ) . esc_attr( $condition_class ) . '" data-addon-id="' . esc_attr( $addon->id ) . '" data-addon-type="' . esc_attr( $addon->addon_type ) . '"' . $variation_attr . $condition_attrs . '>';
 
         // Title
         $title_format = ! empty( $addon->title_format ) ? $addon->title_format : 'label';
         if ( $title_format !== 'hide' ) {
             $tag = $title_format === 'heading' ? 'h4' : 'label';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $tag is hardcoded to 'h4' or 'label'.
             echo '<' . $tag . ' class="upad-addon-title">';
             echo esc_html( $addon->title );
             if ( $addon->required ) {
                 echo '<span class="upad-required">*</span>';
             }
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $tag is hardcoded to 'h4' or 'label'.
             echo '</' . $tag . '>';
         }
 
@@ -484,10 +487,12 @@ class UPAD_Display {
                     $price_display = $this->get_price_display( $option );
                     $selected = selected( $default_value, $option->id, false );
                     $stock_attrs = $this->get_stock_attributes( $option );
-                    
+
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $selected from selected(), $stock_attrs from internal method with esc_attr().
                     echo '<option value="' . esc_attr( $option->id ) . '" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $selected . ' ' . $stock_attrs . '>';
                     echo esc_html( $option->label );
                     if ( $price_display ) {
+                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
                         echo ' ' . $price_display;
                     }
                     echo '</option>';
@@ -503,6 +508,7 @@ class UPAD_Display {
                 if ( ! empty( $settings['show_none_option'] ) && ! $addon->required ) {
                     $checked = empty( $default_value ) ? 'checked' : '';
                     echo '<label class="upad-radio-label">';
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $checked is hardcoded 'checked' or empty string.
                     echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="" class="upad-field upad-radio" ' . $checked . '>';
                     echo '<span class="upad-radio-text">' . esc_html__( 'None', 'unstoppable-product-addons' ) . '</span>';
                     echo '</label>';
@@ -512,13 +518,16 @@ class UPAD_Display {
                     $price_display = $this->get_price_display( $option );
                     $checked = checked( $default_value, $option->id, false );
                     $stock_class = $this->get_stock_class( $option );
-                    
+
                     echo '<label class="upad-radio-label ' . esc_attr( $stock_class ) . '">';
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $checked from checked() function.
                     echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-radio" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
                     echo '<span class="upad-radio-text">' . esc_html( $option->label ) . '</span>';
                     if ( $price_display ) {
+                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
                         echo '<span class="upad-option-price">' . $price_display . '</span>';
                     }
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_stock_badge() returns escaped HTML.
                     echo $this->get_stock_badge( $option );
                     echo '</label>';
                 }
@@ -533,13 +542,15 @@ class UPAD_Display {
                     $checked = checked( $default_value, $option->id, false );
                     $image_url = $option->image_id ? wp_get_attachment_image_url( $option->image_id, 'thumbnail' ) : wc_placeholder_img_src( 'thumbnail' );
                     $stock_class = $this->get_stock_class( $option );
-                    
+
                     echo '<label class="upad-image-label ' . esc_attr( $stock_class ) . '">';
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $checked from checked() function.
                     echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-radio" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
                     echo '<span class="upad-image-wrap">';
                     echo '<img src="' . esc_url( $image_url ) . '" alt="' . esc_attr( $option->label ) . '">';
                     echo '</span>';
                     echo '<span class="upad-image-text">' . esc_html( $option->label ) . '</span>';
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_stock_badge() returns escaped HTML.
                     echo $this->get_stock_badge( $option );
                     echo '</label>';
                 }
@@ -577,8 +588,9 @@ class UPAD_Display {
             $data_attrs .= ' data-allow-same="1"';
         }
 
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $data_attrs is built from esc_attr() calls above.
         echo '<div class="upad-checkbox-group"' . $data_attrs . '>';
-        
+
         // Show selection hint
         if ( $link_to_quantity ) {
             echo '<p class="upad-selection-hint upad-qty-linked-hint">';
@@ -595,27 +607,27 @@ class UPAD_Display {
                     printf(
                         /* translators: %d: number of options to select */
                         esc_html__( 'Select exactly %d option(s)', 'unstoppable-product-addons' ),
-                        $min_selections
+                        absint( $min_selections )
                     );
                 } else {
                     printf(
                         /* translators: %1$d: minimum options, %2$d: maximum options */
                         esc_html__( 'Select %1$d to %2$d options', 'unstoppable-product-addons' ),
-                        $min_selections,
-                        $max_selections
+                        absint( $min_selections ),
+                        absint( $max_selections )
                     );
                 }
             } elseif ( $min_selections > 0 ) {
                 printf(
                     /* translators: %d: minimum number of options to select */
                     esc_html__( 'Select at least %d option(s)', 'unstoppable-product-addons' ),
-                    $min_selections
+                    absint( $min_selections )
                 );
             } elseif ( $max_selections > 0 ) {
                 printf(
                     /* translators: %d: maximum number of options to select */
                     esc_html__( 'Select up to %d option(s)', 'unstoppable-product-addons' ),
-                    $max_selections
+                    absint( $max_selections )
                 );
             }
             echo '</p>';
@@ -632,6 +644,7 @@ class UPAD_Display {
                 echo '<div class="upad-qty-option ' . esc_attr( $stock_class ) . '" data-option-id="' . esc_attr( $option->id ) . '">';
                 echo '<span class="upad-option-label">' . esc_html( $option->label ) . '</span>';
                 if ( $price_display ) {
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
                     echo '<span class="upad-option-price">' . $price_display . ' ' . esc_html__( 'each', 'unstoppable-product-addons' ) . '</span>';
                 }
                 echo '<div class="upad-qty-selector">';
@@ -639,6 +652,7 @@ class UPAD_Display {
                 echo '<input type="number" name="' . esc_attr( $qty_field_name ) . '[' . esc_attr( $option->id ) . ']" value="0" min="0" class="upad-option-qty-input upad-field" data-option-id="' . esc_attr( $option->id ) . '" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '">';
                 echo '<button type="button" class="upad-option-qty-plus">+</button>';
                 echo '</div>';
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_stock_badge() returns escaped HTML.
                 echo $this->get_stock_badge( $option );
                 echo '</div>';
             }
@@ -654,13 +668,16 @@ class UPAD_Display {
                 $price_display = $this->get_price_display( $option );
                 $checked = $option->is_default ? 'checked' : '';
                 $stock_class = $this->get_stock_class( $option );
-                
+
                 echo '<label class="upad-checkbox-label ' . esc_attr( $stock_class ) . '">';
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $checked is hardcoded 'checked' or empty string.
                 echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-checkbox" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
                 echo '<span class="upad-checkbox-text">' . esc_html( $option->label ) . '</span>';
                 if ( $price_display ) {
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
                     echo '<span class="upad-option-price">' . $price_display . '</span>';
                 }
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_stock_badge() returns escaped HTML.
                 echo $this->get_stock_badge( $option );
                 echo '</label>';
             }
@@ -686,6 +703,7 @@ class UPAD_Display {
             $attrs .= ' required';
         }
 
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attrs is built from absint() and hardcoded strings.
         echo '<input type="text" name="' . esc_attr( $field_name ) . '" class="upad-field upad-text-input" placeholder="' . esc_attr( $placeholder ) . '"' . $attrs . '>';
         
         $this->render_price_info( $addon );
@@ -710,9 +728,11 @@ class UPAD_Display {
             $attrs .= ' required';
         }
 
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attrs is built from absint() and hardcoded strings.
         echo '<textarea name="' . esc_attr( $field_name ) . '" class="upad-field upad-textarea" placeholder="' . esc_attr( $placeholder ) . '" rows="' . esc_attr( $rows ) . '"' . $attrs . '></textarea>';
-        
+
         if ( $show_counter && $max_length ) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $max_length is from absint().
             echo '<div class="upad-char-counter"><span class="upad-chars-remaining">' . $max_length . '</span> ' . esc_html__( 'characters remaining', 'unstoppable-product-addons' ) . '</div>';
         }
 
@@ -732,6 +752,7 @@ class UPAD_Display {
         echo '<div class="upad-file-upload-wrapper" data-max-files="' . esc_attr( $max_files ) . '" data-addon-id="' . esc_attr( $addon->id ) . '">';
         
         echo '<div class="upad-file-dropzone">';
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Ternary outputs hardcoded 'multiple' or empty string.
         echo '<input type="file" name="upad_file_' . esc_attr( $addon->id ) . '" class="upad-file-input" accept="' . esc_attr( $this->get_accept_string( $allowed_types ) ) . '" ' . ( $max_files > 1 ? 'multiple' : '' ) . '>';
         echo '<input type="hidden" name="' . esc_attr( $field_name ) . '" class="upad-file-hash">';
         echo '<div class="upad-dropzone-content">';
@@ -777,7 +798,8 @@ class UPAD_Display {
         }
 
         echo '<div class="upad-price-input-wrapper">';
-        echo '<span class="upad-currency-symbol">' . get_woocommerce_currency_symbol() . '</span>';
+        echo '<span class="upad-currency-symbol">' . esc_html( get_woocommerce_currency_symbol() ) . '</span>';
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attrs is built from floatval() and hardcoded strings.
         echo '<input type="number" name="' . esc_attr( $field_name ) . '" class="upad-field upad-price-input" value="' . esc_attr( $default ) . '" ' . $attrs . '>';
         echo '</div>';
     }
@@ -803,6 +825,7 @@ class UPAD_Display {
 
         echo '<div class="upad-quantity-wrapper">';
         echo '<button type="button" class="upad-qty-btn upad-qty-minus">-</button>';
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attrs is built from absint() and hardcoded strings.
         echo '<input type="number" name="' . esc_attr( $field_name ) . '" class="upad-field upad-quantity-input" value="' . esc_attr( $default ) . '" ' . $attrs . '>';
         echo '<button type="button" class="upad-qty-btn upad-qty-plus">+</button>';
         echo '</div>';
@@ -829,6 +852,7 @@ class UPAD_Display {
             $attrs .= ' required';
         }
 
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attrs is hardcoded 'required' or empty.
         echo '<input type="text" name="' . esc_attr( $field_name ) . '" class="upad-field upad-datepicker" ' . $attrs . ' readonly>';
         
         $this->render_price_info( $addon );
@@ -892,12 +916,15 @@ class UPAD_Display {
                 echo ' title="' . esc_attr( $option->label . ( $price_display ? ' ' . wp_strip_all_tags( $price_display ) : '' ) ) . '"';
             }
             echo ' style="width:' . esc_attr( $swatch_size ) . ';height:' . esc_attr( $swatch_size ) . '">';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $checked is hardcoded 'checked' or empty string.
             echo '<input type="' . esc_attr( $input_type ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-swatch-input" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $swatch_content is built from esc_url(), esc_attr(), esc_html().
             echo '<span class="upad-swatch-visual">' . $swatch_content . '</span>';
             if ( $show_label ) {
                 echo '<span class="upad-swatch-text">' . esc_html( $option->label ) . '</span>';
             }
             if ( $price_display ) {
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
                 echo '<span class="upad-swatch-price">' . $price_display . '</span>';
             }
             echo '</label>';
@@ -989,29 +1016,32 @@ class UPAD_Display {
         // Length input
         echo '<div class="upad-dimension-input">';
         echo '<label>' . esc_html__( 'Length', 'unstoppable-product-addons' ) . ' (' . esc_html( $unit_label ) . ')</label>';
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Ternary outputs hardcoded 'required' or empty string.
         echo '<input type="number" name="' . esc_attr( $field_name ) . '[length]" class="upad-field upad-dimension-length" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
         echo '</div>';
-        
+
         // Width input
         if ( $inputs === 'length_width' || $inputs === 'length_width_height' ) {
             echo '<div class="upad-dimension-input">';
             echo '<label>' . esc_html__( 'Width', 'unstoppable-product-addons' ) . ' (' . esc_html( $unit_label ) . ')</label>';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Ternary outputs hardcoded 'required' or empty string.
             echo '<input type="number" name="' . esc_attr( $field_name ) . '[width]" class="upad-field upad-dimension-width" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
             echo '</div>';
         }
-        
+
         // Height input
         if ( $inputs === 'length_width_height' ) {
             echo '<div class="upad-dimension-input">';
             echo '<label>' . esc_html__( 'Height', 'unstoppable-product-addons' ) . ' (' . esc_html( $unit_label ) . ')</label>';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Ternary outputs hardcoded 'required' or empty string.
             echo '<input type="number" name="' . esc_attr( $field_name ) . '[height]" class="upad-field upad-dimension-height" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
             echo '</div>';
         }
-        
+
         // Calculated price display
         echo '<div class="upad-dimension-price">';
         echo '<span class="upad-dimension-price-label">' . esc_html__( 'Price:', 'unstoppable-product-addons' ) . '</span> ';
-        echo '<span class="upad-dimension-price-value">' . wc_price( 0 ) . '</span>';
+        echo '<span class="upad-dimension-price-value">' . wp_kses_post( wc_price( 0 ) ) . '</span>';
         echo '</div>';
         
         echo '</div>';
@@ -1033,7 +1063,10 @@ class UPAD_Display {
     }
 
     /**
-     * Get price display string for option
+     * Get price display string for option.
+     *
+     * Note: This method returns HTML containing wc_price() output.
+     * Callers must use wp_kses_post() or phpcs:ignore when echoing.
      */
     private function get_price_display( $option ) {
         if ( empty( $option->price ) ) {
@@ -1045,9 +1078,9 @@ class UPAD_Display {
 
         switch ( $option->price_type ) {
             case 'percentage':
-                return '(' . $sign . $price . '%)';
+                return '(' . esc_html( $sign . $price ) . '%)';
             case 'quantity':
-                return '(' . $sign . wc_price( $price ) . ' ' . __( 'each', 'unstoppable-product-addons' ) . ')';
+                return '(' . $sign . wc_price( $price ) . ' ' . esc_html__( 'each', 'unstoppable-product-addons' ) . ')';
             default:
                 return '(' . $sign . wc_price( $price ) . ')';
         }
@@ -1058,7 +1091,7 @@ class UPAD_Display {
      */
     private function render_price_info( $addon ) {
         $settings = $addon->settings;
-        
+
         if ( empty( $settings['price'] ) ) {
             return;
         }
@@ -1068,18 +1101,20 @@ class UPAD_Display {
         $sign = $price >= 0 ? '+' : '';
 
         echo '<div class="upad-field-price-info">';
-        
+
         switch ( $price_type ) {
             case 'percentage':
-                echo $sign . $price . '%';
+                echo esc_html( $sign . $price ) . '%';
                 break;
             case 'quantity':
-                echo $sign . wc_price( $price ) . ' ' . __( 'per item', 'unstoppable-product-addons' );
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wc_price() returns safe HTML; $sign is hardcoded '+' or empty.
+                echo $sign . wc_price( $price ) . ' ' . esc_html__( 'per item', 'unstoppable-product-addons' );
                 break;
             default:
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wc_price() returns safe HTML; $sign is hardcoded '+' or empty.
                 echo $sign . wc_price( $price );
         }
-        
+
         echo '</div>';
     }
 
@@ -1129,20 +1164,22 @@ class UPAD_Display {
     }
 
     /**
-     * Get stock badge for option
+     * Get stock badge for option.
+     *
+     * Note: This method returns escaped HTML. Callers may use phpcs:ignore.
      */
     private function get_stock_badge( $option ) {
         $data = apply_filters( 'upad_option_data', array(), $option );
-        
+
         if ( isset( $data['in_stock'] ) && ! $data['in_stock'] ) {
-            return '<span class="upad-stock-badge upad-out-of-stock-badge">' . __( 'Out of stock', 'unstoppable-product-addons' ) . '</span>';
+            return '<span class="upad-stock-badge upad-out-of-stock-badge">' . esc_html__( 'Out of stock', 'unstoppable-product-addons' ) . '</span>';
         }
-        
+
         if ( isset( $data['low_stock'] ) && $data['low_stock'] && isset( $data['stock_quantity'] ) ) {
             /* translators: %d: quantity remaining in stock */
-            return '<span class="upad-stock-badge upad-low-stock-badge">' . sprintf( __( 'Only %d left', 'unstoppable-product-addons' ), $data['stock_quantity'] ) . '</span>';
+            return '<span class="upad-stock-badge upad-low-stock-badge">' . esc_html( sprintf( __( 'Only %d left', 'unstoppable-product-addons' ), absint( $data['stock_quantity'] ) ) ) . '</span>';
         }
-        
+
         return '';
     }
 
@@ -1174,9 +1211,9 @@ class UPAD_Display {
         echo '<div class="upad-totals-wrapper" style="display:none;">';
         echo '<dl class="upad-product-addon-totals">';
         echo '<dt class="upad-options-total-label">' . esc_html__( 'Options Total', 'unstoppable-product-addons' ) . '</dt>';
-        echo '<dd class="upad-options-total-value">' . wc_price( 0 ) . '</dd>';
+        echo '<dd class="upad-options-total-value">' . wp_kses_post( wc_price( 0 ) ) . '</dd>';
         echo '<dt class="upad-grand-total-label">' . esc_html__( 'Grand Total', 'unstoppable-product-addons' ) . '</dt>';
-        echo '<dd class="upad-grand-total-value">' . wc_price( $product->get_price() ) . '</dd>';
+        echo '<dd class="upad-grand-total-value">' . wp_kses_post( wc_price( $product->get_price() ) ) . '</dd>';
         echo '</dl>';
         echo '</div>';
     }

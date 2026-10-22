@@ -112,12 +112,14 @@ class UPAD_File_Upload {
         }
 
         // Check if file was uploaded
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- File upload handling uses WordPress core functions.
         if ( empty( $_FILES['file'] ) ) {
             wp_send_json_error( array(
                 'message' => __( 'No file was uploaded.', 'unstoppable-product-addons' ),
             ) );
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- File upload handling uses WordPress core functions.
         $file = $_FILES['file'];
 
         // Check for upload errors
@@ -243,6 +245,7 @@ class UPAD_File_Upload {
 
         // Save upload record to database
         global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
         $wpdb->insert(
             $wpdb->prefix . 'upad_uploads',
             array(
@@ -284,7 +287,7 @@ class UPAD_File_Upload {
             ) );
         }
 
-        $upload_hash = isset( $_POST['upload_hash'] ) ? sanitize_text_field( $_POST['upload_hash'] ) : '';
+        $upload_hash = isset( $_POST['upload_hash'] ) ? sanitize_text_field( wp_unslash( $_POST['upload_hash'] ) ) : '';
         $session_key = $this->get_session_key();
 
         if ( empty( $upload_hash ) ) {
@@ -296,6 +299,7 @@ class UPAD_File_Upload {
         global $wpdb;
 
         // Get upload record
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $upload = $wpdb->get_row( $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}upad_uploads WHERE upload_hash = %s AND session_key = %s AND status = 'pending'",
             $upload_hash,
@@ -314,6 +318,7 @@ class UPAD_File_Upload {
         }
 
         // Delete database record.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $wpdb->delete(
             $wpdb->prefix . 'upad_uploads',
             array( 'id' => $upload->id ),
@@ -329,8 +334,8 @@ class UPAD_File_Upload {
      * Handle secure file download
      */
     public function handle_download() {
-        $upload_hash = isset( $_GET['hash'] ) ? sanitize_text_field( $_GET['hash'] ) : '';
-        $nonce = isset( $_GET['nonce'] ) ? sanitize_text_field( $_GET['nonce'] ) : '';
+        $upload_hash = isset( $_GET['hash'] ) ? sanitize_text_field( wp_unslash( $_GET['hash'] ) ) : '';
+        $nonce = isset( $_GET['nonce'] ) ? sanitize_text_field( wp_unslash( $_GET['nonce'] ) ) : '';
 
         if ( ! wp_verify_nonce( $nonce, 'upad_download_' . $upload_hash ) ) {
             wp_die( esc_html__( 'Invalid download link.', 'unstoppable-product-addons' ) );
@@ -338,6 +343,7 @@ class UPAD_File_Upload {
 
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $upload = $wpdb->get_row( $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}upad_uploads WHERE upload_hash = %s",
             $upload_hash
@@ -518,6 +524,7 @@ class UPAD_File_Upload {
      */
     private function get_addon( $addon_id ) {
         global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->get_row( $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
             $addon_id
@@ -571,6 +578,7 @@ class UPAD_File_Upload {
         // Delete pending uploads older than 24 hours.
         $cutoff = gmdate( 'Y-m-d H:i:s', strtotime( '-24 hours' ) );
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $old_uploads = $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}upad_uploads WHERE status = 'pending' AND created_at < %s",
             $cutoff
@@ -583,6 +591,7 @@ class UPAD_File_Upload {
             }
 
             // Delete database record.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
             $wpdb->delete(
                 $wpdb->prefix . 'upad_uploads',
                 array( 'id' => $upload->id ),
@@ -617,6 +626,7 @@ class UPAD_File_Upload {
 
         $session_key = $this->get_session_key();
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->update(
             $wpdb->prefix . 'upad_uploads',
             array(
@@ -652,6 +662,7 @@ class UPAD_File_Upload {
     public function get_order_item_uploads( $order_item_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}upad_uploads WHERE order_item_id = %d ORDER BY created_at ASC",
             $order_item_id

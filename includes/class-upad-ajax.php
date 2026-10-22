@@ -92,8 +92,10 @@ class UPAD_Ajax {
         if ( ! $this->verify_admin_request() ) {
             return;
         }
+        // Nonce verified in verify_admin_request() above.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
 
-        $group_id = isset( $_GET['group_id'] ) ? absint( $_GET['group_id'] ) : 0;
+        $group_id = isset( $_GET['group_id'] ) ? absint( wp_unslash( $_GET['group_id'] ) ) : 0;
 
         if ( ! $group_id ) {
             wp_send_json_error( array( 
@@ -120,6 +122,8 @@ class UPAD_Ajax {
         $categories = array_map( 'absint', $categories );
         $categories = array_filter( $categories ); // Remove zeros
 
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
         wp_send_json_success( array(
             'id'         => absint( $group->id ),
             'name'       => sanitize_text_field( $group->name ?? '' ),
@@ -139,9 +143,12 @@ class UPAD_Ajax {
             return;
         }
 
+        // Nonce verified in verify_admin_request() above.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+
         global $wpdb;
 
-        // Sanitize input
+        // Sanitize input.
         $addon_id   = isset( $_POST['addon_id'] ) ? absint( $_POST['addon_id'] ) : 0;
         $group_id   = isset( $_POST['group_id'] ) ? absint( $_POST['group_id'] ) : 0;
         $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
@@ -165,30 +172,31 @@ class UPAD_Ajax {
             'title'        => isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : '',
             'title_format' => $title_format,
             'description'  => isset( $_POST['description'] ) ? wp_kses_post( wp_unslash( $_POST['description'] ) ) : '',
-            'required'     => isset( $_POST['required'] ) && $_POST['required'] ? 1 : 0,
-            'enabled'      => isset( $_POST['enabled'] ) && $_POST['enabled'] ? 1 : 0,
+            'required'     => isset( $_POST['required'] ) && sanitize_text_field( wp_unslash( $_POST['required'] ) ) ? 1 : 0,
+            'enabled'      => isset( $_POST['enabled'] ) && sanitize_text_field( wp_unslash( $_POST['enabled'] ) ) ? 1 : 0,
         );
-        
-        // Handle settings
+
+        // Handle settings.
         $settings = array();
         if ( isset( $_POST['settings'] ) && is_array( $_POST['settings'] ) ) {
-            foreach ( $_POST['settings'] as $key => $value ) {
-                $settings[ sanitize_key( $key ) ] = sanitize_text_field( $value );
+            $raw_settings = map_deep( wp_unslash( $_POST['settings'] ), 'sanitize_text_field' );
+            foreach ( $raw_settings as $key => $value ) {
+                $settings[ sanitize_key( $key ) ] = $value;
             }
         }
-        
-        // Handle apply_to_variations (for variable products)
+
+        // Handle apply_to_variations (for variable products).
         if ( isset( $_POST['apply_to_variations'] ) && is_array( $_POST['apply_to_variations'] ) ) {
-            $variation_ids = array_map( 'absint', $_POST['apply_to_variations'] );
-            $variation_ids = array_filter( $variation_ids ); // Remove zeros
+            $variation_ids = array_map( 'absint', wp_unslash( $_POST['apply_to_variations'] ) );
+            $variation_ids = array_filter( $variation_ids ); // Remove zeros.
             if ( ! empty( $variation_ids ) ) {
                 $settings['apply_to_variations'] = $variation_ids;
             }
         }
-        
-        // Handle conditional logic
+
+        // Handle conditional logic.
         if ( isset( $_POST['conditional_logic'] ) && is_array( $_POST['conditional_logic'] ) ) {
-            $cond = $_POST['conditional_logic'];
+            $cond = map_deep( wp_unslash( $_POST['conditional_logic'] ), 'sanitize_text_field' );
             $conditional_logic = array(
                 'enabled'  => ! empty( $cond['enabled'] ) ? 1 : 0,
                 'action'   => isset( $cond['action'] ) && in_array( $cond['action'], array( 'show', 'hide' ) ) ? $cond['action'] : 'show',
@@ -242,10 +250,14 @@ class UPAD_Ajax {
 
         if ( $addon_id ) {
             // Verify addon exists before updating
-            $existing = $wpdb->get_var( $wpdb->prepare(
-                "SELECT id FROM {$table_name} WHERE id = %d",
-                $addon_id
-            ) );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+            $existing = $wpdb->get_var(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+                $wpdb->prepare(
+                    "SELECT id FROM {$table_name} WHERE id = %d",
+                    $addon_id
+                )
+            );
 
             if ( ! $existing ) {
                 wp_send_json_error( array( 
@@ -255,6 +267,7 @@ class UPAD_Ajax {
             }
 
             // Update existing addon
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
             $wpdb->update(
                 $table_name,
                 array(
@@ -273,19 +286,28 @@ class UPAD_Ajax {
         } else {
             // Get next position
             if ( $group_id ) {
-                $max_position = $wpdb->get_var( $wpdb->prepare(
-                    "SELECT MAX(position) FROM {$table_name} WHERE group_id = %d",
-                    $group_id
-                ) );
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+                $max_position = $wpdb->get_var(
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+                    $wpdb->prepare(
+                        "SELECT MAX(position) FROM {$table_name} WHERE group_id = %d",
+                        $group_id
+                    )
+                );
             } else {
-                $max_position = $wpdb->get_var( $wpdb->prepare(
-                    "SELECT MAX(position) FROM {$table_name} WHERE product_id = %d",
-                    $product_id
-                ) );
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+                $max_position = $wpdb->get_var(
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+                    $wpdb->prepare(
+                        "SELECT MAX(position) FROM {$table_name} WHERE product_id = %d",
+                        $product_id
+                    )
+                );
             }
             $position = ( $max_position !== null ) ? absint( $max_position ) + 1 : 0;
 
             // Insert new addon
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
             $wpdb->insert(
                 $table_name,
                 array(
@@ -313,10 +335,12 @@ class UPAD_Ajax {
             }
         }
 
-        // Handle options
+        // Handle options.
         if ( isset( $_POST['options'] ) && is_array( $_POST['options'] ) ) {
-            $this->save_addon_options( $addon_id, wp_unslash( $_POST['options'] ) );
+            $this->save_addon_options( $addon_id, map_deep( wp_unslash( $_POST['options'] ), 'sanitize_text_field' ) );
         }
+
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         wp_send_json_success( array(
             'message'  => esc_html__( 'Add-on saved successfully.', 'unstoppable-product-addons' ),
@@ -341,11 +365,12 @@ class UPAD_Ajax {
 
         $table_name = $wpdb->prefix . 'upad_addon_options';
 
-        // Get existing option IDs
-        $existing = $wpdb->get_col( $wpdb->prepare(
-            "SELECT id FROM {$table_name} WHERE addon_id = %d",
-            $addon_id
-        ) );
+        // Get existing option IDs.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+        $existing = $wpdb->get_col(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+            $wpdb->prepare( "SELECT id FROM {$table_name} WHERE addon_id = %d", $addon_id )
+        );
         $existing = array_map( 'absint', $existing );
 
         $submitted_ids = array();
@@ -379,6 +404,7 @@ class UPAD_Ajax {
 
             if ( $option_id && in_array( $option_id, $existing, true ) ) {
                 // Update existing
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                 $wpdb->update(
                     $table_name,
                     $option_data,
@@ -389,6 +415,7 @@ class UPAD_Ajax {
                 $submitted_ids[] = $option_id;
             } else {
                 // Insert new
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
                 $wpdb->insert(
                     $table_name,
                     $option_data,
@@ -403,6 +430,7 @@ class UPAD_Ajax {
         // Delete removed options
         $to_delete = array_diff( $existing, $submitted_ids );
         foreach ( $to_delete as $delete_id ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
             $wpdb->delete(
                 $table_name,
                 array( 'id' => absint( $delete_id ) ),
@@ -420,8 +448,10 @@ class UPAD_Ajax {
         if ( ! $this->verify_admin_request() ) {
             return;
         }
+        // Nonce verified in verify_admin_request() above.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
 
-        $addon_id = isset( $_GET['addon_id'] ) ? absint( $_GET['addon_id'] ) : 0;
+        $addon_id = isset( $_GET['addon_id'] ) ? absint( wp_unslash( $_GET['addon_id'] ) ) : 0;
 
         if ( ! $addon_id ) {
             wp_send_json_error( array( 
@@ -432,10 +462,14 @@ class UPAD_Ajax {
 
         global $wpdb;
 
-        $addon = $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
-            $addon_id
-        ) );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+        $addon = $wpdb->get_row(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
+                $addon_id
+            )
+        );
 
         if ( ! $addon ) {
             wp_send_json_error( array( 
@@ -465,10 +499,14 @@ class UPAD_Ajax {
             $addon->settings = array();
         }
 
-        $addon->options = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d ORDER BY position",
-            $addon_id
-        ) );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+        $addon->options = $wpdb->get_results(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d ORDER BY position",
+                $addon_id
+            )
+        );
 
         // Sanitize options output
         foreach ( $addon->options as $key => $option ) {
@@ -478,6 +516,8 @@ class UPAD_Ajax {
             $addon->options[ $key ]->price_type = sanitize_key( $option->price_type ?? 'flat' );
             $addon->options[ $key ]->is_default = absint( $option->is_default ?? 0 );
         }
+
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         wp_send_json_success( $addon );
     }
@@ -491,8 +531,10 @@ class UPAD_Ajax {
         if ( ! $this->verify_admin_request() ) {
             return;
         }
+        // Nonce verified in verify_admin_request() above.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
 
-        $addon_id = isset( $_POST['addon_id'] ) ? absint( $_POST['addon_id'] ) : 0;
+        $addon_id = isset( $_POST['addon_id'] ) ? absint( wp_unslash( $_POST['addon_id'] ) ) : 0;
 
         if ( ! $addon_id ) {
             wp_send_json_error( array( 
@@ -504,10 +546,14 @@ class UPAD_Ajax {
         global $wpdb;
 
         // Verify addon exists
-        $existing = $wpdb->get_var( $wpdb->prepare(
-            "SELECT id FROM {$wpdb->prefix}upad_addons WHERE id = %d",
-            $addon_id
-        ) );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+        $existing = $wpdb->get_var(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+            $wpdb->prepare(
+                "SELECT id FROM {$wpdb->prefix}upad_addons WHERE id = %d",
+                $addon_id
+            )
+        );
 
         if ( ! $existing ) {
             wp_send_json_error( array( 
@@ -517,6 +563,7 @@ class UPAD_Ajax {
         }
 
         // Delete options first
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $wpdb->delete(
             $wpdb->prefix . 'upad_addon_options',
             array( 'addon_id' => $addon_id ),
@@ -524,11 +571,14 @@ class UPAD_Ajax {
         );
 
         // Delete addon
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $wpdb->delete(
             $wpdb->prefix . 'upad_addons',
             array( 'id' => $addon_id ),
             array( '%d' )
         );
+
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         wp_send_json_success( array(
             'message' => esc_html__( 'Add-on deleted successfully.', 'unstoppable-product-addons' ),
@@ -544,8 +594,10 @@ class UPAD_Ajax {
         if ( ! $this->verify_admin_request() ) {
             return;
         }
+        // Nonce verified in verify_admin_request() above.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
 
-        $addon_id = isset( $_POST['addon_id'] ) ? absint( $_POST['addon_id'] ) : 0;
+        $addon_id = isset( $_POST['addon_id'] ) ? absint( wp_unslash( $_POST['addon_id'] ) ) : 0;
 
         if ( ! $addon_id ) {
             wp_send_json_error( array( 
@@ -557,10 +609,15 @@ class UPAD_Ajax {
         global $wpdb;
 
         // Get the original addon
-        $addon = $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
-            $addon_id
-        ), ARRAY_A );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+        $addon = $wpdb->get_row(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
+                $addon_id
+            ),
+            ARRAY_A
+        );
 
         if ( ! $addon ) {
             wp_send_json_error( array( 
@@ -570,10 +627,15 @@ class UPAD_Ajax {
         }
 
         // Get the original options
-        $options = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d ORDER BY position ASC",
-            $addon_id
-        ), ARRAY_A );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+        $options = $wpdb->get_results(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d ORDER BY position ASC",
+                $addon_id
+            ),
+            ARRAY_A
+        );
 
         // Store original type for response
         $addon_type = $addon['addon_type'];
@@ -583,15 +645,23 @@ class UPAD_Ajax {
 
         // Get max position for this group/product
         if ( $group_id ) {
-            $max_position = $wpdb->get_var( $wpdb->prepare(
-                "SELECT MAX(position) FROM {$wpdb->prefix}upad_addons WHERE group_id = %d",
-                $group_id
-            ) );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+            $max_position = $wpdb->get_var(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+                $wpdb->prepare(
+                    "SELECT MAX(position) FROM {$wpdb->prefix}upad_addons WHERE group_id = %d",
+                    $group_id
+                )
+            );
         } elseif ( $product_id ) {
-            $max_position = $wpdb->get_var( $wpdb->prepare(
-                "SELECT MAX(position) FROM {$wpdb->prefix}upad_addons WHERE product_id = %d",
-                $product_id
-            ) );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+            $max_position = $wpdb->get_var(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
+                $wpdb->prepare(
+                    "SELECT MAX(position) FROM {$wpdb->prefix}upad_addons WHERE product_id = %d",
+                    $product_id
+                )
+            );
         } else {
             $max_position = $addon['position'];
         }
@@ -603,6 +673,7 @@ class UPAD_Ajax {
         $addon['position'] = ( $max_position !== null ) ? absint( $max_position ) + 1 : 0;
 
         // Insert the new addon
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
         $inserted = $wpdb->insert(
             $wpdb->prefix . 'upad_addons',
             $addon
@@ -622,13 +693,16 @@ class UPAD_Ajax {
             foreach ( $options as $option ) {
                 unset( $option['id'] );
                 $option['addon_id'] = $new_addon_id;
-                
+
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
                 $wpdb->insert(
                     $wpdb->prefix . 'upad_addon_options',
                     $option
                 );
             }
         }
+
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         wp_send_json_success( array(
             'message'      => esc_html__( 'Add-on duplicated successfully.', 'unstoppable-product-addons' ),
@@ -651,8 +725,10 @@ class UPAD_Ajax {
         if ( ! $this->verify_admin_request() ) {
             return;
         }
+        // Nonce verified in verify_admin_request() above.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
 
-        $order = isset( $_POST['order'] ) ? array_map( 'absint', $_POST['order'] ) : array();
+        $order = isset( $_POST['order'] ) ? array_map( 'absint', wp_unslash( $_POST['order'] ) ) : array();
 
         if ( empty( $order ) ) {
             wp_send_json_error( array( 
@@ -666,6 +742,7 @@ class UPAD_Ajax {
 
         foreach ( $order as $position => $addon_id ) {
             if ( $addon_id > 0 ) {
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                 $wpdb->update(
                     $table_name,
                     array( 'position' => absint( $position ) ),
@@ -675,6 +752,8 @@ class UPAD_Ajax {
                 );
             }
         }
+
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         wp_send_json_success( array(
             'message' => esc_html__( 'Order saved.', 'unstoppable-product-addons' ),
@@ -690,6 +769,8 @@ class UPAD_Ajax {
         if ( ! $this->verify_admin_request() ) {
             return;
         }
+        // Nonce verified in verify_admin_request() above.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
 
         $term = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
         
@@ -709,6 +790,8 @@ class UPAD_Ajax {
             );
         }
 
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
         wp_send_json( $sanitized );
     }
 
@@ -718,10 +801,13 @@ class UPAD_Ajax {
      * @since 1.0.0
      */
     public function calculate_price() {
+        // Frontend AJAX action - nonce verification is optional but recommended.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+
         // Verify nonce for frontend (optional but recommended)
-        $nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( $_POST['nonce'] ) : '';
-        
-        $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+        $nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+
+        $product_id = isset( $_POST['product_id'] ) ? absint( wp_unslash( $_POST['product_id'] ) ) : 0;
         
         if ( ! $product_id ) {
             wp_send_json_error( array( 
@@ -733,11 +819,13 @@ class UPAD_Ajax {
         $product = wc_get_product( $product_id );
 
         if ( ! $product ) {
-            wp_send_json_error( array( 
-                'message' => esc_html__( 'Product not found.', 'unstoppable-product-addons' ) 
+            wp_send_json_error( array(
+                'message' => esc_html__( 'Product not found.', 'unstoppable-product-addons' )
             ) );
             return;
         }
+
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         wp_send_json_success( array(
             'base_price' => floatval( $product->get_price() ),

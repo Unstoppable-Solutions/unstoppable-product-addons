@@ -67,7 +67,9 @@ class UPAD_Global_Addons {
     public function get_group( $group_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->get_row( $wpdb->prepare(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
             "SELECT * FROM {$wpdb->prefix}upad_global_groups WHERE id = %d",
             $group_id
         ) );
@@ -92,6 +94,7 @@ class UPAD_Global_Addons {
             $data['restrict_to_categories'] = maybe_serialize( $data['restrict_to_categories'] );
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $result = $wpdb->insert(
             $wpdb->prefix . 'upad_global_groups',
             array(
@@ -145,6 +148,7 @@ class UPAD_Global_Addons {
             return true;
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->update(
             $wpdb->prefix . 'upad_global_groups',
             $update_data,
@@ -160,22 +164,26 @@ class UPAD_Global_Addons {
     public function delete_group( $group_id ) {
         global $wpdb;
 
-        // Delete addon options first
+        // Delete addon options first.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $wpdb->query( $wpdb->prepare(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
             "DELETE o FROM {$wpdb->prefix}upad_addon_options o
              INNER JOIN {$wpdb->prefix}upad_addons a ON o.addon_id = a.id
              WHERE a.group_id = %d",
             $group_id
         ) );
 
-        // Delete addons
+        // Delete addons.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $wpdb->delete(
             $wpdb->prefix . 'upad_addons',
             array( 'group_id' => $group_id ),
             array( '%d' )
         );
 
-        // Delete group
+        // Delete group.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->delete(
             $wpdb->prefix . 'upad_global_groups',
             array( 'id' => $group_id ),
@@ -189,7 +197,9 @@ class UPAD_Global_Addons {
     public function get_group_addons( $group_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $results = $wpdb->get_results( $wpdb->prepare(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
             "SELECT * FROM {$wpdb->prefix}upad_addons 
              WHERE group_id = %d AND enabled = 1
              ORDER BY position ASC",
@@ -259,7 +269,9 @@ class UPAD_Global_Addons {
     public function get_addon_options( $addon_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $options = $wpdb->get_results( $wpdb->prepare(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
             "SELECT * FROM {$wpdb->prefix}upad_addon_options 
              WHERE addon_id = %d AND is_hidden = 0
              ORDER BY position ASC",
@@ -298,14 +310,17 @@ class UPAD_Global_Addons {
             return $new_group_id;
         }
 
-        // Duplicate addons
+        // Duplicate addons.
         global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $addons = $wpdb->get_results( $wpdb->prepare(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
             "SELECT * FROM {$wpdb->prefix}upad_addons WHERE group_id = %d",
             $group_id
         ) );
 
         foreach ( $addons as $addon ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
             $new_addon_id = $wpdb->insert(
                 $wpdb->prefix . 'upad_addons',
                 array(
@@ -326,13 +341,16 @@ class UPAD_Global_Addons {
             if ( $new_addon_id ) {
                 $new_addon_id = $wpdb->insert_id;
 
-                // Duplicate options
+                // Duplicate options.
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                 $options = $wpdb->get_results( $wpdb->prepare(
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                     "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d",
                     $addon->id
                 ) );
 
                 foreach ( $options as $option ) {
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                     $wpdb->insert(
                         $wpdb->prefix . 'upad_addon_options',
                         array(

@@ -55,7 +55,7 @@ class UPAD_Order {
             $display_value = $addon['display'];
             
             if ( 'yes' === get_option( 'upad_display_option_prices', 'yes' ) && ! empty( $addon['price'] ) ) {
-                if ( apply_filters( 'woocommerce_addons_add_order_price_to_value', false ) ) {
+                if ( apply_filters( 'upad_addons_add_order_price_to_value', false ) ) {
                     $display_value .= ' (' . wc_price( $addon['price'] ) . ')';
                 }
             }
@@ -184,7 +184,7 @@ class UPAD_Order {
             echo esc_html( $addon['display'] );
             
             if ( ! empty( $addon['price'] ) ) {
-                echo ' <span class="upad-addon-price">(' . wc_price( $addon['price'] ) . ')</span>';
+                echo ' <span class="upad-addon-price">(' . wp_kses_post( wc_price( $addon['price'] ) ) . ')</span>';
             }
 
             // Show file upload links
@@ -193,7 +193,7 @@ class UPAD_Order {
                 foreach ( (array) $addon['value'] as $upload_hash ) {
                     $download_url = UPAD_File_Upload::instance()->get_download_url( $upload_hash );
                     echo '<a href="' . esc_url( $download_url ) . '" target="_blank" class="button button-small">';
-                    echo '<span class="dashicons dashicons-download"></span> ' . __( 'Download File', 'unstoppable-product-addons' );
+                    echo '<span class="dashicons dashicons-download"></span> ' . esc_html__( 'Download File', 'unstoppable-product-addons' );
                     echo '</a> ';
                 }
                 echo '</div>';
@@ -206,8 +206,8 @@ class UPAD_Order {
                         $linked = wc_get_product( $option['linked_product_id'] );
                         if ( $linked ) {
                             echo '<div class="upad-linked-product">';
-                            echo '<small>' . __( 'Linked to:', 'unstoppable-product-addons' ) . ' ';
-                            echo '<a href="' . get_edit_post_link( $linked->get_id() ) . '">';
+                            echo '<small>' . esc_html__( 'Linked to:', 'unstoppable-product-addons' ) . ' ';
+                            echo '<a href="' . esc_url( get_edit_post_link( $linked->get_id() ) ) . '">';
                             echo esc_html( $linked->get_name() );
                             if ( $linked->get_sku() ) {
                                 echo ' (SKU: ' . esc_html( $linked->get_sku() ) . ')';
@@ -238,7 +238,7 @@ class UPAD_Order {
         if ( $linked_from ) {
             $source = $item->get_meta( '_upad_addon_source' );
             if ( $source ) {
-                $name .= '<br><small>' . __( 'Added via:', 'unstoppable-product-addons' ) . ' ' . esc_html( $source ) . '</small>';
+                $name .= '<br><small>' . esc_html__( 'Added via:', 'unstoppable-product-addons' ) . ' ' . esc_html( $source ) . '</small>';
             }
         }
 
@@ -284,9 +284,10 @@ class UPAD_Order {
     public function get_order_uploads( $order_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}upad_uploads 
-             WHERE order_id = %d 
+            "SELECT * FROM {$wpdb->prefix}upad_uploads
+             WHERE order_id = %d
              ORDER BY order_item_id, created_at",
             $order_id
         ) );

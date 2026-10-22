@@ -318,11 +318,13 @@ class UPAD_Admin_Migrate {
         );
 
         // Check for per-product add-ons
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration detection query.
         $products_with_addons = $wpdb->get_var(
             "SELECT COUNT(DISTINCT post_id) FROM {$wpdb->postmeta} WHERE meta_key = '_product_addons' AND meta_value != '' AND meta_value != 'a:0:{}'"
         );
 
         // Check for global add-ons (custom post type)
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration detection query.
         $global_addons = $wpdb->get_var(
             "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'global_product_addon' AND post_status = 'publish'"
         );
@@ -351,6 +353,7 @@ class UPAD_Admin_Migrate {
         );
 
         // Check if Orderable addon post type exists
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration detection query.
         $orderable_addons = $wpdb->get_var(
             "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'orderable_addons' AND post_status = 'publish'"
         );
@@ -402,6 +405,7 @@ class UPAD_Admin_Migrate {
         );
 
         // Scan global add-ons
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration scan query.
         $global_posts = $wpdb->get_results(
             "SELECT ID, post_title FROM {$wpdb->posts} WHERE post_type = 'global_product_addon' AND post_status = 'publish'"
         );
@@ -418,12 +422,13 @@ class UPAD_Admin_Migrate {
         }
 
         // Scan per-product add-ons
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration scan query.
         $products = $wpdb->get_results(
-            "SELECT pm.post_id, pm.meta_value, p.post_title 
-             FROM {$wpdb->postmeta} pm 
-             JOIN {$wpdb->posts} p ON pm.post_id = p.ID 
-             WHERE pm.meta_key = '_product_addons' 
-             AND pm.meta_value != '' 
+            "SELECT pm.post_id, pm.meta_value, p.post_title
+             FROM {$wpdb->postmeta} pm
+             JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+             WHERE pm.meta_key = '_product_addons'
+             AND pm.meta_value != ''
              AND pm.meta_value != 'a:0:{}'"
         );
 
@@ -457,6 +462,7 @@ class UPAD_Admin_Migrate {
         );
 
         // Scan Orderable addon groups
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration scan query.
         $addon_posts = $wpdb->get_results(
             "SELECT ID, post_title FROM {$wpdb->posts} WHERE post_type = 'orderable_addons' AND post_status = 'publish'"
         );
@@ -539,6 +545,7 @@ class UPAD_Admin_Migrate {
         );
 
         // Migrate global add-ons
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration query.
         $global_posts = $wpdb->get_results(
             "SELECT ID, post_title FROM {$wpdb->posts} WHERE post_type = 'global_product_addon' AND post_status = 'publish'"
         );
@@ -581,11 +588,12 @@ class UPAD_Admin_Migrate {
         }
 
         // Migrate per-product add-ons
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration query.
         $products = $wpdb->get_results(
-            "SELECT pm.post_id, pm.meta_value 
-             FROM {$wpdb->postmeta} pm 
-             WHERE pm.meta_key = '_product_addons' 
-             AND pm.meta_value != '' 
+            "SELECT pm.post_id, pm.meta_value
+             FROM {$wpdb->postmeta} pm
+             WHERE pm.meta_key = '_product_addons'
+             AND pm.meta_value != ''
              AND pm.meta_value != 'a:0:{}'"
         );
 
@@ -658,6 +666,7 @@ class UPAD_Admin_Migrate {
 
         // Insert addon
         $table_name = $wpdb->prefix . 'upad_addons';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
         $inserted = $wpdb->insert(
             $table_name,
             $addon_data,
@@ -690,6 +699,7 @@ class UPAD_Admin_Migrate {
                     }
                 }
 
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
                 $wpdb->insert(
                     $options_table,
                     array(
@@ -735,6 +745,7 @@ class UPAD_Admin_Migrate {
         );
 
         // Get Orderable addon posts
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration query.
         $addon_posts = $wpdb->get_results(
             "SELECT ID, post_title FROM {$wpdb->posts} WHERE post_type = 'orderable_addons' AND post_status = 'publish'"
         );
@@ -812,6 +823,7 @@ class UPAD_Admin_Migrate {
 
         // Insert addon
         $table_name = $wpdb->prefix . 'upad_addons';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
         $inserted = $wpdb->insert(
             $table_name,
             $addon_data,
@@ -884,6 +896,7 @@ class UPAD_Admin_Migrate {
                     continue;
                 }
 
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
                 $wpdb->insert(
                     $options_table,
                     array(

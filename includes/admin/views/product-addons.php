@@ -3,6 +3,8 @@
  * Product Add-ons Tab View
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- View template variables are not true globals.
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }

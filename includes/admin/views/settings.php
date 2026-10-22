@@ -6,6 +6,8 @@
  * @since 1.5.0
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- View template variables are not true globals.
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }

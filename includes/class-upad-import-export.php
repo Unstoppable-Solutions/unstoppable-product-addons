@@ -47,6 +47,8 @@ class UPAD_Import_Export {
             wp_send_json_error( array( 'message' => __( 'Invalid request.', 'unstoppable-product-addons' ) ) );
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant, $where is prepared.
         $addons = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}upad_addons {$where} ORDER BY position" );
 
         $export_data = array(
@@ -55,8 +57,9 @@ class UPAD_Import_Export {
         );
 
         foreach ( $addons as $addon ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
             $options = $wpdb->get_results( $wpdb->prepare(
-                "SELECT label, price, price_type, is_default, is_hidden, position 
+                "SELECT label, price, price_type, is_default, is_hidden, position
                  FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d ORDER BY position",
                 $addon->id
             ) );
@@ -91,7 +94,8 @@ class UPAD_Import_Export {
 
         $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
         $group_id = isset( $_POST['group_id'] ) ? absint( $_POST['group_id'] ) : 0;
-        $import_data = isset( $_POST['import_data'] ) ? $_POST['import_data'] : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Data is base64 decoded and JSON parsed, not used directly.
+        $import_data = isset( $_POST['import_data'] ) ? wp_unslash( $_POST['import_data'] ) : '';
 
         if ( empty( $import_data ) ) {
             wp_send_json_error( array( 'message' => __( 'No import data provided.', 'unstoppable-product-addons' ) ) );
@@ -108,7 +112,7 @@ class UPAD_Import_Export {
         $imported = 0;
 
         foreach ( $decoded['addons'] as $addon_data ) {
-            // Insert addon
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
             $wpdb->insert(
                 $wpdb->prefix . 'upad_addons',
                 array(
@@ -131,6 +135,7 @@ class UPAD_Import_Export {
             // Insert options
             if ( ! empty( $addon_data['options'] ) && $addon_id ) {
                 foreach ( $addon_data['options'] as $option ) {
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
                     $wpdb->insert(
                         $wpdb->prefix . 'upad_addon_options',
                         array(

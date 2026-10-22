@@ -144,9 +144,13 @@ class UPAD_Install {
             KEY status (status)
         ) $charset_collate;";
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Required for plugin table creation.
         dbDelta( $sql_groups );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Required for plugin table creation.
         dbDelta( $sql_addons );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Required for plugin table creation.
         dbDelta( $sql_options );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Required for plugin table creation.
         dbDelta( $sql_uploads );
     }
 
@@ -200,12 +204,14 @@ class UPAD_Install {
 
         $htaccess_file = $upad_upload_dir . '/.htaccess';
         if ( ! file_exists( $htaccess_file ) ) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Simple security file; WP_Filesystem requires credentials.
             file_put_contents( $htaccess_file, $htaccess_content );
         }
 
         // Create index.php to prevent directory listing
         $index_file = $upad_upload_dir . '/index.php';
         if ( ! file_exists( $index_file ) ) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Simple index file; WP_Filesystem requires credentials.
             file_put_contents( $index_file, '<?php // Silence is golden' );
         }
     }
@@ -229,15 +235,21 @@ class UPAD_Install {
         }
 
         // Delete tables
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Uninstall cleanup requires direct query.
         $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}upad_global_groups" );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Uninstall cleanup requires direct query.
         $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}upad_addons" );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Uninstall cleanup requires direct query.
         $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}upad_addon_options" );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Uninstall cleanup requires direct query.
         $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}upad_uploads" );
 
         // Delete options
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Uninstall cleanup requires direct query.
         $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'upad_%'" );
 
         // Delete product meta
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Uninstall cleanup requires direct query.
         $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '_upad_%'" );
 
         // Delete upload directory

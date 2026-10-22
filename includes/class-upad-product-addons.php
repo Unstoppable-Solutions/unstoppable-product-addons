@@ -58,8 +58,9 @@ class UPAD_Product_Addons {
     public function get_addons( $product_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $addons = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}upad_addons 
+            "SELECT * FROM {$wpdb->prefix}upad_addons
              WHERE product_id = %d AND enabled = 1
              ORDER BY position ASC",
             $product_id
@@ -89,8 +90,9 @@ class UPAD_Product_Addons {
     public function get_addon_options( $addon_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $options = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}upad_addon_options 
+            "SELECT * FROM {$wpdb->prefix}upad_addon_options
              WHERE addon_id = %d AND is_hidden = 0
              ORDER BY position ASC",
             $addon_id
@@ -128,6 +130,7 @@ class UPAD_Product_Addons {
 
         // Get next position
         if ( empty( $data['position'] ) ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
             $max_position = $wpdb->get_var( $wpdb->prepare(
                 "SELECT MAX(position) FROM {$wpdb->prefix}upad_addons WHERE product_id = %d",
                 $product_id
@@ -135,6 +138,7 @@ class UPAD_Product_Addons {
             $data['position'] = ( $max_position !== null ) ? $max_position + 1 : 0;
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
         $result = $wpdb->insert(
             $wpdb->prefix . 'upad_addons',
             array(
@@ -215,6 +219,7 @@ class UPAD_Product_Addons {
             return true;
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->update(
             $wpdb->prefix . 'upad_addons',
             $update_data,
@@ -231,6 +236,7 @@ class UPAD_Product_Addons {
         global $wpdb;
 
         // Delete options first
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $wpdb->delete(
             $wpdb->prefix . 'upad_addon_options',
             array( 'addon_id' => $addon_id ),
@@ -238,6 +244,7 @@ class UPAD_Product_Addons {
         );
 
         // Delete addon
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->delete(
             $wpdb->prefix . 'upad_addons',
             array( 'id' => $addon_id ),
@@ -266,6 +273,7 @@ class UPAD_Product_Addons {
 
         // Get next position
         if ( empty( $data['position'] ) ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
             $max_position = $wpdb->get_var( $wpdb->prepare(
                 "SELECT MAX(position) FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d",
                 $addon_id
@@ -273,6 +281,7 @@ class UPAD_Product_Addons {
             $data['position'] = ( $max_position !== null ) ? $max_position + 1 : 0;
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
         $result = $wpdb->insert(
             $wpdb->prefix . 'upad_addon_options',
             array(
@@ -349,6 +358,7 @@ class UPAD_Product_Addons {
             return true;
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->update(
             $wpdb->prefix . 'upad_addon_options',
             $update_data,
@@ -364,6 +374,7 @@ class UPAD_Product_Addons {
     public function delete_option( $option_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         return $wpdb->delete(
             $wpdb->prefix . 'upad_addon_options',
             array( 'id' => $option_id ),
@@ -378,6 +389,7 @@ class UPAD_Product_Addons {
         global $wpdb;
 
         foreach ( $order as $position => $addon_id ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
             $wpdb->update(
                 $wpdb->prefix . 'upad_addons',
                 array( 'position' => $position ),
@@ -397,6 +409,7 @@ class UPAD_Product_Addons {
         global $wpdb;
 
         foreach ( $order as $position => $option_id ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
             $wpdb->update(
                 $wpdb->prefix . 'upad_addon_options',
                 array( 'position' => $position ),
@@ -415,6 +428,7 @@ class UPAD_Product_Addons {
     public function copy_addons( $from_product_id, $to_product_id ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $addons = $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}upad_addons WHERE product_id = %d",
             $from_product_id
@@ -434,6 +448,7 @@ class UPAD_Product_Addons {
 
             if ( ! is_wp_error( $new_addon_id ) ) {
                 // Copy options
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                 $options = $wpdb->get_results( $wpdb->prepare(
                     "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d",
                     $addon->id

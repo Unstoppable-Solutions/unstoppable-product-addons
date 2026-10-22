@@ -48,8 +48,10 @@ class UPAD_Cart {
             return $passed;
         }
 
-        $posted_addons = isset( $_POST['upad_addon'] ) ? $_POST['upad_addon'] : array();
-        $posted_addon_qty = isset( $_POST['upad_addon_qty'] ) ? $_POST['upad_addon_qty'] : array();
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce add_to_cart flow.
+        $posted_addons = isset( $_POST['upad_addon'] ) ? map_deep( wp_unslash( $_POST['upad_addon'] ), 'sanitize_text_field' ) : array();
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce add_to_cart flow.
+        $posted_addon_qty = isset( $_POST['upad_addon_qty'] ) ? map_deep( wp_unslash( $_POST['upad_addon_qty'] ), 'absint' ) : array();
 
         foreach ( $addons as $addon ) {
             // Check if addon applies to this variation
@@ -415,7 +417,8 @@ class UPAD_Cart {
     private function validate_multiple_choice( $value, $addon ) {
         // Verify option exists
         global $wpdb;
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $exists = $wpdb->get_var( $wpdb->prepare(
             "SELECT COUNT(*) FROM {$wpdb->prefix}upad_addon_options 
              WHERE addon_id = %d AND id = %d AND is_hidden = 0",
@@ -485,8 +488,10 @@ class UPAD_Cart {
             return $cart_item_data;
         }
 
-        $posted_addons = isset( $_POST['upad_addon'] ) ? $_POST['upad_addon'] : array();
-        $posted_addon_qty = isset( $_POST['upad_addon_qty'] ) ? $_POST['upad_addon_qty'] : array();
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce add_to_cart flow.
+        $posted_addons = isset( $_POST['upad_addon'] ) ? map_deep( wp_unslash( $_POST['upad_addon'] ), 'sanitize_text_field' ) : array();
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce add_to_cart flow.
+        $posted_addon_qty = isset( $_POST['upad_addon_qty'] ) ? map_deep( wp_unslash( $_POST['upad_addon_qty'] ), 'absint' ) : array();
         $addon_data = array();
 
         foreach ( $addons as $addon ) {
@@ -541,6 +546,7 @@ class UPAD_Cart {
 
         switch ( $addon->addon_type ) {
             case 'multiple_choice':
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                 $option = $wpdb->get_row( $wpdb->prepare(
                     "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                     absint( $value )
@@ -571,7 +577,8 @@ class UPAD_Cart {
                         if ( $option_qty <= 0 ) {
                             continue;
                         }
-                        
+
+                        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                         $option = $wpdb->get_row( $wpdb->prepare(
                             "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                             absint( $option_id )
@@ -604,6 +611,7 @@ class UPAD_Cart {
                 elseif ( is_array( $value ) ) {
                     $labels = array();
                     foreach ( $value as $option_id ) {
+                        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                         $option = $wpdb->get_row( $wpdb->prepare(
                             "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                             absint( $option_id )
@@ -674,6 +682,7 @@ class UPAD_Cart {
                 if ( $multiple && is_array( $value ) ) {
                     $labels = array();
                     foreach ( $value as $option_id ) {
+                        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                         $option = $wpdb->get_row( $wpdb->prepare(
                             "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                             absint( $option_id )
@@ -691,6 +700,7 @@ class UPAD_Cart {
                     $data['value'] = $value;
                     $data['display'] = implode( ', ', $labels );
                 } else {
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
                     $option = $wpdb->get_row( $wpdb->prepare(
                         "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                         absint( $value )

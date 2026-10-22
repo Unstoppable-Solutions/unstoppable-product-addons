@@ -81,6 +81,7 @@ class UPAD_Admin_Global_Addons {
             return;
         }
 
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in verify_admin_request() above.
         $group_id = isset( $_POST['group_id'] ) ? absint( $_POST['group_id'] ) : 0;
         
         // Sanitize and validate input
@@ -144,6 +145,7 @@ class UPAD_Admin_Global_Addons {
             'message'  => esc_html__( 'Group saved successfully.', 'unstoppable-product-addons' ),
             'group_id' => absint( $group_id ),
         ) );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
     }
 
     /**
@@ -156,6 +158,7 @@ class UPAD_Admin_Global_Addons {
             return;
         }
 
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in verify_admin_request() above.
         $group_id = isset( $_POST['group_id'] ) ? absint( $_POST['group_id'] ) : 0;
 
         if ( ! $group_id ) {
@@ -186,5 +189,6 @@ class UPAD_Admin_Global_Addons {
         wp_send_json_success( array(
             'message' => esc_html__( 'Group deleted successfully.', 'unstoppable-product-addons' ),
         ) );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
     }
 }

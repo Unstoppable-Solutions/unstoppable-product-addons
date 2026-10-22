@@ -47,9 +47,11 @@ class UPAD_Admin_Product_Addons {
 
     /**
      * Save product meta
+     *
+     * @param int $post_id Product ID.
      */
     public function save_product_meta( $post_id ) {
-        // Save global addons setting
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce in woocommerce_process_product_meta hook.
         $use_global = isset( $_POST['_upad_use_global_addons'] ) ? 'yes' : 'no';
         update_post_meta( $post_id, '_upad_use_global_addons', $use_global );
     }

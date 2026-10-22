@@ -181,6 +181,7 @@ class UPAD_REST_API {
     public function get_addon( $request ) {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
         $addon = $wpdb->get_row( $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
             $request['id']

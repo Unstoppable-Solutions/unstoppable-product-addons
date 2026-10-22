@@ -52,6 +52,7 @@ class UPAD_Admin {
      * @return string Current tab slug.
      */
     private function get_current_tab() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab detection for navigation, no data processing.
         return isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'addons';
     }
 
@@ -175,7 +176,8 @@ class UPAD_Admin {
      * @param string $hook Current admin page hook.
      */
     public function enqueue_scripts( $hook ) {
-        // Check if we're on a plugin page
+        // Check if we're on a plugin page.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Page detection for conditional asset loading, no data processing.
         $current_page = isset( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : '';
         $is_plugin_page = in_array( $current_page, array( 'upad-settings', 'unstoppable-studio' ), true );
         
