@@ -592,28 +592,28 @@ class UPAD_Display {
             echo '<p class="upad-selection-hint">';
             if ( $min_selections > 0 && $max_selections > 0 ) {
                 if ( $min_selections === $max_selections ) {
-                    /* translators: %d: number of options to select */
                     printf(
+                        /* translators: %d: number of options to select */
                         esc_html__( 'Select exactly %d option(s)', 'unstoppable-product-addons' ),
                         $min_selections
                     );
                 } else {
-                    /* translators: %1$d: minimum options, %2$d: maximum options */
                     printf(
+                        /* translators: %1$d: minimum options, %2$d: maximum options */
                         esc_html__( 'Select %1$d to %2$d options', 'unstoppable-product-addons' ),
                         $min_selections,
                         $max_selections
                     );
                 }
             } elseif ( $min_selections > 0 ) {
-                /* translators: %d: minimum number of options to select */
                 printf(
+                    /* translators: %d: minimum number of options to select */
                     esc_html__( 'Select at least %d option(s)', 'unstoppable-product-addons' ),
                     $min_selections
                 );
             } elseif ( $max_selections > 0 ) {
-                /* translators: %d: maximum number of options to select */
                 printf(
+                    /* translators: %d: maximum number of options to select */
                     esc_html__( 'Select up to %d option(s)', 'unstoppable-product-addons' ),
                     $max_selections
                 );

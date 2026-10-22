@@ -88,8 +88,8 @@ class UPAD_Admin_Migrate {
                             <div class="upad-detected-info">
                                 <span class="dashicons dashicons-yes-alt"></span>
                                 <?php
-                                /* translators: %1$d: number of products, %2$d: number of global groups */
                                 printf(
+                                    /* translators: %1$d: number of products, %2$d: number of global groups */
                                     esc_html__( 'Detected: %1$d products with add-ons, %2$d global add-on groups', 'unstoppable-product-addons' ),
                                     $detected['products'],
                                     $detected['globals']

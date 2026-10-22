@@ -129,9 +129,9 @@ class UPAD_Inventory {
                     wc_reduce_stock_levels( $linked_product->get_id(), $quantity );
 
                     // Add order note.
-                    /* translators: %1$s: product name, %2$s: addon title, %3$d: quantity reduced */
                     $order->add_order_note(
                         sprintf(
+                            /* translators: %1$s: product name, %2$s: addon title, %3$d: quantity reduced */
                             __( 'Reduced stock for linked product "%1$s" (Add-on: %2$s) by %3$d', 'unstoppable-product-addons' ),
                             $linked_product->get_name(),
                             $addon['title'],
@@ -188,9 +188,9 @@ class UPAD_Inventory {
 
                     wc_update_product_stock( $linked_product, $quantity, 'increase' );
 
-                    /* translators: %1$s: product name, %2$s: addon title, %3$d: quantity restored */
                     $order->add_order_note(
                         sprintf(
+                            /* translators: %1$s: product name, %2$s: addon title, %3$d: quantity restored */
                             __( 'Restored stock for linked product "%1$s" (Add-on: %2$s) by %3$d', 'unstoppable-product-addons' ),
                             $linked_product->get_name(),
                             $addon['title'],

@@ -145,8 +145,8 @@ class UPAD_File_Upload {
         $file_ext = strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
         if ( ! in_array( $file_ext, $allowed_extensions, true ) ) {
             wp_send_json_error( array(
-                /* translators: %s: list of allowed file extensions */
                 'message' => sprintf(
+                    /* translators: %s: list of allowed file extensions */
                     __( 'File type not allowed. Allowed types: %s', 'unstoppable-product-addons' ),
                     implode( ', ', $allowed_extensions )
                 ),
@@ -156,8 +156,8 @@ class UPAD_File_Upload {
         // Validate file size.
         if ( $file['size'] > $max_file_size ) {
             wp_send_json_error( array(
-                /* translators: %s: maximum file size in megabytes */
                 'message' => sprintf(
+                    /* translators: %s: maximum file size in megabytes */
                     __( 'File is too large. Maximum size: %s MB', 'unstoppable-product-addons' ),
                     number_format( $max_file_size / 1024 / 1024, 1 )
                 ),
