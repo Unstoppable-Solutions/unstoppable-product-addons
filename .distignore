@@ -4,6 +4,7 @@
 .distignore
 .gitattributes
 README.md
+ROADMAP.md
 CLAUDE.md
 SECURITY.md
 CONTRIBUTING.md

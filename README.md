@@ -1,46 +1,107 @@
 # Unstoppable Product Addons
 
 [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2+-blue.svg)](https://www.gnu.org/licenses/gpl-2.0)
+[![WordPress Plugin](https://img.shields.io/wordpress/plugin/v/unstoppable-product-addons)](https://wordpress.org/plugins/unstoppable-product-addons/)
+[![WordPress](https://img.shields.io/wordpress/plugin/tested/unstoppable-product-addons)](https://wordpress.org/plugins/unstoppable-product-addons/)
 
-Add optional extras to WooCommerce products at purchase — gift wrap, engraving, personalization, custom text fields. One admin page, no theme edits, no per-product configuration slog.
+Create custom product options for WooCommerce. Add text fields, dropdowns, checkboxes, file uploads, date pickers, and more to any product.
 
-> **Status:** pre-release (v0.1.0). Not yet published to the WordPress Plugin Directory — the deploy workflow is set up and will fire the moment this plugin is approved into the directory and a tagged release is cut.
+**[WordPress.org Plugin Page](https://wordpress.org/plugins/unstoppable-product-addons/)** | **[Documentation](https://unstoppablesolutions.app/plugins/unstoppable-product-addons/)**
 
-## Planned features
+## Features
 
-- **Global add-on sets** — define a set once (e.g. "Gift options"), attach to any number of products
-- **Per-product overrides** — a specific product can tweak or replace the global set
-- **Field types** — text input, textarea, checkbox, dropdown, radio, file upload, date, time
-- **Pricing hooks** — each add-on can be free, flat-fee, percentage of product price, or per-character
-- **Cart + checkout display** — add-on choices visible all the way through to the order
-- **Order emails + admin** — add-on values printed in the order detail and admin order screen
-- **No theme edits** — hooks on standard WooCommerce templates
+- **10 Field Types** — Multiple choice (dropdown/radio/images), checkboxes, short text, long text, file upload, customer-defined price, quantity, heading, date picker, and color picker.
+- **Global Add-ons** — Create add-on groups that apply to all products or specific categories.
+- **Per-Product Add-ons** — Add custom options to individual products.
+- **Flexible Pricing** — Flat fees, percentage-based, or quantity-multiplied pricing for each option.
+- **File Upload Security** — Control allowed file types, sizes, and image dimensions with MIME validation.
+- **Variable Product Support** — Apply add-ons to specific variations.
+- **Inventory Tracking** — Track stock for add-on options.
+- **Import/Export** — Easily migrate add-ons between products.
+- **Migration Tool** — Import from other popular add-on plugins (WooCommerce Product Add-Ons, Orderable).
 
-## Why not just use the existing WooCommerce Product Add-Ons plugin?
+## Perfect For
 
-- Not using the WooCommerce brand name in the title (per WordPress.org trademark rules)
-- Open source, no "upgrade to Pro to unlock the useful stuff" pattern on the fundamentals
-- Clean admin UI, no 10-year-old UX
-- Managed as part of the Unstoppable Solutions suite — consistent conventions, release cadence, support
+- Personalized products (engraving, monograms)
+- Gift options (gift wrapping, messages)
+- Custom sizing or dimensions
+- Appointment/delivery date selection
+- File upload for print-on-demand
+- Rush processing fees
+- Donations and tips
+
+## Requirements
+
+- WordPress 6.5 or higher
+- WooCommerce 7.0 or higher
+- PHP 7.4 or higher
+
+## Installation
+
+1. Upload the plugin files to `/wp-content/plugins/unstoppable-product-addons`, or install directly through the WordPress plugins screen.
+2. Activate the plugin through the 'Plugins' screen in WordPress.
+3. Navigate to **Options Studio → Product Addons** to configure global add-ons.
+4. Or edit any product and look for the "Product Add-ons" panel.
 
 ## Development
 
-### Release workflow
+### Repository Structure
 
-Releases are deployed to WordPress.org SVN automatically by GitHub Actions, once the plugin is accepted into the directory:
+```
+unstoppable-product-addons/
+├── assets/              # CSS and JavaScript files
+│   ├── css/
+│   └── js/
+├── includes/            # PHP classes
+│   ├── admin/          # Admin UI classes
+│   │   └── views/      # Admin templates
+│   └── api/            # REST API
+├── languages/           # Translation files
+├── templates/           # Frontend templates
+├── .github/workflows/   # CI/CD workflows
+├── readme.txt           # WordPress.org listing
+├── ROADMAP.md           # Development roadmap
+└── CHANGELOG.md         # Version history
+```
+
+### Release Workflow
+
+Releases are deployed to WordPress.org SVN automatically by GitHub Actions:
 
 1. Finish feature work on `main`
-2. Bump the version in `unstoppable-product-addons.php` (header + `UPAD_VERSION` constant), `readme.txt` (Stable tag), and add a Changelog entry
-3. Commit and push `main`
-4. On GitHub, create a new **Release** tagged `vX.Y.Z` — the deploy workflow fires
+2. Bump the version in:
+   - `unstoppable-product-addons.php` (Version header + `UPAD_VERSION` constant)
+   - `readme.txt` (Stable tag + Changelog entry)
+3. Commit and push to `main`
+4. On GitHub, create a new **Release** tagged `vX.Y.Z`
+5. The `deploy-to-wporg.yml` workflow fires and pushes to WordPress.org SVN
 
 ### CI
 
-Every push and pull request runs the official WordPress Plugin Check against the codebase.
+Every push and pull request runs the official WordPress Plugin Check against the codebase via `.github/workflows/plugin-check.yml`.
+
+### Coding Standards
+
+This plugin follows:
+- [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/)
+- [WordPress Plugin Guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/)
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for planned features and development priorities.
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Support
+
+- [WordPress.org Support Forum](https://wordpress.org/support/plugin/unstoppable-product-addons/)
+- [Unstoppable Solutions Support](https://unstoppablesolutions.app/support)
 
 ## License
 
-GPL-2.0-or-later. See the `License` header in `unstoppable-product-addons.php`.
+GPL-2.0-or-later. See the `License` header in `unstoppable-product-addons.php` and `license.txt`.
 
 ## Author
 
