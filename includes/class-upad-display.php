@@ -303,11 +303,17 @@ class UPAD_Display {
                 'none'              => __( 'None', 'unstoppable-product-addons' ),
                 'chars_remaining'   => __( 'characters remaining', 'unstoppable-product-addons' ),
                 'out_of_stock'      => __( 'Out of stock', 'unstoppable-product-addons' ),
+                /* translators: %d: quantity in stock */
                 'low_stock'         => __( 'Only %d left', 'unstoppable-product-addons' ),
+                /* translators: %d: minimum number of options */
                 'select_minimum'    => __( 'Please select at least %d option(s)', 'unstoppable-product-addons' ),
+                /* translators: %d: exact number of options to select */
                 'select_exactly'    => __( 'Please select exactly %d option(s)', 'unstoppable-product-addons' ),
+                /* translators: %d: maximum number of options */
                 'select_maximum'    => __( 'You can select up to %d option(s)', 'unstoppable-product-addons' ),
+                /* translators: %d: number of options to select */
                 'select_qty_options' => __( 'Select %d option(s) to match your quantity', 'unstoppable-product-addons' ),
+                /* translators: %d: required quantity, %n: selected quantity (JS placeholder) */
                 'select_qty_total'  => __( 'Please select %d total (you selected %n)', 'unstoppable-product-addons' ),
             ),
         ) );
