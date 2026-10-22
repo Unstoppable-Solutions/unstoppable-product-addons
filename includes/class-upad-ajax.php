@@ -252,9 +252,8 @@ class UPAD_Ajax {
             // Verify addon exists before updating
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom table requires direct query; table name is safe prefix + constant.
             $existing = $wpdb->get_var(
-                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                 $wpdb->prepare(
-                    "SELECT id FROM {$table_name} WHERE id = %d",
+                    "SELECT id FROM {$table_name} WHERE id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                     $addon_id
                 )
             );
@@ -288,18 +287,16 @@ class UPAD_Ajax {
             if ( $group_id ) {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom table requires direct query; table name is safe prefix + constant.
                 $max_position = $wpdb->get_var(
-                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                     $wpdb->prepare(
-                        "SELECT MAX(position) FROM {$table_name} WHERE group_id = %d",
+                        "SELECT MAX(position) FROM {$table_name} WHERE group_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                         $group_id
                     )
                 );
             } else {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom table requires direct query; table name is safe prefix + constant.
                 $max_position = $wpdb->get_var(
-                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                     $wpdb->prepare(
-                        "SELECT MAX(position) FROM {$table_name} WHERE product_id = %d",
+                        "SELECT MAX(position) FROM {$table_name} WHERE product_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                         $product_id
                     )
                 );
