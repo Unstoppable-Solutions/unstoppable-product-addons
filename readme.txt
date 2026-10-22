@@ -3,7 +3,7 @@ Contributors: paramedic192
 Tags: woocommerce, product options, custom fields, addons, product addons
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -86,6 +86,11 @@ The plugin uses semantic HTML and minimal styling, so it works with most themes.
 5. Date picker on product page
 
 == Changelog ==
+
+= 1.0.6 =
+* Fixed PluginCheck.Security.DirectDB.UnescapedDBParameter warnings
+* Fixed NonceVerification.Recommended warnings for $_GET parameters
+* Fixed ValidatedSanitizedInput warnings for inline-sanitized values
 
 = 1.0.5 =
 * Full PHPCS cleanup: added phpcs:ignore annotations for all WARNINGS
