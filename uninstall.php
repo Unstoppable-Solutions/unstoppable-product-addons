@@ -8,7 +8,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 // Load install class
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-wcos-install.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-upad-install.php';
 
 // Run uninstall
 WCOS_Install::uninstall();

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Import_Export {
+class UPAD_Import_Export {
 
     protected static $_instance = null;
 
@@ -19,15 +19,15 @@ class WCOS_Import_Export {
     }
 
     public function __construct() {
-        add_action( 'wp_ajax_wcos_export_addons', array( $this, 'export_addons' ) );
-        add_action( 'wp_ajax_wcos_import_addons', array( $this, 'import_addons' ) );
+        add_action( 'wp_ajax_upad_export_addons', array( $this, 'export_addons' ) );
+        add_action( 'wp_ajax_upad_import_addons', array( $this, 'import_addons' ) );
     }
 
     /**
      * Export addons to JSON
      */
     public function export_addons() {
-        check_ajax_referer( 'wcos_admin_nonce', 'nonce' );
+        check_ajax_referer( 'upad_admin_nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wc-options-studio' ) ) );
@@ -47,17 +47,17 @@ class WCOS_Import_Export {
             wp_send_json_error( array( 'message' => __( 'Invalid request.', 'wc-options-studio' ) ) );
         }
 
-        $addons = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wcos_addons {$where} ORDER BY position" );
+        $addons = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}upad_addons {$where} ORDER BY position" );
 
         $export_data = array(
-            'version' => WCOS_VERSION,
+            'version' => UPAD_VERSION,
             'addons'  => array(),
         );
 
         foreach ( $addons as $addon ) {
             $options = $wpdb->get_results( $wpdb->prepare(
                 "SELECT label, price, price_type, is_default, is_hidden, position 
-                 FROM {$wpdb->prefix}wcos_addon_options WHERE addon_id = %d ORDER BY position",
+                 FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d ORDER BY position",
                 $addon->id
             ) );
 
@@ -83,7 +83,7 @@ class WCOS_Import_Export {
      * Import addons from JSON
      */
     public function import_addons() {
-        check_ajax_referer( 'wcos_admin_nonce', 'nonce' );
+        check_ajax_referer( 'upad_admin_nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wc-options-studio' ) ) );
@@ -110,7 +110,7 @@ class WCOS_Import_Export {
         foreach ( $decoded['addons'] as $addon_data ) {
             // Insert addon
             $wpdb->insert(
-                $wpdb->prefix . 'wcos_addons',
+                $wpdb->prefix . 'upad_addons',
                 array(
                     'group_id'     => $group_id ?: null,
                     'product_id'   => $product_id ?: null,
@@ -132,7 +132,7 @@ class WCOS_Import_Export {
             if ( ! empty( $addon_data['options'] ) && $addon_id ) {
                 foreach ( $addon_data['options'] as $option ) {
                     $wpdb->insert(
-                        $wpdb->prefix . 'wcos_addon_options',
+                        $wpdb->prefix . 'upad_addon_options',
                         array(
                             'addon_id'   => $addon_id,
                             'label'      => sanitize_text_field( $option['label'] ),

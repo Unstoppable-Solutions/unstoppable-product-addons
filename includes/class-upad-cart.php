@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Cart {
+class UPAD_Cart {
 
     protected static $_instance = null;
 
@@ -42,14 +42,14 @@ class WCOS_Cart {
      * Validate addon selections before adding to cart
      */
     public function validate_add_to_cart( $passed, $product_id, $quantity, $variation_id = 0, $variations = array() ) {
-        $addons = WCOS_Product_Addons::instance()->get_product_addons( $product_id );
+        $addons = UPAD_Product_Addons::instance()->get_product_addons( $product_id );
         
         if ( empty( $addons ) ) {
             return $passed;
         }
 
-        $posted_addons = isset( $_POST['wcos_addon'] ) ? $_POST['wcos_addon'] : array();
-        $posted_addon_qty = isset( $_POST['wcos_addon_qty'] ) ? $_POST['wcos_addon_qty'] : array();
+        $posted_addons = isset( $_POST['upad_addon'] ) ? $_POST['upad_addon'] : array();
+        $posted_addon_qty = isset( $_POST['upad_addon_qty'] ) ? $_POST['upad_addon_qty'] : array();
 
         foreach ( $addons as $addon ) {
             // Check if addon applies to this variation
@@ -186,7 +186,7 @@ class WCOS_Cart {
                 return $this->validate_date( $value, $settings );
         }
 
-        return apply_filters( 'wcos_validate_addon_value', true, $value, $addon, $product_id );
+        return apply_filters( 'upad_validate_addon_value', true, $value, $addon, $product_id );
     }
 
     /**
@@ -402,7 +402,7 @@ class WCOS_Cart {
         global $wpdb;
         
         $exists = $wpdb->get_var( $wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->prefix}wcos_addon_options 
+            "SELECT COUNT(*) FROM {$wpdb->prefix}upad_addon_options 
              WHERE addon_id = %d AND id = %d AND is_hidden = 0",
             $addon->id,
             absint( $value )
@@ -463,14 +463,14 @@ class WCOS_Cart {
      * Add addon data to cart item
      */
     public function add_cart_item_data( $cart_item_data, $product_id, $variation_id ) {
-        $addons = WCOS_Product_Addons::instance()->get_product_addons( $product_id );
+        $addons = UPAD_Product_Addons::instance()->get_product_addons( $product_id );
         
         if ( empty( $addons ) ) {
             return $cart_item_data;
         }
 
-        $posted_addons = isset( $_POST['wcos_addon'] ) ? $_POST['wcos_addon'] : array();
-        $posted_addon_qty = isset( $_POST['wcos_addon_qty'] ) ? $_POST['wcos_addon_qty'] : array();
+        $posted_addons = isset( $_POST['upad_addon'] ) ? $_POST['upad_addon'] : array();
+        $posted_addon_qty = isset( $_POST['upad_addon_qty'] ) ? $_POST['upad_addon_qty'] : array();
         $addon_data = array();
 
         foreach ( $addons as $addon ) {
@@ -501,7 +501,7 @@ class WCOS_Cart {
         }
 
         if ( ! empty( $addon_data ) ) {
-            $cart_item_data['wcos_addons'] = $addon_data;
+            $cart_item_data['upad_addons'] = $addon_data;
         }
 
         return $cart_item_data;
@@ -526,7 +526,7 @@ class WCOS_Cart {
         switch ( $addon->addon_type ) {
             case 'multiple_choice':
                 $option = $wpdb->get_row( $wpdb->prepare(
-                    "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE id = %d",
+                    "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                     absint( $value )
                 ) );
                 
@@ -557,7 +557,7 @@ class WCOS_Cart {
                         }
                         
                         $option = $wpdb->get_row( $wpdb->prepare(
-                            "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE id = %d",
+                            "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                             absint( $option_id )
                         ) );
                         
@@ -589,7 +589,7 @@ class WCOS_Cart {
                     $labels = array();
                     foreach ( $value as $option_id ) {
                         $option = $wpdb->get_row( $wpdb->prepare(
-                            "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE id = %d",
+                            "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                             absint( $option_id )
                         ) );
                         
@@ -659,7 +659,7 @@ class WCOS_Cart {
                     $labels = array();
                     foreach ( $value as $option_id ) {
                         $option = $wpdb->get_row( $wpdb->prepare(
-                            "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE id = %d",
+                            "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                             absint( $option_id )
                         ) );
                         if ( $option ) {
@@ -676,7 +676,7 @@ class WCOS_Cart {
                     $data['display'] = implode( ', ', $labels );
                 } else {
                     $option = $wpdb->get_row( $wpdb->prepare(
-                        "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE id = %d",
+                        "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
                         absint( $value )
                     ) );
                     if ( $option ) {
@@ -868,15 +868,15 @@ class WCOS_Cart {
      * Display addon data in cart
      */
     public function get_item_data( $item_data, $cart_item ) {
-        if ( empty( $cart_item['wcos_addons'] ) ) {
+        if ( empty( $cart_item['upad_addons'] ) ) {
             return $item_data;
         }
 
-        foreach ( $cart_item['wcos_addons'] as $addon ) {
+        foreach ( $cart_item['upad_addons'] as $addon ) {
             $display = $addon['display'];
             
             // Optionally show price
-            if ( 'yes' === get_option( 'wcos_display_option_prices', 'yes' ) && ! empty( $addon['price'] ) ) {
+            if ( 'yes' === get_option( 'upad_display_option_prices', 'yes' ) && ! empty( $addon['price'] ) ) {
                 $display .= ' (' . wc_price( $addon['price'] ) . ')';
             }
 
@@ -905,7 +905,7 @@ class WCOS_Cart {
         $running = true;
 
         foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
-            if ( empty( $cart_item['wcos_addons'] ) ) {
+            if ( empty( $cart_item['upad_addons'] ) ) {
                 continue;
             }
 
@@ -921,7 +921,7 @@ class WCOS_Cart {
             $base_price = floatval( $original_product->get_price( 'edit' ) );
             $addon_total = 0;
 
-            foreach ( $cart_item['wcos_addons'] as $addon ) {
+            foreach ( $cart_item['upad_addons'] as $addon ) {
                 $addon_price = floatval( $addon['price'] );
                 $addon_total += $addon_price;
             }
@@ -938,8 +938,8 @@ class WCOS_Cart {
      * Generate unique cart item key including addons
      */
     public function generate_cart_item_key( $cart_id, $product_id, $cart_item_data ) {
-        if ( ! empty( $cart_item_data['wcos_addons'] ) ) {
-            $cart_id = md5( $cart_id . serialize( $cart_item_data['wcos_addons'] ) );
+        if ( ! empty( $cart_item_data['upad_addons'] ) ) {
+            $cart_id = md5( $cart_id . serialize( $cart_item_data['upad_addons'] ) );
         }
         return $cart_id;
     }
@@ -948,8 +948,8 @@ class WCOS_Cart {
      * Restore addon data from session
      */
     public function get_cart_item_from_session( $cart_item, $values, $key ) {
-        if ( ! empty( $values['wcos_addons'] ) ) {
-            $cart_item['wcos_addons'] = $values['wcos_addons'];
+        if ( ! empty( $values['upad_addons'] ) ) {
+            $cart_item['upad_addons'] = $values['upad_addons'];
         }
         return $cart_item;
     }

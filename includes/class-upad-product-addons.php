@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Product_Addons {
+class UPAD_Product_Addons {
 
     protected static $_instance = null;
 
@@ -37,9 +37,9 @@ class WCOS_Product_Addons {
 
         // Get global addons
         if ( $include_global ) {
-            $use_global = get_post_meta( $product_id, '_wcos_use_global_addons', true );
+            $use_global = get_post_meta( $product_id, '_upad_use_global_addons', true );
             if ( $use_global !== 'no' ) {
-                $global_addons = WCOS_Global_Addons::instance()->get_addons_for_product( $product_id );
+                $global_addons = UPAD_Global_Addons::instance()->get_addons_for_product( $product_id );
                 $addons = array_merge( $addons, $global_addons );
             }
         }
@@ -49,7 +49,7 @@ class WCOS_Product_Addons {
             return $a->position - $b->position;
         } );
 
-        return apply_filters( 'wcos_product_addons', $addons, $product_id );
+        return apply_filters( 'upad_product_addons', $addons, $product_id );
     }
 
     /**
@@ -59,7 +59,7 @@ class WCOS_Product_Addons {
         global $wpdb;
 
         $addons = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addons 
+            "SELECT * FROM {$wpdb->prefix}upad_addons 
              WHERE product_id = %d AND enabled = 1
              ORDER BY position ASC",
             $product_id
@@ -90,7 +90,7 @@ class WCOS_Product_Addons {
         global $wpdb;
 
         $options = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addon_options 
+            "SELECT * FROM {$wpdb->prefix}upad_addon_options 
              WHERE addon_id = %d AND is_hidden = 0
              ORDER BY position ASC",
             $addon_id
@@ -129,14 +129,14 @@ class WCOS_Product_Addons {
         // Get next position
         if ( empty( $data['position'] ) ) {
             $max_position = $wpdb->get_var( $wpdb->prepare(
-                "SELECT MAX(position) FROM {$wpdb->prefix}wcos_addons WHERE product_id = %d",
+                "SELECT MAX(position) FROM {$wpdb->prefix}upad_addons WHERE product_id = %d",
                 $product_id
             ) );
             $data['position'] = ( $max_position !== null ) ? $max_position + 1 : 0;
         }
 
         $result = $wpdb->insert(
-            $wpdb->prefix . 'wcos_addons',
+            $wpdb->prefix . 'upad_addons',
             array(
                 'group_id'     => null,
                 'product_id'   => $product_id,
@@ -216,7 +216,7 @@ class WCOS_Product_Addons {
         }
 
         return $wpdb->update(
-            $wpdb->prefix . 'wcos_addons',
+            $wpdb->prefix . 'upad_addons',
             $update_data,
             array( 'id' => $addon_id ),
             $format,
@@ -232,14 +232,14 @@ class WCOS_Product_Addons {
 
         // Delete options first
         $wpdb->delete(
-            $wpdb->prefix . 'wcos_addon_options',
+            $wpdb->prefix . 'upad_addon_options',
             array( 'addon_id' => $addon_id ),
             array( '%d' )
         );
 
         // Delete addon
         return $wpdb->delete(
-            $wpdb->prefix . 'wcos_addons',
+            $wpdb->prefix . 'upad_addons',
             array( 'id' => $addon_id ),
             array( '%d' )
         );
@@ -267,14 +267,14 @@ class WCOS_Product_Addons {
         // Get next position
         if ( empty( $data['position'] ) ) {
             $max_position = $wpdb->get_var( $wpdb->prepare(
-                "SELECT MAX(position) FROM {$wpdb->prefix}wcos_addon_options WHERE addon_id = %d",
+                "SELECT MAX(position) FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d",
                 $addon_id
             ) );
             $data['position'] = ( $max_position !== null ) ? $max_position + 1 : 0;
         }
 
         $result = $wpdb->insert(
-            $wpdb->prefix . 'wcos_addon_options',
+            $wpdb->prefix . 'upad_addon_options',
             array(
                 'addon_id'          => $addon_id,
                 'label'             => sanitize_text_field( $data['label'] ),
@@ -350,7 +350,7 @@ class WCOS_Product_Addons {
         }
 
         return $wpdb->update(
-            $wpdb->prefix . 'wcos_addon_options',
+            $wpdb->prefix . 'upad_addon_options',
             $update_data,
             array( 'id' => $option_id ),
             $format,
@@ -365,7 +365,7 @@ class WCOS_Product_Addons {
         global $wpdb;
 
         return $wpdb->delete(
-            $wpdb->prefix . 'wcos_addon_options',
+            $wpdb->prefix . 'upad_addon_options',
             array( 'id' => $option_id ),
             array( '%d' )
         );
@@ -379,7 +379,7 @@ class WCOS_Product_Addons {
 
         foreach ( $order as $position => $addon_id ) {
             $wpdb->update(
-                $wpdb->prefix . 'wcos_addons',
+                $wpdb->prefix . 'upad_addons',
                 array( 'position' => $position ),
                 array( 'id' => $addon_id, 'product_id' => $product_id ),
                 array( '%d' ),
@@ -398,7 +398,7 @@ class WCOS_Product_Addons {
 
         foreach ( $order as $position => $option_id ) {
             $wpdb->update(
-                $wpdb->prefix . 'wcos_addon_options',
+                $wpdb->prefix . 'upad_addon_options',
                 array( 'position' => $position ),
                 array( 'id' => $option_id, 'addon_id' => $addon_id ),
                 array( '%d' ),
@@ -416,7 +416,7 @@ class WCOS_Product_Addons {
         global $wpdb;
 
         $addons = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addons WHERE product_id = %d",
+            "SELECT * FROM {$wpdb->prefix}upad_addons WHERE product_id = %d",
             $from_product_id
         ) );
 
@@ -435,7 +435,7 @@ class WCOS_Product_Addons {
             if ( ! is_wp_error( $new_addon_id ) ) {
                 // Copy options
                 $options = $wpdb->get_results( $wpdb->prepare(
-                    "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE addon_id = %d",
+                    "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d",
                     $addon->id
                 ) );
 

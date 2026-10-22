@@ -11,12 +11,12 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Migration Tool Class
  */
-class WCOS_Admin_Migrate {
+class UPAD_Admin_Migrate {
 
     /**
      * Single instance of the class.
      *
-     * @var WCOS_Admin_Migrate
+     * @var UPAD_Admin_Migrate
      */
     protected static $_instance = null;
 
@@ -30,7 +30,7 @@ class WCOS_Admin_Migrate {
     /**
      * Main Instance.
      *
-     * @return WCOS_Admin_Migrate
+     * @return UPAD_Admin_Migrate
      */
     public static function instance() {
         if ( is_null( self::$_instance ) ) {
@@ -45,22 +45,22 @@ class WCOS_Admin_Migrate {
     public function __construct() {
         $this->supported_sources = array(
             'wc_product_addons' => array(
-                'name'        => __( 'WooCommerce Product Add-Ons (Official)', 'wc-custom-addons' ),
+                'name'        => __( 'WooCommerce Product Add-Ons (Official)', 'unstoppable-product-addons' ),
                 'detect'      => array( $this, 'detect_wc_product_addons' ),
                 'migrate'     => array( $this, 'migrate_wc_product_addons' ),
-                'description' => __( 'Import from the official WooCommerce Product Add-Ons extension.', 'wc-custom-addons' ),
+                'description' => __( 'Import from the official WooCommerce Product Add-Ons extension.', 'unstoppable-product-addons' ),
             ),
             'orderable' => array(
-                'name'        => __( 'Orderable Product Addons', 'wc-custom-addons' ),
+                'name'        => __( 'Orderable Product Addons', 'unstoppable-product-addons' ),
                 'detect'      => array( $this, 'detect_orderable' ),
                 'migrate'     => array( $this, 'migrate_orderable' ),
-                'description' => __( 'Import from Orderable plugin product addons.', 'wc-custom-addons' ),
+                'description' => __( 'Import from Orderable plugin product addons.', 'unstoppable-product-addons' ),
             ),
         );
 
         // AJAX handlers only - no menu (handled by main admin class via tabs)
-        add_action( 'wp_ajax_wcos_scan_migration', array( $this, 'ajax_scan_migration' ) );
-        add_action( 'wp_ajax_wcos_run_migration', array( $this, 'ajax_run_migration' ) );
+        add_action( 'wp_ajax_upad_scan_migration', array( $this, 'ajax_scan_migration' ) );
+        add_action( 'wp_ajax_upad_run_migration', array( $this, 'ajax_run_migration' ) );
     }
 
     /**
@@ -68,106 +68,75 @@ class WCOS_Admin_Migrate {
      */
     public function render_page_content() {
         ?>
-        <div class="wcca-migrate-page">
-            <h2><?php esc_html_e( 'Migrate Product Add-ons', 'wc-custom-addons' ); ?></h2>
-            <p class="description"><?php esc_html_e( 'Import product add-ons from other plugins. This tool will detect existing add-ons and convert them to Unstoppable Product Addons format.', 'wc-custom-addons' ); ?></p>
+        <div class="upad-migrate-page">
+            <h2><?php esc_html_e( 'Migrate Product Add-ons', 'unstoppable-product-addons' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Import product add-ons from other plugins. This tool will detect existing add-ons and convert them to Unstoppable Product Addons format.', 'unstoppable-product-addons' ); ?></p>
 
-            <div class="wcca-migrate-sources">
-                <h3><?php esc_html_e( 'Select Source Plugin', 'wc-custom-addons' ); ?></h3>
+            <div class="upad-migrate-sources">
+                <h3><?php esc_html_e( 'Select Source Plugin', 'unstoppable-product-addons' ); ?></h3>
                 
                 <?php foreach ( $this->supported_sources as $key => $source ) : ?>
                     <?php 
                     $detected = call_user_func( $source['detect'] );
                     $status_class = $detected['found'] ? 'detected' : 'not-detected';
                     ?>
-                    <div class="wcca-source-card <?php echo esc_attr( $status_class ); ?>" data-source="<?php echo esc_attr( $key ); ?>">
+                    <div class="upad-source-card <?php echo esc_attr( $status_class ); ?>" data-source="<?php echo esc_attr( $key ); ?>">
                         <h3><?php echo esc_html( $source['name'] ); ?></h3>
                         <p><?php echo esc_html( $source['description'] ); ?></p>
                         
                         <?php if ( $detected['found'] ) : ?>
-                            <div class="wcca-detected-info">
+                            <div class="upad-detected-info">
                                 <span class="dashicons dashicons-yes-alt"></span>
                                 <?php 
                                 printf( 
-                                    esc_html__( 'Detected: %d products with add-ons, %d global add-on groups', 'wc-custom-addons' ),
+                                    esc_html__( 'Detected: %d products with add-ons, %d global add-on groups', 'unstoppable-product-addons' ),
                                     $detected['products'],
                                     $detected['globals']
                                 ); 
                                 ?>
                             </div>
-                            <button type="button" class="button button-primary wcca-scan-btn" data-source="<?php echo esc_attr( $key ); ?>">
-                                <?php esc_html_e( 'Scan & Preview', 'wc-custom-addons' ); ?>
+                            <button type="button" class="button button-primary upad-scan-btn" data-source="<?php echo esc_attr( $key ); ?>">
+                                <?php esc_html_e( 'Scan & Preview', 'unstoppable-product-addons' ); ?>
                             </button>
                         <?php else : ?>
-                            <div class="wcca-not-detected-info">
+                            <div class="upad-not-detected-info">
                                 <span class="dashicons dashicons-info"></span>
-                                <?php esc_html_e( 'No add-ons detected from this plugin.', 'wc-custom-addons' ); ?>
+                                <?php esc_html_e( 'No add-ons detected from this plugin.', 'unstoppable-product-addons' ); ?>
                             </div>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
 
-            <div class="wcca-migrate-preview" style="display: none;">
-                <h2><?php esc_html_e( 'Migration Preview', 'wc-custom-addons' ); ?></h2>
-                <div class="wcca-preview-content"></div>
+            <div class="upad-migrate-preview" style="display: none;">
+                <h2><?php esc_html_e( 'Migration Preview', 'unstoppable-product-addons' ); ?></h2>
+                <div class="upad-preview-content"></div>
                 
-                <div class="wcca-migrate-options">
+                <div class="upad-migrate-options">
                     <label>
                         <input type="checkbox" name="delete_source" value="1">
-                        <?php esc_html_e( 'Delete original add-ons after migration (not recommended until verified)', 'wc-custom-addons' ); ?>
+                        <?php esc_html_e( 'Delete original add-ons after migration (not recommended until verified)', 'unstoppable-product-addons' ); ?>
                     </label>
                 </div>
                 
-                <div class="wcca-migrate-actions">
-                    <button type="button" class="button wcca-cancel-btn"><?php esc_html_e( 'Cancel', 'wc-custom-addons' ); ?></button>
-                    <button type="button" class="button button-primary wcca-migrate-btn"><?php esc_html_e( 'Run Migration', 'wc-custom-addons' ); ?></button>
+                <div class="upad-migrate-actions">
+                    <button type="button" class="button upad-cancel-btn"><?php esc_html_e( 'Cancel', 'unstoppable-product-addons' ); ?></button>
+                    <button type="button" class="button button-primary upad-migrate-btn"><?php esc_html_e( 'Run Migration', 'unstoppable-product-addons' ); ?></button>
                 </div>
                 
-                <div class="wcca-migrate-progress" style="display: none;">
-                    <div class="wcca-progress-bar">
-                        <div class="wcca-progress-fill"></div>
+                <div class="upad-migrate-progress" style="display: none;">
+                    <div class="upad-progress-bar">
+                        <div class="upad-progress-fill"></div>
                     </div>
-                    <div class="wcca-progress-text"></div>
+                    <div class="upad-progress-text"></div>
                 </div>
             </div>
 
-            <div class="wcca-migrate-results" style="display: none;">
-                <h2><?php esc_html_e( 'Migration Complete', 'wc-custom-addons' ); ?></h2>
-                <div class="wcca-results-content"></div>
+            <div class="upad-migrate-results" style="display: none;">
+                <h2><?php esc_html_e( 'Migration Complete', 'unstoppable-product-addons' ); ?></h2>
+                <div class="upad-results-content"></div>
             </div>
         </div>
-
-        <style>
-            .wcca-migrate-page { max-width: 800px; }
-            .wcca-source-card {
-                background: #fff;
-                border: 1px solid #ccd0d4;
-                border-radius: 4px;
-                padding: 20px;
-                margin-bottom: 15px;
-            }
-            .wcca-source-card h3 { margin-top: 0; }
-            .wcca-source-card.detected { border-left: 4px solid #00a32a; }
-            .wcca-source-card.not-detected { border-left: 4px solid #dba617; opacity: 0.7; }
-            .wcca-detected-info { color: #00a32a; margin: 10px 0; }
-            .wcca-not-detected-info { color: #996800; margin: 10px 0; }
-            .wcca-detected-info .dashicons, .wcca-not-detected-info .dashicons { vertical-align: middle; margin-right: 5px; }
-            .wcca-migrate-preview { background: #fff; border: 1px solid #ccd0d4; border-radius: 4px; padding: 20px; margin-top: 20px; }
-            .wcca-preview-content { max-height: 400px; overflow-y: auto; margin: 15px 0; }
-            .wcca-preview-table { width: 100%; border-collapse: collapse; }
-            .wcca-preview-table th, .wcca-preview-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #eee; }
-            .wcca-preview-table th { background: #f6f7f7; }
-            .wcca-migrate-options { margin: 15px 0; padding: 15px; background: #fff8e5; border-radius: 4px; }
-            .wcca-migrate-actions { margin-top: 20px; }
-            .wcca-migrate-actions .button { margin-right: 10px; }
-            .wcca-progress-bar { height: 20px; background: #e0e0e0; border-radius: 10px; overflow: hidden; margin: 15px 0; }
-            .wcca-progress-fill { height: 100%; background: #0073aa; width: 0%; transition: width 0.3s; }
-            .wcca-progress-text { text-align: center; color: #666; }
-            .wcca-migrate-results { background: #fff; border: 1px solid #ccd0d4; border-radius: 4px; padding: 20px; margin-top: 20px; }
-            .wcca-results-content .success { color: #00a32a; }
-            .wcca-results-content .error { color: #d63638; }
-        </style>
 
         <script>
         jQuery(document).ready(function($) {
@@ -175,33 +144,33 @@ class WCOS_Admin_Migrate {
             var scanData = null;
 
             // Scan button
-            $('.wcca-scan-btn').on('click', function() {
+            $('.upad-scan-btn').on('click', function() {
                 currentSource = $(this).data('source');
                 var $btn = $(this);
                 
-                $btn.prop('disabled', true).text('<?php esc_html_e( 'Scanning...', 'wc-custom-addons' ); ?>');
+                $btn.prop('disabled', true).text('<?php esc_html_e( 'Scanning...', 'unstoppable-product-addons' ); ?>');
                 
                 $.ajax({
                     url: ajaxurl,
                     type: 'POST',
                     data: {
-                        action: 'wcos_scan_migration',
+                        action: 'upad_scan_migration',
                         source: currentSource,
-                        nonce: '<?php echo esc_js( wp_create_nonce( 'wcos_migrate_nonce' ) ); ?>'
+                        nonce: '<?php echo esc_js( wp_create_nonce( 'upad_migrate_nonce' ) ); ?>'
                     },
                     success: function(response) {
-                        $btn.prop('disabled', false).text('<?php esc_html_e( 'Scan & Preview', 'wc-custom-addons' ); ?>');
+                        $btn.prop('disabled', false).text('<?php esc_html_e( 'Scan & Preview', 'unstoppable-product-addons' ); ?>');
                         
                         if (response.success) {
                             scanData = response.data;
                             showPreview(response.data);
                         } else {
-                            alert(response.data.message || '<?php esc_html_e( 'Scan failed.', 'wc-custom-addons' ); ?>');
+                            alert(response.data.message || '<?php esc_html_e( 'Scan failed.', 'unstoppable-product-addons' ); ?>');
                         }
                     },
                     error: function() {
-                        $btn.prop('disabled', false).text('<?php esc_html_e( 'Scan & Preview', 'wc-custom-addons' ); ?>');
-                        alert('<?php esc_html_e( 'Request failed. Please try again.', 'wc-custom-addons' ); ?>');
+                        $btn.prop('disabled', false).text('<?php esc_html_e( 'Scan & Preview', 'unstoppable-product-addons' ); ?>');
+                        alert('<?php esc_html_e( 'Request failed. Please try again.', 'unstoppable-product-addons' ); ?>');
                     }
                 });
             });
@@ -213,21 +182,21 @@ class WCOS_Admin_Migrate {
                     console.log('First field structure:', data.globals[0].debug_structure);
                 }
                 
-                var html = '<table class="wcca-preview-table">';
-                html += '<thead><tr><th><?php esc_html_e( 'Type', 'wc-custom-addons' ); ?></th><th><?php esc_html_e( 'Name', 'wc-custom-addons' ); ?></th><th><?php esc_html_e( 'Add-ons', 'wc-custom-addons' ); ?></th><th><?php esc_html_e( 'Product', 'wc-custom-addons' ); ?></th></tr></thead>';
+                var html = '<table class="upad-preview-table">';
+                html += '<thead><tr><th><?php esc_html_e( 'Type', 'unstoppable-product-addons' ); ?></th><th><?php esc_html_e( 'Name', 'unstoppable-product-addons' ); ?></th><th><?php esc_html_e( 'Add-ons', 'unstoppable-product-addons' ); ?></th><th><?php esc_html_e( 'Product', 'unstoppable-product-addons' ); ?></th></tr></thead>';
                 html += '<tbody>';
                 
                 if (data.globals && data.globals.length) {
                     data.globals.forEach(function(item) {
                         html += '<tr>';
-                        html += '<td><span class="dashicons dashicons-admin-site"></span> <?php esc_html_e( 'Global', 'wc-custom-addons' ); ?></td>';
+                        html += '<td><span class="dashicons dashicons-admin-site"></span> <?php esc_html_e( 'Global', 'unstoppable-product-addons' ); ?></td>';
                         html += '<td>' + item.name + '</td>';
                         html += '<td>' + item.addon_count + '</td>';
                         html += '<td>—</td>';
                         html += '</tr>';
                         // Show debug structure if available
                         if (item.debug_structure) {
-                            html += '<tr><td colspan="4"><details><summary><?php esc_html_e( 'Debug: Raw Field Structure', 'wc-custom-addons' ); ?></summary><pre style="background:#f5f5f5;padding:10px;font-size:11px;max-height:300px;overflow:auto;">' + item.debug_structure + '</pre></details></td></tr>';
+                            html += '<tr><td colspan="4"><details><summary><?php esc_html_e( 'Debug: Raw Field Structure', 'unstoppable-product-addons' ); ?></summary><pre style="background:#f5f5f5;padding:10px;font-size:11px;max-height:300px;overflow:auto;">' + item.debug_structure + '</pre></details></td></tr>';
                         }
                     });
                 }
@@ -235,7 +204,7 @@ class WCOS_Admin_Migrate {
                 if (data.products && data.products.length) {
                     data.products.forEach(function(item) {
                         html += '<tr>';
-                        html += '<td><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'Product', 'wc-custom-addons' ); ?></td>';
+                        html += '<td><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'Product', 'unstoppable-product-addons' ); ?></td>';
                         html += '<td>' + item.product_name + '</td>';
                         html += '<td>' + item.addon_count + '</td>';
                         html += '<td>#' + item.product_id + '</td>';
@@ -246,74 +215,74 @@ class WCOS_Admin_Migrate {
                 html += '</tbody></table>';
                 
                 if ((!data.globals || !data.globals.length) && (!data.products || !data.products.length)) {
-                    html = '<p><?php esc_html_e( 'No add-ons found to migrate.', 'wc-custom-addons' ); ?></p>';
+                    html = '<p><?php esc_html_e( 'No add-ons found to migrate.', 'unstoppable-product-addons' ); ?></p>';
                 }
                 
-                $('.wcca-preview-content').html(html);
-                $('.wcca-migrate-preview').show();
-                $('.wcca-migrate-results').hide();
+                $('.upad-preview-content').html(html);
+                $('.upad-migrate-preview').show();
+                $('.upad-migrate-results').hide();
             }
 
             // Cancel button
-            $('.wcca-cancel-btn').on('click', function() {
-                $('.wcca-migrate-preview').hide();
+            $('.upad-cancel-btn').on('click', function() {
+                $('.upad-migrate-preview').hide();
                 scanData = null;
             });
 
             // Migrate button
-            $('.wcca-migrate-btn').on('click', function() {
+            $('.upad-migrate-btn').on('click', function() {
                 if (!scanData) return;
                 
                 var deleteSource = $('input[name="delete_source"]').is(':checked') ? 1 : 0;
                 
-                if (!confirm('<?php esc_html_e( 'Are you sure you want to run the migration? This will create new add-ons in Unstoppable Product Addons.', 'wc-custom-addons' ); ?>')) {
+                if (!confirm('<?php esc_html_e( 'Are you sure you want to run the migration? This will create new add-ons in Unstoppable Product Addons.', 'unstoppable-product-addons' ); ?>')) {
                     return;
                 }
                 
                 var $btn = $(this);
                 $btn.prop('disabled', true);
-                $('.wcca-migrate-progress').show();
+                $('.upad-migrate-progress').show();
                 
                 $.ajax({
                     url: ajaxurl,
                     type: 'POST',
                     data: {
-                        action: 'wcos_run_migration',
+                        action: 'upad_run_migration',
                         source: currentSource,
                         delete_source: deleteSource,
-                        nonce: '<?php echo esc_js( wp_create_nonce( 'wcos_migrate_nonce' ) ); ?>'
+                        nonce: '<?php echo esc_js( wp_create_nonce( 'upad_migrate_nonce' ) ); ?>'
                     },
                     success: function(response) {
                         $btn.prop('disabled', false);
-                        $('.wcca-migrate-progress').hide();
+                        $('.upad-migrate-progress').hide();
                         
                         if (response.success) {
                             showResults(response.data);
                         } else {
-                            alert(response.data.message || '<?php esc_html_e( 'Migration failed.', 'wc-custom-addons' ); ?>');
+                            alert(response.data.message || '<?php esc_html_e( 'Migration failed.', 'unstoppable-product-addons' ); ?>');
                         }
                     },
                     error: function() {
                         $btn.prop('disabled', false);
-                        $('.wcca-migrate-progress').hide();
-                        alert('<?php esc_html_e( 'Request failed. Please try again.', 'wc-custom-addons' ); ?>');
+                        $('.upad-migrate-progress').hide();
+                        alert('<?php esc_html_e( 'Request failed. Please try again.', 'unstoppable-product-addons' ); ?>');
                     }
                 });
             });
 
             function showResults(data) {
                 var html = '<div class="success">';
-                html += '<p><strong><?php esc_html_e( 'Migration completed successfully!', 'wc-custom-addons' ); ?></strong></p>';
+                html += '<p><strong><?php esc_html_e( 'Migration completed successfully!', 'unstoppable-product-addons' ); ?></strong></p>';
                 html += '<ul>';
-                html += '<li>' + data.globals_migrated + ' <?php esc_html_e( 'global add-on groups migrated', 'wc-custom-addons' ); ?></li>';
-                html += '<li>' + data.products_migrated + ' <?php esc_html_e( 'product add-ons migrated', 'wc-custom-addons' ); ?></li>';
-                html += '<li>' + data.total_addons + ' <?php esc_html_e( 'total add-on fields created', 'wc-custom-addons' ); ?></li>';
+                html += '<li>' + data.globals_migrated + ' <?php esc_html_e( 'global add-on groups migrated', 'unstoppable-product-addons' ); ?></li>';
+                html += '<li>' + data.products_migrated + ' <?php esc_html_e( 'product add-ons migrated', 'unstoppable-product-addons' ); ?></li>';
+                html += '<li>' + data.total_addons + ' <?php esc_html_e( 'total add-on fields created', 'unstoppable-product-addons' ); ?></li>';
                 html += '</ul>';
                 html += '</div>';
                 
                 if (data.errors && data.errors.length) {
                     html += '<div class="error">';
-                    html += '<p><strong><?php esc_html_e( 'Some items had errors:', 'wc-custom-addons' ); ?></strong></p>';
+                    html += '<p><strong><?php esc_html_e( 'Some items had errors:', 'unstoppable-product-addons' ); ?></strong></p>';
                     html += '<ul>';
                     data.errors.forEach(function(error) {
                         html += '<li>' + error + '</li>';
@@ -322,11 +291,11 @@ class WCOS_Admin_Migrate {
                     html += '</div>';
                 }
                 
-                html += '<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=wcca-addons' ) ); ?>" class="button button-primary"><?php esc_html_e( 'View Migrated Add-ons', 'wc-custom-addons' ); ?></a></p>';
+                html += '<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=upad-settings' ) ); ?>" class="button button-primary"><?php esc_html_e( 'View Migrated Add-ons', 'unstoppable-product-addons' ); ?></a></p>';
                 
-                $('.wcca-results-content').html(html);
-                $('.wcca-migrate-preview').hide();
-                $('.wcca-migrate-results').show();
+                $('.upad-results-content').html(html);
+                $('.upad-migrate-preview').hide();
+                $('.upad-migrate-results').show();
             }
         });
         </script>
@@ -397,16 +366,16 @@ class WCOS_Admin_Migrate {
      * AJAX: Scan for migration.
      */
     public function ajax_scan_migration() {
-        check_ajax_referer( 'wcos_migrate_nonce', 'nonce' );
+        check_ajax_referer( 'upad_migrate_nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wc-custom-addons' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'unstoppable-product-addons' ) ) );
         }
 
         $source = isset( $_POST['source'] ) ? sanitize_key( $_POST['source'] ) : '';
 
         if ( ! isset( $this->supported_sources[ $source ] ) ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid source.', 'wc-custom-addons' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid source.', 'unstoppable-product-addons' ) ) );
         }
 
         $scan_method = 'scan_' . $source;
@@ -414,7 +383,7 @@ class WCOS_Admin_Migrate {
             $data = $this->$scan_method();
             wp_send_json_success( $data );
         } else {
-            wp_send_json_error( array( 'message' => __( 'Scan method not found.', 'wc-custom-addons' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Scan method not found.', 'unstoppable-product-addons' ) ) );
         }
     }
 
@@ -517,17 +486,17 @@ class WCOS_Admin_Migrate {
      * AJAX: Run migration.
      */
     public function ajax_run_migration() {
-        check_ajax_referer( 'wcos_migrate_nonce', 'nonce' );
+        check_ajax_referer( 'upad_migrate_nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wc-custom-addons' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'unstoppable-product-addons' ) ) );
         }
 
         $source = isset( $_POST['source'] ) ? sanitize_key( $_POST['source'] ) : '';
         $delete_source = isset( $_POST['delete_source'] ) && $_POST['delete_source'] === '1';
 
         if ( ! isset( $this->supported_sources[ $source ] ) ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid source.', 'wc-custom-addons' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid source.', 'unstoppable-product-addons' ) ) );
         }
 
         $migrate_callback = $this->supported_sources[ $source ]['migrate'];
@@ -535,7 +504,7 @@ class WCOS_Admin_Migrate {
             $result = call_user_func( $migrate_callback, $delete_source );
             wp_send_json_success( $result );
         } else {
-            wp_send_json_error( array( 'message' => __( 'Migration method not found.', 'wc-custom-addons' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Migration method not found.', 'unstoppable-product-addons' ) ) );
         }
     }
 
@@ -581,7 +550,7 @@ class WCOS_Admin_Migrate {
             }
 
             // Create global group
-            $group_id = WCOS_Global_Addons::instance()->create_group( array(
+            $group_id = UPAD_Global_Addons::instance()->create_group( array(
                 'name'       => $post->post_title . ' (Migrated)',
                 'priority'   => 10,
                 'enabled'    => 1,
@@ -589,7 +558,7 @@ class WCOS_Admin_Migrate {
             ) );
 
             if ( ! $group_id ) {
-                $result['errors'][] = sprintf( __( 'Failed to create group: %s', 'wc-custom-addons' ), $post->post_title );
+                $result['errors'][] = sprintf( __( 'Failed to create group: %s', 'unstoppable-product-addons' ), $post->post_title );
                 continue;
             }
 
@@ -675,7 +644,7 @@ class WCOS_Admin_Migrate {
             'group_id'     => $group_id,
             'product_id'   => $product_id,
             'addon_type'   => $addon_type,
-            'title'        => isset( $addon['name'] ) ? sanitize_text_field( $addon['name'] ) : __( 'Untitled', 'wc-custom-addons' ),
+            'title'        => isset( $addon['name'] ) ? sanitize_text_field( $addon['name'] ) : __( 'Untitled', 'unstoppable-product-addons' ),
             'title_format' => $title_format,
             'description'  => isset( $addon['description'] ) ? wp_kses_post( $addon['description'] ) : '',
             'required'     => isset( $addon['required'] ) && $addon['required'] ? 1 : 0,
@@ -685,7 +654,7 @@ class WCOS_Admin_Migrate {
         );
 
         // Insert addon
-        $table_name = $wpdb->prefix . 'wcos_addons';
+        $table_name = $wpdb->prefix . 'upad_addons';
         $inserted = $wpdb->insert(
             $table_name,
             $addon_data,
@@ -700,7 +669,7 @@ class WCOS_Admin_Migrate {
 
         // Migrate options if present
         if ( isset( $addon['options'] ) && is_array( $addon['options'] ) ) {
-            $options_table = $wpdb->prefix . 'wcos_addon_options';
+            $options_table = $wpdb->prefix . 'upad_addon_options';
             $position = 0;
 
             foreach ( $addon['options'] as $option ) {
@@ -779,7 +748,7 @@ class WCOS_Admin_Migrate {
             $categories = array();
             
             // Create global group
-            $group_id = WCOS_Global_Addons::instance()->create_group( array(
+            $group_id = UPAD_Global_Addons::instance()->create_group( array(
                 'name'       => $post->post_title . ' (Migrated from Orderable)',
                 'priority'   => 10,
                 'enabled'    => 1,
@@ -787,7 +756,7 @@ class WCOS_Admin_Migrate {
             ) );
 
             if ( ! $group_id ) {
-                $result['errors'][] = sprintf( __( 'Failed to create group: %s', 'wc-custom-addons' ), $post->post_title );
+                $result['errors'][] = sprintf( __( 'Failed to create group: %s', 'unstoppable-product-addons' ), $post->post_title );
                 continue;
             }
 
@@ -828,7 +797,7 @@ class WCOS_Admin_Migrate {
             'group_id'     => $group_id,
             'product_id'   => null,
             'addon_type'   => $addon_type,
-            'title'        => isset( $field['label'] ) ? sanitize_text_field( $field['label'] ) : __( 'Untitled', 'wc-custom-addons' ),
+            'title'        => isset( $field['label'] ) ? sanitize_text_field( $field['label'] ) : __( 'Untitled', 'unstoppable-product-addons' ),
             'title_format' => 'label',
             'description'  => isset( $field['description'] ) ? wp_kses_post( $field['description'] ) : '',
             'required'     => isset( $field['required'] ) && $field['required'] ? 1 : 0,
@@ -838,7 +807,7 @@ class WCOS_Admin_Migrate {
         );
 
         // Insert addon
-        $table_name = $wpdb->prefix . 'wcos_addons';
+        $table_name = $wpdb->prefix . 'upad_addons';
         $inserted = $wpdb->insert(
             $table_name,
             $addon_data,
@@ -877,7 +846,7 @@ class WCOS_Admin_Migrate {
 
         // Migrate options if found
         if ( $options_data && is_array( $options_data ) ) {
-            $options_table = $wpdb->prefix . 'wcos_addon_options';
+            $options_table = $wpdb->prefix . 'upad_addon_options';
             $position = 0;
 
             foreach ( $options_data as $choice ) {
@@ -931,4 +900,4 @@ class WCOS_Admin_Migrate {
 }
 
 // Initialize
-WCOS_Admin_Migrate::instance();
+UPAD_Admin_Migrate::instance();

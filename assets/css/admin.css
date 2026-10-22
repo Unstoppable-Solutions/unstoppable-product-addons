@@ -1,29 +1,99 @@
 /**
- * WooCommerce Options Studio - Admin Styles
+ * Unstoppable Product Addons - Admin Styles
+ *
+ * @package Unstoppable_Product_Addons
  */
 
+/* =====================================================
+   TAB NAVIGATION
+   ===================================================== */
+.upad-tabs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 20px 0;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.upad-tab-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: #50575e;
+    font-size: 14px;
+    font-weight: 500;
+    border-right: 1px solid #c3c4c7;
+    transition: all 0.15s ease;
+}
+
+.upad-tab-link:last-child {
+    border-right: none;
+}
+
+.upad-tab-link:hover {
+    background: #f6f7f7;
+    color: #2271b1;
+}
+
+.upad-tab-link.active {
+    background: #2271b1;
+    color: #fff;
+}
+
+.upad-tab-link .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* Responsive tabs */
+@media (max-width: 960px) {
+    .upad-tabs-nav {
+        flex-direction: column;
+    }
+    .upad-tab-link {
+        border-right: none;
+        border-bottom: 1px solid #c3c4c7;
+    }
+    .upad-tab-link:last-child {
+        border-bottom: none;
+    }
+}
+
+.upad-tab-content {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+}
+
 /* Settings Page */
-.wcos-settings-wrap .nav-tab-wrapper {
+.upad-settings-wrap .nav-tab-wrapper {
     margin-bottom: 1em;
 }
 
 /* Global Addons Page */
-.wcos-global-addons-wrap {
+.upad-global-addons-wrap {
     max-width: 1200px;
 }
 
-.wcos-groups-container {
+.upad-groups-container {
     margin-top: 1.5em;
 }
 
-.wcos-group-card {
+.upad-group-card {
     background: #fff;
     border: 1px solid #ccd0d4;
     border-radius: 4px;
     margin-bottom: 1.5em;
 }
 
-.wcos-group-header {
+.upad-group-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -32,93 +102,93 @@
     border-bottom: 1px solid #eee;
 }
 
-.wcos-group-header h3 {
+.upad-group-header h3 {
     margin: 0;
 }
 
-.wcos-group-title-section {
+.upad-group-title-section {
     display: flex;
     flex-direction: column;
     gap: 0.25em;
     flex: 1;
 }
 
-.wcos-group-categories {
+.upad-group-categories {
     font-size: 12px;
     color: #666;
 }
 
-.wcos-group-categories em {
+.upad-group-categories em {
     font-style: normal;
 }
 
-.wcos-group-actions {
+.upad-group-actions {
     display: flex;
     align-items: center;
     gap: 1em;
 }
 
-.wcos-status.active {
+.upad-status.active {
     background: #d4edda;
     color: #155724;
     padding: 0.25em 0.75em;
     border-radius: 3px;
 }
 
-.wcos-status.inactive {
+.upad-status.inactive {
     background: #f8d7da;
     color: #721c24;
     padding: 0.25em 0.75em;
     border-radius: 3px;
 }
 
-.wcos-group-addons {
+.upad-group-addons {
     padding: 1em;
 }
 
-.wcos-addons-table {
+.upad-addons-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.wcos-addons-table th,
-.wcos-addons-table td {
+.upad-addons-table th,
+.upad-addons-table td {
     padding: 0.75em;
     text-align: left;
     border-bottom: 1px solid #eee;
 }
 
 /* Product Tab */
-.wcos-product-addons-wrapper {
+.upad-product-addons-wrapper {
     padding: 1em;
 }
 
-.wcos-addon-item {
+.upad-addon-item {
     background: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 3px;
     margin-bottom: 0.5em;
 }
 
-.wcos-addon-header {
+.upad-addon-header {
     display: flex;
     align-items: center;
     padding: 0.75em;
     gap: 0.75em;
 }
 
-.wcos-addon-drag-handle {
+.upad-addon-drag-handle {
     cursor: move;
     color: #999;
 }
 
-.wcos-addon-title {
+.upad-addon-title {
     flex: 1;
     font-weight: 600;
 }
 
 /* Modal */
-.wcos-modal-overlay {
+.upad-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -131,7 +201,7 @@
     justify-content: center;
 }
 
-.wcos-modal {
+.upad-modal {
     background: #fff;
     border-radius: 4px;
     width: 90%;
@@ -142,23 +212,23 @@
     z-index: 100001;
 }
 
-.wcos-modal-header {
+.upad-modal-header {
     display: flex;
     padding: 1em;
     border-bottom: 1px solid #ddd;
 }
 
-.wcos-modal-header h2 {
+.upad-modal-header h2 {
     margin: 0;
     flex: 1;
 }
 
-.wcos-modal-body {
+.upad-modal-body {
     padding: 1em;
     overflow: visible;
 }
 
-.wcos-modal-footer {
+.upad-modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 0.5em;
@@ -176,17 +246,17 @@
 }
 
 /* Make sure Select2 in modal displays properly */
-.wcos-modal .select2-container {
+.upad-modal .select2-container {
     width: 100% !important;
 }
 
-.wcos-modal .select2-container--default .select2-selection--multiple {
+.upad-modal .select2-container--default .select2-selection--multiple {
     min-height: 38px;
     border: 1px solid #8c8f94;
     border-radius: 4px;
 }
 
-.wcos-modal .select2-container--default .select2-selection--multiple .select2-selection__choice {
+.upad-modal .select2-container--default .select2-selection--multiple .select2-selection__choice {
     background-color: #2271b1;
     border: none;
     color: #fff;
@@ -194,69 +264,69 @@
     margin: 4px;
 }
 
-.wcos-modal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+.upad-modal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
     color: #fff;
     margin-right: 5px;
 }
 
-.wcos-modal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+.upad-modal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
     color: #fff;
     background: transparent;
 }
 
 /* Form styling in modal */
-.wcos-modal .wcos-group-form p {
+.upad-modal .upad-group-form p {
     margin-bottom: 1.5em;
 }
 
-.wcos-modal .wcos-group-form label {
+.upad-modal .upad-group-form label {
     display: block;
     font-weight: 600;
     margin-bottom: 0.5em;
 }
 
-.wcos-modal .wcos-group-form input[type="text"],
-.wcos-modal .wcos-group-form input[type="number"] {
+.upad-modal .upad-group-form input[type="text"],
+.upad-modal .upad-group-form input[type="number"] {
     width: 100%;
     padding: 8px;
 }
 
-.wcos-modal .wcos-group-form input[type="number"] {
+.upad-modal .upad-group-form input[type="number"] {
     width: 80px;
 }
 
-.wcos-modal .wcos-group-form .description {
+.upad-modal .upad-group-form .description {
     color: #666;
     font-style: italic;
     margin-top: 0.25em;
 }
 
 /* Addon Modal Specific */
-.wcos-addon-modal {
+.upad-addon-modal {
     max-width: 700px;
 }
 
-.wcos-addon-modal .wcos-modal-body {
+.upad-addon-modal .upad-modal-body {
     max-height: 60vh;
     overflow-y: auto;
 }
 
-.wcos-form-row {
+.upad-form-row {
     margin-bottom: 1.25em;
 }
 
-.wcos-form-row label {
+.upad-form-row label {
     display: block;
     font-weight: 600;
     margin-bottom: 0.5em;
 }
 
-.wcos-form-row.wcos-checkboxes {
+.upad-form-row.upad-checkboxes {
     display: flex;
     gap: 2em;
 }
 
-.wcos-form-row.wcos-checkboxes label {
+.upad-form-row.upad-checkboxes label {
     display: inline-flex;
     align-items: center;
     gap: 0.5em;
@@ -264,21 +334,21 @@
 }
 
 /* Options Section */
-.wcos-options-section {
+.upad-options-section {
     margin-top: 1.5em;
     padding-top: 1.5em;
     border-top: 1px solid #ddd;
 }
 
-.wcos-options-section h4 {
+.upad-options-section h4 {
     margin: 0 0 1em 0;
 }
 
-.wcos-options-list {
+.upad-options-list {
     margin-bottom: 1em;
 }
 
-.wcos-option-row {
+.upad-option-row {
     display: flex;
     align-items: center;
     gap: 0.5em;
@@ -289,25 +359,25 @@
     margin-bottom: 0.5em;
 }
 
-.wcos-option-drag {
+.upad-option-drag {
     cursor: move;
     color: #999;
 }
 
-.wcos-option-label {
+.upad-option-label {
     flex: 1;
     min-width: 150px;
 }
 
-.wcos-option-price {
+.upad-option-price {
     width: 80px !important;
 }
 
-.wcos-option-price-type {
+.upad-option-price-type {
     width: 100px !important;
 }
 
-.wcos-option-row label {
+.upad-option-row label {
     display: inline-flex;
     align-items: center;
     gap: 0.25em;
@@ -315,28 +385,28 @@
     white-space: nowrap;
 }
 
-.wcos-remove-option {
+.upad-remove-option {
     color: #a00 !important;
     text-decoration: none;
 }
 
-.wcos-remove-option:hover {
+.upad-remove-option:hover {
     color: #dc3232 !important;
 }
 
-.wcos-add-option-btn {
+.upad-add-option-btn {
     margin-top: 0.5em;
 }
 
 /* No addons message */
-.wcos-no-addons {
+.upad-no-addons {
     color: #666;
     font-style: italic;
     margin-bottom: 1em;
 }
 
 /* Group footer */
-.wcos-group-footer {
+.upad-group-footer {
     padding: 1em;
     background: #f9f9f9;
     border-top: 1px solid #eee;
@@ -346,13 +416,13 @@
 }
 
 /* Variation selector in modal */
-.wcos-variations-row select {
+.upad-variations-row select {
     height: auto;
     min-height: 100px;
     padding: 8px;
 }
 
-.wcos-variations-row .description {
+.upad-variations-row .description {
     font-size: 12px;
     color: #666;
     margin-top: 8px;
@@ -361,14 +431,14 @@
 /* =====================================================
    CONDITIONAL LOGIC SECTION
    ===================================================== */
-.wcos-conditional-logic-section {
+.upad-conditional-logic-section {
     margin: 1.5em 0;
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 0;
 }
 
-.wcos-conditional-logic-section h4 {
+.upad-conditional-logic-section h4 {
     margin: 0;
     padding: 10px 15px;
     background: #f9f9f9;
@@ -376,18 +446,18 @@
     font-size: 13px;
 }
 
-.wcos-conditional-logic-section h4 label {
+.upad-conditional-logic-section h4 label {
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
 }
 
-.wcos-conditional-rules {
+.upad-conditional-rules {
     padding: 15px;
 }
 
-.wcos-condition-header {
+.upad-condition-header {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -396,15 +466,15 @@
     font-size: 13px;
 }
 
-.wcos-condition-header select {
+.upad-condition-header select {
     padding: 4px 8px;
 }
 
-.wcos-condition-rules-list {
+.upad-condition-rules-list {
     margin-bottom: 10px;
 }
 
-.wcos-condition-rule {
+.upad-condition-rule {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -414,67 +484,67 @@
     border-radius: 4px;
 }
 
-.wcos-condition-rule select,
-.wcos-condition-rule input {
+.upad-condition-rule select,
+.upad-condition-rule input {
     padding: 4px 8px;
 }
 
-.wcos-condition-addon {
+.upad-condition-addon {
     min-width: 150px;
 }
 
-.wcos-condition-operator {
+.upad-condition-operator {
     min-width: 120px;
 }
 
-.wcos-condition-value {
+.upad-condition-value {
     min-width: 100px;
     flex: 1;
 }
 
-.wcos-remove-condition-rule {
+.upad-remove-condition-rule {
     padding: 2px 8px !important;
     min-height: 28px;
     color: #a00;
 }
 
-.wcos-add-condition-rule {
+.upad-add-condition-rule {
     font-size: 12px;
 }
 
 /* =====================================================
    TIERED PRICING 
    ===================================================== */
-.wcos-tiered-pricing-section {
+.upad-tiered-pricing-section {
     margin-top: 10px;
     padding: 10px;
     background: #f9f9f9;
     border-radius: 4px;
 }
 
-.wcos-tiered-pricing-section h5 {
+.upad-tiered-pricing-section h5 {
     margin: 0 0 10px 0;
     font-size: 12px;
 }
 
-.wcos-tier-row {
+.upad-tier-row {
     display: flex;
     gap: 8px;
     margin-bottom: 8px;
     align-items: center;
 }
 
-.wcos-tier-row label {
+.upad-tier-row label {
     font-size: 11px;
     color: #666;
 }
 
-.wcos-tier-row input {
+.upad-tier-row input {
     width: 70px;
     padding: 4px;
 }
 
-.wcos-tier-remove {
+.upad-tier-remove {
     color: #a00;
     cursor: pointer;
 }
@@ -482,13 +552,13 @@
 /* =====================================================
    IMAGE/COLOR SWATCH OPTION FIELDS
    ===================================================== */
-.wcos-option-swatch-fields {
+.upad-option-swatch-fields {
     display: flex;
     gap: 10px;
     margin-top: 8px;
 }
 
-.wcos-option-image-preview {
+.upad-option-image-preview {
     width: 40px;
     height: 40px;
     border: 1px solid #ddd;
@@ -497,13 +567,13 @@
     cursor: pointer;
 }
 
-.wcos-option-image-preview img {
+.upad-option-image-preview img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.wcos-option-color-picker {
+.upad-option-color-picker {
     width: 40px;
     height: 40px;
     padding: 0;
@@ -513,13 +583,138 @@
 }
 
 /* Parent option selector for dependent dropdowns */
-.wcos-parent-option-select {
+.upad-parent-option-select {
     margin-top: 8px;
 }
 
-.wcos-parent-option-select label {
+.upad-parent-option-select label {
     display: block;
     font-size: 11px;
     color: #666;
     margin-bottom: 4px;
+}
+
+/* =====================================================
+   MIGRATION PAGE
+   ===================================================== */
+.upad-migrate-page {
+    max-width: 800px;
+}
+
+.upad-source-card {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.upad-source-card h3 {
+    margin-top: 0;
+}
+
+.upad-source-card.detected {
+    border-left: 4px solid #00a32a;
+}
+
+.upad-source-card.not-detected {
+    border-left: 4px solid #dba617;
+    opacity: 0.7;
+}
+
+.upad-detected-info {
+    color: #00a32a;
+    margin: 10px 0;
+}
+
+.upad-not-detected-info {
+    color: #996800;
+    margin: 10px 0;
+}
+
+.upad-detected-info .dashicons,
+.upad-not-detected-info .dashicons {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.upad-migrate-preview {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.upad-preview-content {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 15px 0;
+}
+
+.upad-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.upad-preview-table th,
+.upad-preview-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.upad-preview-table th {
+    background: #f6f7f7;
+}
+
+.upad-migrate-options {
+    margin: 15px 0;
+    padding: 15px;
+    background: #fff8e5;
+    border-radius: 4px;
+}
+
+.upad-migrate-actions {
+    margin-top: 20px;
+}
+
+.upad-migrate-actions .button {
+    margin-right: 10px;
+}
+
+.upad-progress-bar {
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.upad-progress-fill {
+    height: 100%;
+    background: #0073aa;
+    width: 0%;
+    transition: width 0.3s;
+}
+
+.upad-progress-text {
+    text-align: center;
+    color: #666;
+}
+
+.upad-migrate-results {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.upad-results-content .success {
+    color: #00a32a;
+}
+
+.upad-results-content .error {
+    color: #d63638;
 }

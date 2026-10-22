@@ -7,15 +7,15 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Install {
+class UPAD_Install {
 
     /**
      * DB updates and callbacks
      */
     private static $db_updates = array(
         '1.0.0' => array(
-            'wcos_update_100_create_tables',
-            'wcos_update_100_db_version',
+            'upad_update_100_create_tables',
+            'upad_update_100_db_version',
         ),
     );
 
@@ -56,7 +56,7 @@ class WCOS_Install {
         $charset_collate = $wpdb->get_charset_collate();
 
         // Global add-ons groups table
-        $sql_groups = "CREATE TABLE {$wpdb->prefix}wcos_global_groups (
+        $sql_groups = "CREATE TABLE {$wpdb->prefix}upad_global_groups (
             id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             name varchar(255) NOT NULL,
             priority int(11) NOT NULL DEFAULT 10,
@@ -70,7 +70,7 @@ class WCOS_Install {
         ) $charset_collate;";
 
         // Add-ons table (for both global and per-product)
-        $sql_addons = "CREATE TABLE {$wpdb->prefix}wcos_addons (
+        $sql_addons = "CREATE TABLE {$wpdb->prefix}upad_addons (
             id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             group_id bigint(20) UNSIGNED DEFAULT NULL,
             product_id bigint(20) UNSIGNED DEFAULT NULL,
@@ -93,7 +93,7 @@ class WCOS_Install {
         ) $charset_collate;";
 
         // Add-on options table (for multiple choice, checkboxes, etc.)
-        $sql_options = "CREATE TABLE {$wpdb->prefix}wcos_addon_options (
+        $sql_options = "CREATE TABLE {$wpdb->prefix}upad_addon_options (
             id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             addon_id bigint(20) UNSIGNED NOT NULL,
             parent_option_id bigint(20) UNSIGNED DEFAULT NULL,
@@ -119,7 +119,7 @@ class WCOS_Install {
         ) $charset_collate;";
 
         // File upload tracking table
-        $sql_uploads = "CREATE TABLE {$wpdb->prefix}wcos_uploads (
+        $sql_uploads = "CREATE TABLE {$wpdb->prefix}upad_uploads (
             id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             order_id bigint(20) UNSIGNED DEFAULT NULL,
             order_item_id bigint(20) UNSIGNED DEFAULT NULL,
@@ -155,17 +155,17 @@ class WCOS_Install {
      */
     private static function create_options() {
         $default_options = array(
-            'wcos_version'                    => WCOS_VERSION,
-            'wcos_db_version'                 => WCOS_VERSION,
-            'wcos_file_upload_enabled'        => 'yes',
-            'wcos_allowed_file_types'         => 'jpg,jpeg,png,gif,pdf,doc,docx',
-            'wcos_max_file_size'              => 5, // MB
-            'wcos_secure_uploads'             => 'yes',
-            'wcos_display_option_prices'      => 'yes',
-            'wcos_display_totals'             => 'yes',
-            'wcos_enable_inventory_tracking'  => 'no',
-            'wcos_add_as_line_items'          => 'no',
-            'wcos_inherit_global_addons'      => 'yes',
+            'upad_version'                    => UPAD_VERSION,
+            'upad_db_version'                 => UPAD_VERSION,
+            'upad_file_upload_enabled'        => 'yes',
+            'upad_allowed_file_types'         => 'jpg,jpeg,png,gif,pdf,doc,docx',
+            'upad_max_file_size'              => 5, // MB
+            'upad_secure_uploads'             => 'yes',
+            'upad_display_option_prices'      => 'yes',
+            'upad_display_totals'             => 'yes',
+            'upad_enable_inventory_tracking'  => 'no',
+            'upad_add_as_line_items'          => 'no',
+            'upad_inherit_global_addons'      => 'yes',
         );
 
         foreach ( $default_options as $key => $value ) {
@@ -180,10 +180,10 @@ class WCOS_Install {
      */
     private static function create_upload_directory() {
         $upload_dir = wp_upload_dir();
-        $wcos_upload_dir = $upload_dir['basedir'] . '/wcos-uploads';
+        $upad_upload_dir = $upload_dir['basedir'] . '/upad-uploads';
 
-        if ( ! file_exists( $wcos_upload_dir ) ) {
-            wp_mkdir_p( $wcos_upload_dir );
+        if ( ! file_exists( $upad_upload_dir ) ) {
+            wp_mkdir_p( $upad_upload_dir );
         }
 
         // Create .htaccess to restrict direct access
@@ -198,13 +198,13 @@ class WCOS_Install {
         $htaccess_content .= "    </IfModule>\n";
         $htaccess_content .= "</Files>\n";
 
-        $htaccess_file = $wcos_upload_dir . '/.htaccess';
+        $htaccess_file = $upad_upload_dir . '/.htaccess';
         if ( ! file_exists( $htaccess_file ) ) {
             file_put_contents( $htaccess_file, $htaccess_content );
         }
 
         // Create index.php to prevent directory listing
-        $index_file = $wcos_upload_dir . '/index.php';
+        $index_file = $upad_upload_dir . '/index.php';
         if ( ! file_exists( $index_file ) ) {
             file_put_contents( $index_file, '<?php // Silence is golden' );
         }
@@ -214,7 +214,7 @@ class WCOS_Install {
      * Update DB version
      */
     private static function update_db_version() {
-        update_option( 'wcos_db_version', WCOS_VERSION );
+        update_option( 'upad_db_version', UPAD_VERSION );
     }
 
     /**
@@ -224,31 +224,31 @@ class WCOS_Install {
         global $wpdb;
 
         // Only run if settings say to delete data
-        if ( 'yes' !== get_option( 'wcos_delete_data_on_uninstall', 'no' ) ) {
+        if ( 'yes' !== get_option( 'upad_delete_data_on_uninstall', 'no' ) ) {
             return;
         }
 
         // Delete tables
-        $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}wcos_global_groups" );
-        $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}wcos_addons" );
-        $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}wcos_addon_options" );
-        $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}wcos_uploads" );
+        $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}upad_global_groups" );
+        $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}upad_addons" );
+        $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}upad_addon_options" );
+        $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}upad_uploads" );
 
         // Delete options
-        $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'wcos_%'" );
+        $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'upad_%'" );
 
         // Delete product meta
-        $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '_wcos_%'" );
+        $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '_upad_%'" );
 
         // Delete upload directory
         $upload_dir = wp_upload_dir();
-        $wcos_upload_dir = $upload_dir['basedir'] . '/wcos-uploads';
-        if ( file_exists( $wcos_upload_dir ) ) {
-            self::delete_directory( $wcos_upload_dir );
+        $upad_upload_dir = $upload_dir['basedir'] . '/upad-uploads';
+        if ( file_exists( $upad_upload_dir ) ) {
+            self::delete_directory( $upad_upload_dir );
         }
 
         // Clear scheduled events
-        wp_clear_scheduled_hook( 'wcos_cleanup_temp_uploads' );
+        wp_clear_scheduled_hook( 'upad_cleanup_temp_uploads' );
 
         // Clear any cached data
         wp_cache_flush();

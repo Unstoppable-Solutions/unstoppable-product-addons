@@ -1,20 +1,21 @@
 <?php
 /**
- * Plugin Name: Unstoppable Product Addons
- * Plugin URI: https://unstoppablesolutions.app/product-addons/
- * Description: Create custom product options for WooCommerce. Add text fields, dropdowns, checkboxes, file uploads, date pickers, and more to any product.
- * Version: 1.0.0
- * Author: Unstoppable Solutions
- * Author URI: https://unstoppablesolutions.app/
- * License: GPL-2.0-or-later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: unstoppable-product-addons
- * Domain Path: /languages
- * Requires at least: 5.8
- * Tested up to: 6.7
- * Requires PHP: 7.4
- * WC requires at least: 5.0
- * WC tested up to: 9.4
+ * Plugin Name:          Unstoppable Product Addons for WooCommerce
+ * Plugin URI:           https://unstoppablesolutions.app/plugins/unstoppable-product-addons/
+ * Description:          Create custom product options for WooCommerce. Add text fields, dropdowns, checkboxes, file uploads, date pickers, and more to any product.
+ * Version:              1.0.0
+ * Author:               Unstoppable Solutions
+ * Author URI:           https://unstoppablesolutions.app
+ * License:              GPL-2.0-or-later
+ * License URI:          https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:          unstoppable-product-addons
+ * Domain Path:          /languages
+ * Requires at least:    6.5
+ * Tested up to:         7.1
+ * Requires PHP:         7.4
+ * Requires Plugins:     woocommerce
+ * WC requires at least: 7.0
+ * WC tested up to:      11.2
  *
  * @package Unstoppable_Product_Addons
  */
@@ -23,75 +24,69 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Define plugin constants
-define( 'WCCA_VERSION', '1.0.0' );
-define( 'WCCA_PLUGIN_FILE', __FILE__ );
-define( 'WCCA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'WCCA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'WCCA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) ); // unstoppable-product-addons/unstoppable-product-addons.php
-
-// Legacy constant aliases for backwards compatibility with includes
-define( 'WCOS_VERSION', WCCA_VERSION );
-define( 'WCOS_PLUGIN_FILE', WCCA_PLUGIN_FILE );
-define( 'WCOS_PLUGIN_DIR', WCCA_PLUGIN_DIR );
-define( 'WCOS_PLUGIN_URL', WCCA_PLUGIN_URL );
-define( 'WCOS_PLUGIN_BASENAME', WCCA_PLUGIN_BASENAME );
+// Define plugin constants using UPAD_ prefix (not wc/wp/woo).
+define( 'UPAD_VERSION', '1.0.0' );
+define( 'UPAD_PLUGIN_FILE', __FILE__ );
+define( 'UPAD_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'UPAD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'UPAD_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 /*
  * ============================================================================
- * UNSTOPPABLE OPTIONS STUDIO - SHARED SHELL SYSTEM
+ * UNSTOPPABLE OPTIONS STUDIO - SHARED SHELL (v1.2.0)
  * ============================================================================
- * 
- * This code creates the "Options Studio" parent menu that all Unstoppable Solutions
- * plugins share. Each plugin includes this same code block - the first plugin
- * to load creates the shell, others just add their submenus.
+ * Shared by every Unstoppable Solutions plugin. The first plugin to load
+ * defines these functions; the function_exists() guard makes the others skip
+ * them. Uses the host plugin's text domain (unstoppable-product-addons).
  * ============================================================================
  */
 
 if ( ! function_exists( 'unstoppable_options_studio_init' ) ) {
+
     /**
-     * Initialize the Options Studio shell menu.
-     * This function is shared across all Unstoppable Solutions plugins.
-     * Only the first plugin to load will create the parent menu.
+     * Register the shell hooks.
      */
     function unstoppable_options_studio_init() {
         add_action( 'admin_menu', 'unstoppable_options_studio_create_menu', 9 );
-        add_action( 'admin_enqueue_scripts', 'unstoppable_options_studio_enqueue_styles' );
+        add_action( 'admin_enqueue_scripts', 'unstoppable_options_studio_admin_css' );
+        add_action( 'admin_bar_menu', 'unstoppable_options_studio_admin_bar', 100 );
+        // The admin bar appears in the admin and on the front end.
+        add_action( 'admin_enqueue_scripts', 'unstoppable_options_studio_admin_bar_css' );
+        add_action( 'wp_enqueue_scripts', 'unstoppable_options_studio_admin_bar_css' );
     }
 
     /**
-     * Create the Options Studio parent menu.
+     * Create the Options Studio parent menu and its Dashboard page.
      */
     function unstoppable_options_studio_create_menu() {
-        // Check if WooCommerce is active
         if ( ! class_exists( 'WooCommerce' ) ) {
             return;
         }
 
-        // Check if parent menu already exists (another Unstoppable plugin may have created it)
+        // An older copy of the shell in another plugin may already have created it.
         global $menu;
-        foreach ( $menu as $item ) {
-            if ( isset( $item[2] ) && $item[2] === 'unstoppable-studio' ) {
-                return; // Menu already exists
+        if ( is_array( $menu ) ) {
+            foreach ( $menu as $item ) {
+                if ( isset( $item[2] ) && 'unstoppable-studio' === $item[2] ) {
+                    return;
+                }
             }
         }
 
-        // Create the parent menu
         add_menu_page(
-            __( 'Options Studio', 'unstoppable-studio' ),
-            __( 'Options Studio', 'unstoppable-studio' ),
+            esc_html__( 'Options Studio', 'unstoppable-product-addons' ),
+            esc_html__( 'Options Studio', 'unstoppable-product-addons' ),
             'manage_woocommerce',
             'unstoppable-studio',
             'unstoppable_options_studio_dashboard',
             'dashicons-screenoptions',
-            56 // Position after WooCommerce
+            56
         );
 
-        // Add dashboard as first submenu (replaces the duplicate parent link)
         add_submenu_page(
             'unstoppable-studio',
-            __( 'Dashboard', 'unstoppable-studio' ),
-            __( 'Dashboard', 'unstoppable-studio' ),
+            esc_html__( 'Dashboard', 'unstoppable-product-addons' ),
+            esc_html__( 'Dashboard', 'unstoppable-product-addons' ),
             'manage_woocommerce',
             'unstoppable-studio',
             'unstoppable_options_studio_dashboard'
@@ -99,38 +94,42 @@ if ( ! function_exists( 'unstoppable_options_studio_init' ) ) {
     }
 
     /**
-     * Options Studio Dashboard page.
-     * Shows overview of all installed Unstoppable Solutions plugins.
+     * Render the Options Studio Dashboard.
      */
     function unstoppable_options_studio_dashboard() {
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_die( esc_html__( 'You do not have permission to access this page.', 'unstoppable-product-addons' ) );
+        }
+
         $plugins = apply_filters( 'unstoppable_studio_registered_plugins', array() );
         ?>
         <div class="wrap unstoppable-studio-dashboard">
-            <h1><?php esc_html_e( 'Options Studio', 'unstoppable-studio' ); ?></h1>
-            <p class="description"><?php esc_html_e( 'Your suite of WooCommerce enhancement tools by Unstoppable Solutions.', 'unstoppable-studio' ); ?></p>
-            
-            <div class="unstoppable-studio-plugins" style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
-                <?php if ( empty( $plugins ) ) : ?>
-                    <p><?php esc_html_e( 'No plugins registered yet.', 'unstoppable-studio' ); ?></p>
+            <h1><?php esc_html_e( 'Options Studio', 'unstoppable-product-addons' ); ?></h1>
+            <p class="description"><?php esc_html_e( 'Your suite of WooCommerce tools by Unstoppable Solutions.', 'unstoppable-product-addons' ); ?></p>
+
+            <div class="unstoppable-studio-plugins">
+                <?php if ( empty( $plugins ) || ! is_array( $plugins ) ) : ?>
+                    <p><?php esc_html_e( 'No plugins registered yet.', 'unstoppable-product-addons' ); ?></p>
                 <?php else : ?>
                     <?php foreach ( $plugins as $plugin ) : ?>
-                        <div class="unstoppable-plugin-card" style="background: #fff; border: 1px solid #ccd0d4; border-radius: 4px; padding: 20px; width: 300px;">
-                            <h3 style="margin-top: 0;"><?php echo esc_html( $plugin['name'] ); ?></h3>
-                            <p style="color: #666;"><?php echo esc_html( $plugin['description'] ); ?></p>
+                        <div class="unstoppable-plugin-card">
+                            <h3><?php echo esc_html( isset( $plugin['name'] ) ? $plugin['name'] : '' ); ?></h3>
+                            <p><?php echo esc_html( isset( $plugin['description'] ) ? $plugin['description'] : '' ); ?></p>
                             <?php if ( ! empty( $plugin['menu_slug'] ) ) : ?>
-                                <a href="<?php echo esc_url( admin_url( 'admin.php?page=' . $plugin['menu_slug'] ) ); ?>" class="button button-primary">
-                                    <?php esc_html_e( 'Open', 'unstoppable-studio' ); ?>
+                                <a href="<?php echo esc_url( admin_url( 'admin.php?page=' . sanitize_key( $plugin['menu_slug'] ) ) ); ?>" class="button button-primary">
+                                    <?php esc_html_e( 'Open', 'unstoppable-product-addons' ); ?>
                                 </a>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
-            
-            <div class="unstoppable-studio-footer" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccd0d4;">
+
+            <div class="unstoppable-studio-footer">
                 <p>
-                    <a href="https://unstoppablesolutions.app" target="_blank"><?php esc_html_e( 'Visit Unstoppable Solutions', 'unstoppable-studio' ); ?></a> | 
-                    <a href="https://unstoppablesolutions.app/support" target="_blank"><?php esc_html_e( 'Get Support', 'unstoppable-studio' ); ?></a>
+                    <a href="<?php echo esc_url( 'https://unstoppablesolutions.app' ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Visit Unstoppable Solutions', 'unstoppable-product-addons' ); ?></a>
+                    |
+                    <a href="<?php echo esc_url( 'https://unstoppablesolutions.app/support' ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Get Support', 'unstoppable-product-addons' ); ?></a>
                 </p>
             </div>
         </div>
@@ -138,273 +137,256 @@ if ( ! function_exists( 'unstoppable_options_studio_init' ) ) {
     }
 
     /**
-     * Enqueue admin styles for Options Studio menu icon.
-     * Uses wp_add_inline_style instead of inline <style> per WordPress.org guidelines.
+     * Admin styles: gold menu icon and Dashboard cards.
+     *
+     * An empty registered handle plus wp_add_inline_style() is the supported
+     * way to attach small generated CSS. Never print a <style> tag.
      */
-    function unstoppable_options_studio_enqueue_styles() {
-        // Register an empty stylesheet handle for inline styles
-        wp_register_style( 'unstoppable-studio-shell', false );
-        wp_enqueue_style( 'unstoppable-studio-shell' );
+    function unstoppable_options_studio_admin_css() {
+        wp_register_style( 'unstoppable-studio-admin', false, array(), '1.2.0' );
+        wp_enqueue_style( 'unstoppable-studio-admin' );
 
         $css = '
-            #adminmenu .toplevel_page_unstoppable-studio .wp-menu-image:before {
-                color: #f0b849;
-            }
+            #adminmenu .toplevel_page_unstoppable-studio .wp-menu-image:before { color: #f0b849; }
             #adminmenu .toplevel_page_unstoppable-studio:hover .wp-menu-image:before,
-            #adminmenu .toplevel_page_unstoppable-studio.current .wp-menu-image:before {
-                color: #fff;
-            }
+            #adminmenu .toplevel_page_unstoppable-studio.current .wp-menu-image:before { color: #fff; }
+            .unstoppable-studio-plugins { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
+            .unstoppable-plugin-card { background: #fff; border: 1px solid #ccd0d4; border-radius: 4px; padding: 20px; width: 300px; max-width: 100%; box-sizing: border-box; }
+            .unstoppable-plugin-card h3 { margin-top: 0; }
+            .unstoppable-plugin-card p { color: #646970; }
+            .unstoppable-studio-footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccd0d4; }
         ';
 
-        wp_add_inline_style( 'unstoppable-studio-shell', $css );
+        wp_add_inline_style( 'unstoppable-studio-admin', $css );
     }
-}
 
-// Initialize the Options Studio shell
-unstoppable_options_studio_init();
+    /**
+     * Add Options Studio to the admin bar.
+     *
+     * @param WP_Admin_Bar $wp_admin_bar Admin bar instance.
+     */
+    function unstoppable_options_studio_admin_bar( $wp_admin_bar ) {
+        if ( ! current_user_can( 'manage_woocommerce' ) || ! class_exists( 'WooCommerce' ) ) {
+            return;
+        }
+
+        $wp_admin_bar->add_node(
+            array(
+                'id'    => 'unstoppable-studio',
+                'title' => '<span class="ab-icon dashicons dashicons-screenoptions" aria-hidden="true"></span>' . esc_html__( 'Options Studio', 'unstoppable-product-addons' ),
+                'href'  => admin_url( 'admin.php?page=unstoppable-studio' ),
+                'meta'  => array(
+                    'title' => esc_attr__( 'Options Studio Dashboard', 'unstoppable-product-addons' ),
+                ),
+            )
+        );
+
+        $plugins = apply_filters( 'unstoppable_studio_registered_plugins', array() );
+
+        if ( ! is_array( $plugins ) ) {
+            return;
+        }
+
+        foreach ( $plugins as $plugin_id => $plugin ) {
+            if ( empty( $plugin['menu_slug'] ) || empty( $plugin['name'] ) ) {
+                continue;
+            }
+
+            $wp_admin_bar->add_node(
+                array(
+                    'id'     => 'unstoppable-studio-' . sanitize_key( $plugin_id ),
+                    'parent' => 'unstoppable-studio',
+                    'title'  => esc_html( $plugin['name'] ),
+                    'href'   => admin_url( 'admin.php?page=' . sanitize_key( $plugin['menu_slug'] ) ),
+                )
+            );
+        }
+    }
+
+    /**
+     * Admin bar icon styles, enqueued in the admin and on the front end.
+     */
+    function unstoppable_options_studio_admin_bar_css() {
+        if ( ! is_admin_bar_showing() || ! current_user_can( 'manage_woocommerce' ) ) {
+            return;
+        }
+
+        wp_register_style( 'unstoppable-studio-adminbar', false, array( 'admin-bar' ), '1.2.0' );
+        wp_enqueue_style( 'unstoppable-studio-adminbar' );
+
+        $css = '
+            #wpadminbar #wp-admin-bar-unstoppable-studio > .ab-item .ab-icon:before { content: "\f180"; top: 2px; }
+            #wpadminbar #wp-admin-bar-unstoppable-studio > .ab-item .ab-icon { margin-right: 6px; }
+            #wpadminbar #wp-admin-bar-unstoppable-studio > .ab-item { color: #f0b849; }
+            #wpadminbar #wp-admin-bar-unstoppable-studio:hover > .ab-item { color: #fff; background: #32373c; }
+        ';
+
+        wp_add_inline_style( 'unstoppable-studio-adminbar', $css );
+    }
+
+    unstoppable_options_studio_init();
+}
 
 /*
  * ============================================================================
- * END SHARED SHELL SYSTEM
+ * END SHARED SHELL
  * ============================================================================
  */
 
-
 /**
- * Main WC_Custom_Addons Class
- *
- * @since 1.0.0
+ * Main plugin class.
  */
-final class WC_Custom_Addons {
+final class UPAD_Plugin {
 
     /**
-     * Single instance of the class.
+     * Singleton instance.
      *
-     * @var WC_Custom_Addons
+     * @var UPAD_Plugin
      */
-    protected static $_instance = null;
+    private static $instance = null;
 
     /**
-     * Main Instance.
+     * Get singleton instance.
      *
-     * @return WC_Custom_Addons
+     * @return UPAD_Plugin
      */
     public static function instance() {
-        if ( is_null( self::$_instance ) ) {
-            self::$_instance = new self();
+        if ( null === self::$instance ) {
+            self::$instance = new self();
         }
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
      * Constructor.
      */
-    public function __construct() {
-        $this->init_hooks();
-    }
-
-    /**
-     * Initialize hooks.
-     */
-    private function init_hooks() {
-        register_activation_hook( WCCA_PLUGIN_FILE, array( $this, 'activate' ) );
-        register_deactivation_hook( WCCA_PLUGIN_FILE, array( $this, 'deactivate' ) );
-
-        add_action( 'plugins_loaded', array( $this, 'init' ) );
-        add_action( 'before_woocommerce_init', array( $this, 'declare_hpos_compatibility' ) );
-        
-        // Register this plugin with Options Studio dashboard
-        add_filter( 'unstoppable_studio_registered_plugins', array( $this, 'register_with_studio' ) );
-    }
-
-    /**
-     * Register this plugin with the Options Studio dashboard.
-     *
-     * @param array $plugins Registered plugins.
-     * @return array
-     */
-    public function register_with_studio( $plugins ) {
-        $plugins['wcca-addons'] = array(
-            'name'        => __( 'Product Addons', 'wc-custom-addons' ),
-            'description' => __( 'Add custom options, file uploads, and inventory-tracked add-ons to your products.', 'wc-custom-addons' ),
-            'menu_slug'   => 'wcca-addons',
-            'version'     => WCCA_VERSION,
-        );
-        return $plugins;
-    }
-
-    /**
-     * Initialize plugin.
-     */
-    public function init() {
-        // Check if WooCommerce is active
-        if ( ! class_exists( 'WooCommerce' ) ) {
-            add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
-            return;
-        }
-
-        // Load text domain
-        load_plugin_textdomain( 'wc-custom-addons', false, dirname( WCCA_PLUGIN_BASENAME ) . '/languages' );
-
-        // Include required files
+    private function __construct() {
         $this->includes();
-
-        // Initialize components
-        $this->init_components();
+        $this->init_hooks();
     }
 
     /**
      * Include required files.
      */
     private function includes() {
-        // Core classes
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-install.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-addon-types.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-global-addons.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-product-addons.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-cart.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-order.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-display.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-ajax.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-file-upload.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-inventory.php';
-        require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-import-export.php';
+        // Core classes.
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-install.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-addon-types.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-global-addons.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-product-addons.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-display.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-cart.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-order.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-ajax.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-file-upload.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-inventory.php';
+        require_once UPAD_PLUGIN_DIR . 'includes/class-upad-import-export.php';
 
-        // Admin classes
+        // Admin classes.
         if ( is_admin() ) {
-            require_once WCCA_PLUGIN_DIR . 'includes/admin/class-wcos-admin.php';
-            require_once WCCA_PLUGIN_DIR . 'includes/admin/class-wcos-admin-global-addons.php';
-            require_once WCCA_PLUGIN_DIR . 'includes/admin/class-wcos-admin-product-addons.php';
-            require_once WCCA_PLUGIN_DIR . 'includes/admin/class-wcos-admin-settings.php';
-            require_once WCCA_PLUGIN_DIR . 'includes/admin/class-wcos-admin-migrate.php';
+            require_once UPAD_PLUGIN_DIR . 'includes/admin/class-upad-admin.php';
+            require_once UPAD_PLUGIN_DIR . 'includes/admin/class-upad-admin-settings.php';
+            require_once UPAD_PLUGIN_DIR . 'includes/admin/class-upad-admin-global-addons.php';
+            require_once UPAD_PLUGIN_DIR . 'includes/admin/class-upad-admin-product-addons.php';
+            require_once UPAD_PLUGIN_DIR . 'includes/admin/class-upad-admin-migrate.php';
         }
 
-        // REST API
-        require_once WCCA_PLUGIN_DIR . 'includes/api/class-wcos-rest-api.php';
+        // REST API.
+        require_once UPAD_PLUGIN_DIR . 'includes/api/class-upad-rest-api.php';
     }
 
     /**
-     * Initialize plugin components.
+     * Initialize hooks.
      */
-    private function init_components() {
-        // Initialize addon types
-        WCOS_Addon_Types::instance();
-        
-        // Initialize global and product addons
-        WCOS_Global_Addons::instance();
-        WCOS_Product_Addons::instance();
-        
-        // Initialize all components (no license required in free version)
-        WCOS_Cart::instance();
-        WCOS_Order::instance();
-        WCOS_Display::instance();
-        WCOS_File_Upload::instance();
-        WCOS_Inventory::instance();
-        WCOS_Import_Export::instance();
-        WCOS_REST_API::instance();
-        
-        // Initialize AJAX for admin
-        WCOS_Ajax::instance();
+    private function init_hooks() {
+        register_activation_hook( UPAD_PLUGIN_FILE, array( 'UPAD_Install', 'activate' ) );
+        register_deactivation_hook( UPAD_PLUGIN_FILE, array( 'UPAD_Install', 'deactivate' ) );
+
+        add_action( 'plugins_loaded', array( $this, 'init' ), 10 );
+        add_filter( 'unstoppable_studio_registered_plugins', array( $this, 'register_with_studio' ) );
+    }
+
+    /**
+     * Initialize plugin.
+     */
+    public function init() {
+        if ( ! class_exists( 'WooCommerce' ) ) {
+            add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
+            return;
+        }
+
+        // Initialize classes.
+        UPAD_Addon_Types::instance();
+        UPAD_Global_Addons::instance();
+        UPAD_Product_Addons::instance();
+        UPAD_Display::instance();
+        UPAD_Cart::instance();
+        UPAD_Order::instance();
+        UPAD_Ajax::instance();
+        UPAD_File_Upload::instance();
+        UPAD_Inventory::instance();
+        UPAD_Import_Export::instance();
+        UPAD_REST_API::instance();
 
         if ( is_admin() ) {
-            WCOS_Admin::instance();
-            WCOS_Admin_Settings::instance();
-            WCOS_Admin_Global_Addons::instance();
-            WCOS_Admin_Product_Addons::instance();
-            
-            // Initialize migration tool
-            WCOS_Admin_Migrate::instance();
+            UPAD_Admin::instance();
         }
+
+        // Declare HPOS compatibility.
+        add_action( 'before_woocommerce_init', array( $this, 'declare_hpos_compatibility' ) );
     }
 
     /**
-     * Activation hook.
+     * Register with Options Studio Dashboard.
+     *
+     * @param array $plugins Registered plugins.
+     * @return array
      */
-    public function activate() {
-        // Load install class if not already loaded
-        if ( ! class_exists( 'WCOS_Install' ) ) {
-            require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-install.php';
-        }
-        WCOS_Install::activate();
-
-        // Update version
-        update_option( 'wcca_version', WCCA_VERSION );
-
-        // Clear cache
-        wp_cache_flush();
-        flush_rewrite_rules();
+    public function register_with_studio( $plugins ) {
+        $plugins['unstoppable-product-addons'] = array(
+            'name'        => __( 'Product Addons', 'unstoppable-product-addons' ),
+            'description' => __( 'Add custom option fields to WooCommerce products.', 'unstoppable-product-addons' ),
+            'menu_slug'   => 'upad-settings',
+            'version'     => UPAD_VERSION,
+        );
+        return $plugins;
     }
 
     /**
-     * Deactivation hook.
+     * Show notice when WooCommerce is not active.
      */
-    public function deactivate() {
-        if ( ! class_exists( 'WCOS_Install' ) ) {
-            require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-install.php';
+    public function woocommerce_missing_notice() {
+        $screen = get_current_screen();
+        if ( $screen && false !== strpos( $screen->id, 'upad' ) ) {
+            ?>
+            <div class="notice notice-error">
+                <p>
+                    <strong><?php esc_html_e( 'Unstoppable Product Addons', 'unstoppable-product-addons' ); ?></strong>
+                    <?php esc_html_e( 'requires WooCommerce to be installed and active.', 'unstoppable-product-addons' ); ?>
+                </p>
+            </div>
+            <?php
         }
-        WCOS_Install::deactivate();
-
-        // Clear license scheduled events
-        if ( ! class_exists( 'WCOS_License' ) ) {
-            require_once WCCA_PLUGIN_DIR . 'includes/class-wcos-license.php';
-        }
-        WCOS_License::clear_scheduled_events();
-
-        flush_rewrite_rules();
     }
 
     /**
-     * Declare HPOS compatibility.
+     * Declare compatibility with WooCommerce HPOS.
      */
     public function declare_hpos_compatibility() {
         if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', WCCA_PLUGIN_FILE, true );
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', UPAD_PLUGIN_FILE, true );
         }
-    }
-
-    /**
-     * Admin notice for missing WooCommerce.
-     */
-    public function woocommerce_missing_notice() {
-        ?>
-        <div class="notice notice-error">
-            <p><?php esc_html_e( 'Unstoppable Product Addons requires WooCommerce to be installed and active.', 'wc-custom-addons' ); ?></p>
-        </div>
-        <?php
-    }
-
-    /**
-     * Get plugin URL.
-     *
-     * @return string
-     */
-    public function plugin_url() {
-        return WCCA_PLUGIN_URL;
-    }
-
-    /**
-     * Get plugin path.
-     *
-     * @return string
-     */
-    public function plugin_path() {
-        return WCCA_PLUGIN_DIR;
     }
 }
 
 /**
- * Main instance of WC_Custom_Addons.
+ * Main instance of the plugin.
  *
- * @return WC_Custom_Addons
+ * @return UPAD_Plugin
  */
-function WCCA() {
-    return WC_Custom_Addons::instance();
+function upad() {
+    return UPAD_Plugin::instance();
 }
 
-// Legacy function alias
-function WCOS() {
-    return WCCA();
-}
-
-// Initialize
-WCCA();
+// Initialize the plugin.
+upad();

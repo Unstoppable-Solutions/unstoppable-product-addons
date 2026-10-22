@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Display {
+class UPAD_Display {
 
     protected static $_instance = null;
 
@@ -35,11 +35,11 @@ class WCOS_Display {
         add_action( 'woocommerce_before_add_to_cart_button', array( $this, 'display_totals' ), 15 );
         
         // Register shortcode for manual placement
-        add_shortcode( 'wcos_product_addons', array( $this, 'shortcode_product_addons' ) );
+        add_shortcode( 'upad_product_addons', array( $this, 'shortcode_product_addons' ) );
         
         // AJAX handler to get addons HTML for a product (for side carts/drawers)
-        add_action( 'wp_ajax_wcos_get_product_addons_html', array( $this, 'ajax_get_product_addons_html' ) );
-        add_action( 'wp_ajax_nopriv_wcos_get_product_addons_html', array( $this, 'ajax_get_product_addons_html' ) );
+        add_action( 'wp_ajax_upad_get_product_addons_html', array( $this, 'ajax_get_product_addons_html' ) );
+        add_action( 'wp_ajax_nopriv_upad_get_product_addons_html', array( $this, 'ajax_get_product_addons_html' ) );
         
         // Change "Add to Cart" to "Select Options" on shop/archive pages for products with required addons
         add_filter( 'woocommerce_product_add_to_cart_text', array( $this, 'change_add_to_cart_text' ), 10, 2 );
@@ -63,7 +63,7 @@ class WCOS_Display {
             return false;
         }
 
-        $addons = WCOS_Product_Addons::instance()->get_product_addons( $product->get_id() );
+        $addons = UPAD_Product_Addons::instance()->get_product_addons( $product->get_id() );
 
         if ( empty( $addons ) ) {
             return false;
@@ -178,7 +178,7 @@ class WCOS_Display {
 
     /**
      * Shortcode to display product addons
-     * Usage: [wcos_product_addons product_id="123"]
+     * Usage: [upad_product_addons product_id="123"]
      */
     public function shortcode_product_addons( $atts ) {
         $atts = shortcode_atts( array(
@@ -243,14 +243,14 @@ class WCOS_Display {
             return;
         }
 
-        $addons = WCOS_Product_Addons::instance()->get_product_addons( $product->get_id() );
+        $addons = UPAD_Product_Addons::instance()->get_product_addons( $product->get_id() );
 
         if ( empty( $addons ) ) {
             return;
         }
 
         $is_variable = $product->is_type( 'variable' ) ? 'true' : 'false';
-        echo '<div class="wcos-addons-wrapper" data-product-id="' . esc_attr( $product->get_id() ) . '" data-product-price="' . esc_attr( $product->get_price() ) . '" data-is-variable="' . esc_attr( $is_variable ) . '">';
+        echo '<div class="upad-addons-wrapper" data-product-id="' . esc_attr( $product->get_id() ) . '" data-product-price="' . esc_attr( $product->get_price() ) . '" data-is-variable="' . esc_attr( $is_variable ) . '">';
 
         foreach ( $addons as $addon ) {
             $this->render_addon( $addon, $product );
@@ -265,10 +265,10 @@ class WCOS_Display {
     public function enqueue_frontend_assets() {
         // Styles
         wp_enqueue_style(
-            'wcos-frontend',
-            WCOS_PLUGIN_URL . 'assets/css/frontend.css',
+            'upad-frontend',
+            UPAD_PLUGIN_URL . 'assets/css/frontend.css',
             array(),
-            WCOS_VERSION
+            UPAD_VERSION
         );
 
         // Date picker
@@ -277,16 +277,16 @@ class WCOS_Display {
 
         // Main script
         wp_enqueue_script(
-            'wcos-frontend',
-            WCOS_PLUGIN_URL . 'assets/js/frontend.js',
+            'upad-frontend',
+            UPAD_PLUGIN_URL . 'assets/js/frontend.js',
             array( 'jquery', 'jquery-ui-datepicker', 'wp-util' ),
-            WCOS_VERSION,
+            UPAD_VERSION,
             true
         );
 
-        wp_localize_script( 'wcos-frontend', 'wcos_params', array(
+        wp_localize_script( 'upad-frontend', 'upad_params', array(
             'ajax_url'       => admin_url( 'admin-ajax.php' ),
-            'upload_nonce'   => wp_create_nonce( 'wcos_upload_nonce' ),
+            'upload_nonce'   => wp_create_nonce( 'upad_upload_nonce' ),
             'currency'       => get_woocommerce_currency_symbol(),
             'price_format'   => get_woocommerce_price_format(),
             'decimal_sep'    => wc_get_price_decimal_separator(),
@@ -322,7 +322,7 @@ class WCOS_Display {
             global $post;
             $product = wc_get_product( $post );
             
-            if ( $product && is_a( $product, 'WC_Product' ) && WCOS_Product_Addons::instance()->product_has_addons( $product->get_id() ) ) {
+            if ( $product && is_a( $product, 'WC_Product' ) && UPAD_Product_Addons::instance()->product_has_addons( $product->get_id() ) ) {
                 $this->enqueue_frontend_assets();
                 return;
             }
@@ -386,8 +386,8 @@ class WCOS_Display {
      * Render a single addon
      */
     private function render_addon( $addon, $product ) {
-        $type_class = 'wcos-addon-' . sanitize_html_class( $addon->addon_type );
-        $required_class = $addon->required ? 'wcos-addon-required' : '';
+        $type_class = 'upad-addon-' . sanitize_html_class( $addon->addon_type );
+        $required_class = $addon->required ? 'upad-addon-required' : '';
         
         // Ensure settings is an array
         $addon->settings = $this->get_addon_settings( $addon );
@@ -417,27 +417,27 @@ class WCOS_Display {
             
             // Start hidden if action is 'show' (will be shown when conditions match)
             if ( isset( $cond['action'] ) && $cond['action'] === 'show' ) {
-                $condition_class = ' wcos-condition-hidden';
+                $condition_class = ' upad-condition-hidden';
             }
         }
         
-        echo '<div class="wcos-addon ' . esc_attr( $type_class ) . ' ' . esc_attr( $required_class ) . esc_attr( $condition_class ) . '" data-addon-id="' . esc_attr( $addon->id ) . '" data-addon-type="' . esc_attr( $addon->addon_type ) . '"' . $variation_attr . $condition_attrs . '>';
+        echo '<div class="upad-addon ' . esc_attr( $type_class ) . ' ' . esc_attr( $required_class ) . esc_attr( $condition_class ) . '" data-addon-id="' . esc_attr( $addon->id ) . '" data-addon-type="' . esc_attr( $addon->addon_type ) . '"' . $variation_attr . $condition_attrs . '>';
 
         // Title
         $title_format = ! empty( $addon->title_format ) ? $addon->title_format : 'label';
         if ( $title_format !== 'hide' ) {
             $tag = $title_format === 'heading' ? 'h4' : 'label';
-            echo '<' . $tag . ' class="wcos-addon-title">';
+            echo '<' . $tag . ' class="upad-addon-title">';
             echo esc_html( $addon->title );
             if ( $addon->required ) {
-                echo '<span class="wcos-required">*</span>';
+                echo '<span class="upad-required">*</span>';
             }
             echo '</' . $tag . '>';
         }
 
         // Description
         if ( ! empty( $addon->description ) ) {
-            echo '<div class="wcos-addon-description">' . wp_kses_post( $addon->description ) . '</div>';
+            echo '<div class="upad-addon-description">' . wp_kses_post( $addon->description ) . '</div>';
         }
 
         // Render field based on type
@@ -455,7 +455,7 @@ class WCOS_Display {
     private function render_multiple_choice( $addon, $product ) {
         $settings = $addon->settings;
         $display_type = isset( $settings['display_type'] ) ? $settings['display_type'] : 'dropdown';
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
 
         // Find default option
         $default_value = '';
@@ -468,7 +468,7 @@ class WCOS_Display {
 
         switch ( $display_type ) {
             case 'dropdown':
-                echo '<select name="' . esc_attr( $field_name ) . '" class="wcos-field wcos-dropdown">';
+                echo '<select name="' . esc_attr( $field_name ) . '" class="upad-field upad-dropdown">';
                 echo '<option value="">' . esc_html__( 'Select an option...', 'wc-options-studio' ) . '</option>';
                 
                 foreach ( $addon->options as $option ) {
@@ -488,14 +488,14 @@ class WCOS_Display {
                 break;
 
             case 'radio':
-                echo '<div class="wcos-radio-group">';
+                echo '<div class="upad-radio-group">';
                 
                 // None option
                 if ( ! empty( $settings['show_none_option'] ) && ! $addon->required ) {
                     $checked = empty( $default_value ) ? 'checked' : '';
-                    echo '<label class="wcos-radio-label">';
-                    echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="" class="wcos-field wcos-radio" ' . $checked . '>';
-                    echo '<span class="wcos-radio-text">' . esc_html__( 'None', 'wc-options-studio' ) . '</span>';
+                    echo '<label class="upad-radio-label">';
+                    echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="" class="upad-field upad-radio" ' . $checked . '>';
+                    echo '<span class="upad-radio-text">' . esc_html__( 'None', 'wc-options-studio' ) . '</span>';
                     echo '</label>';
                 }
 
@@ -504,11 +504,11 @@ class WCOS_Display {
                     $checked = checked( $default_value, $option->id, false );
                     $stock_class = $this->get_stock_class( $option );
                     
-                    echo '<label class="wcos-radio-label ' . esc_attr( $stock_class ) . '">';
-                    echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="wcos-field wcos-radio" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
-                    echo '<span class="wcos-radio-text">' . esc_html( $option->label ) . '</span>';
+                    echo '<label class="upad-radio-label ' . esc_attr( $stock_class ) . '">';
+                    echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-radio" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
+                    echo '<span class="upad-radio-text">' . esc_html( $option->label ) . '</span>';
                     if ( $price_display ) {
-                        echo '<span class="wcos-option-price">' . $price_display . '</span>';
+                        echo '<span class="upad-option-price">' . $price_display . '</span>';
                     }
                     echo $this->get_stock_badge( $option );
                     echo '</label>';
@@ -518,19 +518,19 @@ class WCOS_Display {
                 break;
 
             case 'images':
-                echo '<div class="wcos-image-group">';
+                echo '<div class="upad-image-group">';
                 
                 foreach ( $addon->options as $option ) {
                     $checked = checked( $default_value, $option->id, false );
                     $image_url = $option->image_id ? wp_get_attachment_image_url( $option->image_id, 'thumbnail' ) : wc_placeholder_img_src( 'thumbnail' );
                     $stock_class = $this->get_stock_class( $option );
                     
-                    echo '<label class="wcos-image-label ' . esc_attr( $stock_class ) . '">';
-                    echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="wcos-field wcos-radio" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
-                    echo '<span class="wcos-image-wrap">';
+                    echo '<label class="upad-image-label ' . esc_attr( $stock_class ) . '">';
+                    echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-radio" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
+                    echo '<span class="upad-image-wrap">';
                     echo '<img src="' . esc_url( $image_url ) . '" alt="' . esc_attr( $option->label ) . '">';
                     echo '</span>';
-                    echo '<span class="wcos-image-text">' . esc_html( $option->label ) . '</span>';
+                    echo '<span class="upad-image-text">' . esc_html( $option->label ) . '</span>';
                     echo $this->get_stock_badge( $option );
                     echo '</label>';
                 }
@@ -544,7 +544,7 @@ class WCOS_Display {
      * Render checkboxes addon
      */
     private function render_checkboxes( $addon, $product ) {
-        $field_name = 'wcos_addon[' . $addon->id . '][]';
+        $field_name = 'upad_addon[' . $addon->id . '][]';
         $settings = $addon->settings;
         
         // Get settings
@@ -568,11 +568,11 @@ class WCOS_Display {
             $data_attrs .= ' data-allow-same="1"';
         }
 
-        echo '<div class="wcos-checkbox-group"' . $data_attrs . '>';
+        echo '<div class="upad-checkbox-group"' . $data_attrs . '>';
         
         // Show selection hint
         if ( $link_to_quantity ) {
-            echo '<p class="wcos-selection-hint wcos-qty-linked-hint">';
+            echo '<p class="upad-selection-hint upad-qty-linked-hint">';
             if ( $allow_same_option ) {
                 esc_html_e( 'Select flavors to match your quantity (can repeat)', 'wc-options-studio' );
             } else {
@@ -580,7 +580,7 @@ class WCOS_Display {
             }
             echo '</p>';
         } elseif ( $min_selections > 0 || $max_selections > 0 ) {
-            echo '<p class="wcos-selection-hint">';
+            echo '<p class="upad-selection-hint">';
             if ( $min_selections > 0 && $max_selections > 0 ) {
                 if ( $min_selections === $max_selections ) {
                     printf( 
@@ -610,30 +610,30 @@ class WCOS_Display {
 
         // Quantity-linked with same option allowed = quantity inputs per option
         if ( $link_to_quantity && $allow_same_option ) {
-            $qty_field_name = 'wcos_addon_qty[' . $addon->id . ']';
+            $qty_field_name = 'upad_addon_qty[' . $addon->id . ']';
             
             foreach ( $addon->options as $option ) {
                 $price_display = $this->get_price_display( $option );
                 $stock_class = $this->get_stock_class( $option );
                 
-                echo '<div class="wcos-qty-option ' . esc_attr( $stock_class ) . '" data-option-id="' . esc_attr( $option->id ) . '">';
-                echo '<span class="wcos-option-label">' . esc_html( $option->label ) . '</span>';
+                echo '<div class="upad-qty-option ' . esc_attr( $stock_class ) . '" data-option-id="' . esc_attr( $option->id ) . '">';
+                echo '<span class="upad-option-label">' . esc_html( $option->label ) . '</span>';
                 if ( $price_display ) {
-                    echo '<span class="wcos-option-price">' . $price_display . ' ' . esc_html__( 'each', 'wc-options-studio' ) . '</span>';
+                    echo '<span class="upad-option-price">' . $price_display . ' ' . esc_html__( 'each', 'wc-options-studio' ) . '</span>';
                 }
-                echo '<div class="wcos-qty-selector">';
-                echo '<button type="button" class="wcos-option-qty-minus">−</button>';
-                echo '<input type="number" name="' . esc_attr( $qty_field_name ) . '[' . esc_attr( $option->id ) . ']" value="0" min="0" class="wcos-option-qty-input wcos-field" data-option-id="' . esc_attr( $option->id ) . '" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '">';
-                echo '<button type="button" class="wcos-option-qty-plus">+</button>';
+                echo '<div class="upad-qty-selector">';
+                echo '<button type="button" class="upad-option-qty-minus">−</button>';
+                echo '<input type="number" name="' . esc_attr( $qty_field_name ) . '[' . esc_attr( $option->id ) . ']" value="0" min="0" class="upad-option-qty-input upad-field" data-option-id="' . esc_attr( $option->id ) . '" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '">';
+                echo '<button type="button" class="upad-option-qty-plus">+</button>';
                 echo '</div>';
                 echo $this->get_stock_badge( $option );
                 echo '</div>';
             }
             
             // Total counter
-            echo '<div class="wcos-qty-total">';
-            echo '<span class="wcos-qty-total-label">' . esc_html__( 'Selected:', 'wc-options-studio' ) . '</span> ';
-            echo '<span class="wcos-qty-total-count">0</span> / <span class="wcos-qty-total-required">1</span>';
+            echo '<div class="upad-qty-total">';
+            echo '<span class="upad-qty-total-label">' . esc_html__( 'Selected:', 'wc-options-studio' ) . '</span> ';
+            echo '<span class="upad-qty-total-count">0</span> / <span class="upad-qty-total-required">1</span>';
             echo '</div>';
         } else {
             // Standard checkboxes
@@ -642,11 +642,11 @@ class WCOS_Display {
                 $checked = $option->is_default ? 'checked' : '';
                 $stock_class = $this->get_stock_class( $option );
                 
-                echo '<label class="wcos-checkbox-label ' . esc_attr( $stock_class ) . '">';
-                echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="wcos-field wcos-checkbox" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
-                echo '<span class="wcos-checkbox-text">' . esc_html( $option->label ) . '</span>';
+                echo '<label class="upad-checkbox-label ' . esc_attr( $stock_class ) . '">';
+                echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-checkbox" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
+                echo '<span class="upad-checkbox-text">' . esc_html( $option->label ) . '</span>';
                 if ( $price_display ) {
-                    echo '<span class="wcos-option-price">' . $price_display . '</span>';
+                    echo '<span class="upad-option-price">' . $price_display . '</span>';
                 }
                 echo $this->get_stock_badge( $option );
                 echo '</label>';
@@ -661,7 +661,7 @@ class WCOS_Display {
      */
     private function render_short_text( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
         $placeholder = isset( $settings['placeholder'] ) ? $settings['placeholder'] : '';
         $max_length = isset( $settings['max_length'] ) ? absint( $settings['max_length'] ) : '';
         
@@ -673,7 +673,7 @@ class WCOS_Display {
             $attrs .= ' required';
         }
 
-        echo '<input type="text" name="' . esc_attr( $field_name ) . '" class="wcos-field wcos-text-input" placeholder="' . esc_attr( $placeholder ) . '"' . $attrs . '>';
+        echo '<input type="text" name="' . esc_attr( $field_name ) . '" class="upad-field upad-text-input" placeholder="' . esc_attr( $placeholder ) . '"' . $attrs . '>';
         
         $this->render_price_info( $addon );
     }
@@ -683,7 +683,7 @@ class WCOS_Display {
      */
     private function render_long_text( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
         $placeholder = isset( $settings['placeholder'] ) ? $settings['placeholder'] : '';
         $rows = isset( $settings['rows'] ) ? absint( $settings['rows'] ) : 4;
         $max_length = isset( $settings['max_length'] ) ? absint( $settings['max_length'] ) : '';
@@ -697,10 +697,10 @@ class WCOS_Display {
             $attrs .= ' required';
         }
 
-        echo '<textarea name="' . esc_attr( $field_name ) . '" class="wcos-field wcos-textarea" placeholder="' . esc_attr( $placeholder ) . '" rows="' . esc_attr( $rows ) . '"' . $attrs . '></textarea>';
+        echo '<textarea name="' . esc_attr( $field_name ) . '" class="upad-field upad-textarea" placeholder="' . esc_attr( $placeholder ) . '" rows="' . esc_attr( $rows ) . '"' . $attrs . '></textarea>';
         
         if ( $show_counter && $max_length ) {
-            echo '<div class="wcos-char-counter"><span class="wcos-chars-remaining">' . $max_length . '</span> ' . esc_html__( 'characters remaining', 'wc-options-studio' ) . '</div>';
+            echo '<div class="upad-char-counter"><span class="upad-chars-remaining">' . $max_length . '</span> ' . esc_html__( 'characters remaining', 'wc-options-studio' ) . '</div>';
         }
 
         $this->render_price_info( $addon );
@@ -711,20 +711,20 @@ class WCOS_Display {
      */
     private function render_file_upload( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . '][]';
+        $field_name = 'upad_addon[' . $addon->id . '][]';
         $allowed_types = isset( $settings['allowed_extensions'] ) ? $settings['allowed_extensions'] : '';
         $max_size = isset( $settings['max_file_size'] ) ? floatval( $settings['max_file_size'] ) : 5;
         $max_files = isset( $settings['max_files'] ) ? absint( $settings['max_files'] ) : 1;
 
-        echo '<div class="wcos-file-upload-wrapper" data-max-files="' . esc_attr( $max_files ) . '" data-addon-id="' . esc_attr( $addon->id ) . '">';
+        echo '<div class="upad-file-upload-wrapper" data-max-files="' . esc_attr( $max_files ) . '" data-addon-id="' . esc_attr( $addon->id ) . '">';
         
-        echo '<div class="wcos-file-dropzone">';
-        echo '<input type="file" name="wcos_file_' . esc_attr( $addon->id ) . '" class="wcos-file-input" accept="' . esc_attr( $this->get_accept_string( $allowed_types ) ) . '" ' . ( $max_files > 1 ? 'multiple' : '' ) . '>';
-        echo '<input type="hidden" name="' . esc_attr( $field_name ) . '" class="wcos-file-hash">';
-        echo '<div class="wcos-dropzone-content">';
-        echo '<span class="wcos-dropzone-icon dashicons dashicons-upload"></span>';
-        echo '<span class="wcos-dropzone-text">' . esc_html__( 'Drop files here or click to upload', 'wc-options-studio' ) . '</span>';
-        echo '<span class="wcos-dropzone-info">';
+        echo '<div class="upad-file-dropzone">';
+        echo '<input type="file" name="upad_file_' . esc_attr( $addon->id ) . '" class="upad-file-input" accept="' . esc_attr( $this->get_accept_string( $allowed_types ) ) . '" ' . ( $max_files > 1 ? 'multiple' : '' ) . '>';
+        echo '<input type="hidden" name="' . esc_attr( $field_name ) . '" class="upad-file-hash">';
+        echo '<div class="upad-dropzone-content">';
+        echo '<span class="upad-dropzone-icon dashicons dashicons-upload"></span>';
+        echo '<span class="upad-dropzone-text">' . esc_html__( 'Drop files here or click to upload', 'wc-options-studio' ) . '</span>';
+        echo '<span class="upad-dropzone-info">';
         if ( $allowed_types ) {
             echo esc_html( sprintf( __( 'Allowed: %s', 'wc-options-studio' ), strtoupper( $allowed_types ) ) ) . '<br>';
         }
@@ -733,7 +733,7 @@ class WCOS_Display {
         echo '</div>';
         echo '</div>';
 
-        echo '<div class="wcos-uploaded-files-list"></div>';
+        echo '<div class="upad-uploaded-files-list"></div>';
         
         echo '</div>';
 
@@ -745,7 +745,7 @@ class WCOS_Display {
      */
     private function render_customer_price( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
         $default = isset( $settings['default_price'] ) ? floatval( $settings['default_price'] ) : '';
         $min = isset( $settings['min_price'] ) ? floatval( $settings['min_price'] ) : '';
         $max = isset( $settings['max_price'] ) ? floatval( $settings['max_price'] ) : '';
@@ -761,9 +761,9 @@ class WCOS_Display {
             $attrs .= ' required';
         }
 
-        echo '<div class="wcos-price-input-wrapper">';
-        echo '<span class="wcos-currency-symbol">' . get_woocommerce_currency_symbol() . '</span>';
-        echo '<input type="number" name="' . esc_attr( $field_name ) . '" class="wcos-field wcos-price-input" value="' . esc_attr( $default ) . '" ' . $attrs . '>';
+        echo '<div class="upad-price-input-wrapper">';
+        echo '<span class="upad-currency-symbol">' . get_woocommerce_currency_symbol() . '</span>';
+        echo '<input type="number" name="' . esc_attr( $field_name ) . '" class="upad-field upad-price-input" value="' . esc_attr( $default ) . '" ' . $attrs . '>';
         echo '</div>';
     }
 
@@ -772,7 +772,7 @@ class WCOS_Display {
      */
     private function render_quantity( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
         $default = isset( $settings['default_quantity'] ) ? absint( $settings['default_quantity'] ) : 1;
         $min = isset( $settings['min_quantity'] ) ? absint( $settings['min_quantity'] ) : 0;
         $max = isset( $settings['max_quantity'] ) ? absint( $settings['max_quantity'] ) : '';
@@ -786,10 +786,10 @@ class WCOS_Display {
             $attrs .= ' required';
         }
 
-        echo '<div class="wcos-quantity-wrapper">';
-        echo '<button type="button" class="wcos-qty-btn wcos-qty-minus">-</button>';
-        echo '<input type="number" name="' . esc_attr( $field_name ) . '" class="wcos-field wcos-quantity-input" value="' . esc_attr( $default ) . '" ' . $attrs . '>';
-        echo '<button type="button" class="wcos-qty-btn wcos-qty-plus">+</button>';
+        echo '<div class="upad-quantity-wrapper">';
+        echo '<button type="button" class="upad-qty-btn upad-qty-minus">-</button>';
+        echo '<input type="number" name="' . esc_attr( $field_name ) . '" class="upad-field upad-quantity-input" value="' . esc_attr( $default ) . '" ' . $attrs . '>';
+        echo '<button type="button" class="upad-qty-btn upad-qty-plus">+</button>';
         echo '</div>';
 
         $this->render_price_info( $addon );
@@ -807,14 +807,14 @@ class WCOS_Display {
      */
     private function render_date_picker( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
 
         $attrs = '';
         if ( $addon->required ) {
             $attrs .= ' required';
         }
 
-        echo '<input type="text" name="' . esc_attr( $field_name ) . '" class="wcos-field wcos-datepicker" ' . $attrs . ' readonly>';
+        echo '<input type="text" name="' . esc_attr( $field_name ) . '" class="upad-field upad-datepicker" ' . $attrs . ' readonly>';
         
         $this->render_price_info( $addon );
     }
@@ -824,10 +824,10 @@ class WCOS_Display {
      */
     private function render_color_picker( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
         $default = isset( $settings['default_color'] ) ? $settings['default_color'] : '#000000';
 
-        echo '<input type="color" name="' . esc_attr( $field_name ) . '" class="wcos-field wcos-color-picker" value="' . esc_attr( $default ) . '">';
+        echo '<input type="color" name="' . esc_attr( $field_name ) . '" class="upad-field upad-color-picker" value="' . esc_attr( $default ) . '">';
         
         $this->render_price_info( $addon );
     }
@@ -837,7 +837,7 @@ class WCOS_Display {
      */
     private function render_image_swatches( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
         $size = isset( $settings['swatch_size'] ) ? $settings['swatch_size'] : 'medium';
         $style = isset( $settings['swatch_style'] ) ? $settings['swatch_style'] : 'square';
         $show_label = ! empty( $settings['show_label'] );
@@ -855,7 +855,7 @@ class WCOS_Display {
         $input_type = $multiple ? 'checkbox' : 'radio';
         $name = $multiple ? $field_name . '[]' : $field_name;
 
-        echo '<div class="wcos-swatches-group wcos-swatches-' . esc_attr( $style ) . '" data-size="' . esc_attr( $swatch_size ) . '">';
+        echo '<div class="upad-swatches-group upad-swatches-' . esc_attr( $style ) . '" data-size="' . esc_attr( $swatch_size ) . '">';
 
         foreach ( $addon->options as $option ) {
             $price_display = $this->get_price_display( $option );
@@ -867,23 +867,23 @@ class WCOS_Display {
             if ( ! empty( $option->image_url ) ) {
                 $swatch_content = '<img src="' . esc_url( $option->image_url ) . '" alt="' . esc_attr( $option->label ) . '">';
             } elseif ( ! empty( $option->color ) ) {
-                $swatch_content = '<span class="wcos-swatch-color" style="background-color:' . esc_attr( $option->color ) . '"></span>';
+                $swatch_content = '<span class="upad-swatch-color" style="background-color:' . esc_attr( $option->color ) . '"></span>';
             } else {
-                $swatch_content = '<span class="wcos-swatch-placeholder">' . esc_html( substr( $option->label, 0, 2 ) ) . '</span>';
+                $swatch_content = '<span class="upad-swatch-placeholder">' . esc_html( substr( $option->label, 0, 2 ) ) . '</span>';
             }
 
-            echo '<label class="wcos-swatch-label ' . esc_attr( $stock_class ) . '"';
+            echo '<label class="upad-swatch-label ' . esc_attr( $stock_class ) . '"';
             if ( $show_tooltip ) {
                 echo ' title="' . esc_attr( $option->label . ( $price_display ? ' ' . wp_strip_all_tags( $price_display ) : '' ) ) . '"';
             }
             echo ' style="width:' . esc_attr( $swatch_size ) . ';height:' . esc_attr( $swatch_size ) . '">';
-            echo '<input type="' . esc_attr( $input_type ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( $option->id ) . '" class="wcos-field wcos-swatch-input" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
-            echo '<span class="wcos-swatch-visual">' . $swatch_content . '</span>';
+            echo '<input type="' . esc_attr( $input_type ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-swatch-input" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
+            echo '<span class="upad-swatch-visual">' . $swatch_content . '</span>';
             if ( $show_label ) {
-                echo '<span class="wcos-swatch-text">' . esc_html( $option->label ) . '</span>';
+                echo '<span class="upad-swatch-text">' . esc_html( $option->label ) . '</span>';
             }
             if ( $price_display ) {
-                echo '<span class="wcos-swatch-price">' . $price_display . '</span>';
+                echo '<span class="upad-swatch-price">' . $price_display . '</span>';
             }
             echo '</label>';
         }
@@ -896,7 +896,7 @@ class WCOS_Display {
      */
     private function render_datetime_picker( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
         
         $date_format = isset( $settings['date_format'] ) ? $settings['date_format'] : 'Y-m-d';
         $time_format = isset( $settings['time_format'] ) ? $settings['time_format'] : 'H:i';
@@ -907,10 +907,10 @@ class WCOS_Display {
         $time_end = isset( $settings['time_end'] ) ? $settings['time_end'] : '17:00';
         $disabled_days = isset( $settings['disabled_days'] ) ? (array) $settings['disabled_days'] : array();
 
-        echo '<div class="wcos-datetime-wrapper" data-time-interval="' . esc_attr( $time_interval ) . '" data-time-start="' . esc_attr( $time_start ) . '" data-time-end="' . esc_attr( $time_end ) . '" data-disabled-days="' . esc_attr( implode( ',', $disabled_days ) ) . '">';
+        echo '<div class="upad-datetime-wrapper" data-time-interval="' . esc_attr( $time_interval ) . '" data-time-start="' . esc_attr( $time_start ) . '" data-time-end="' . esc_attr( $time_end ) . '" data-disabled-days="' . esc_attr( implode( ',', $disabled_days ) ) . '">';
         
         // Date input
-        echo '<div class="wcos-datetime-date">';
+        echo '<div class="upad-datetime-date">';
         echo '<label>' . esc_html__( 'Date', 'wc-options-studio' ) . '</label>';
         
         $min_date_val = '';
@@ -922,13 +922,13 @@ class WCOS_Display {
             $min_date_val = date( 'Y-m-d', strtotime( '+' . $min_days_ahead . ' days' ) );
         }
         
-        echo '<input type="date" name="' . esc_attr( $field_name ) . '[date]" class="wcos-field wcos-datetime-date-input" min="' . esc_attr( $min_date_val ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
+        echo '<input type="date" name="' . esc_attr( $field_name ) . '[date]" class="upad-field upad-datetime-date-input" min="' . esc_attr( $min_date_val ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
         echo '</div>';
         
         // Time input
-        echo '<div class="wcos-datetime-time">';
+        echo '<div class="upad-datetime-time">';
         echo '<label>' . esc_html__( 'Time', 'wc-options-studio' ) . '</label>';
-        echo '<select name="' . esc_attr( $field_name ) . '[time]" class="wcos-field wcos-datetime-time-input">';
+        echo '<select name="' . esc_attr( $field_name ) . '[time]" class="upad-field upad-datetime-time-input">';
         echo '<option value="">' . esc_html__( 'Select time...', 'wc-options-studio' ) . '</option>';
         
         // Generate time slots
@@ -955,7 +955,7 @@ class WCOS_Display {
      */
     private function render_dimensions( $addon, $product ) {
         $settings = $addon->settings;
-        $field_name = 'wcos_addon[' . $addon->id . ']';
+        $field_name = 'upad_addon[' . $addon->id . ']';
         
         $inputs = isset( $settings['inputs'] ) ? $settings['inputs'] : 'length_width';
         $unit_label = isset( $settings['unit_label'] ) ? $settings['unit_label'] : 'inches';
@@ -967,34 +967,34 @@ class WCOS_Display {
         $custom_formula = isset( $settings['custom_formula'] ) ? $settings['custom_formula'] : '';
         $min_price = isset( $settings['min_price'] ) ? floatval( $settings['min_price'] ) : 0;
 
-        echo '<div class="wcos-dimensions-wrapper" data-formula="' . esc_attr( $formula ) . '" data-price-per-unit="' . esc_attr( $price_per_unit ) . '" data-custom-formula="' . esc_attr( $custom_formula ) . '" data-min-price="' . esc_attr( $min_price ) . '">';
+        echo '<div class="upad-dimensions-wrapper" data-formula="' . esc_attr( $formula ) . '" data-price-per-unit="' . esc_attr( $price_per_unit ) . '" data-custom-formula="' . esc_attr( $custom_formula ) . '" data-min-price="' . esc_attr( $min_price ) . '">';
         
         // Length input
-        echo '<div class="wcos-dimension-input">';
+        echo '<div class="upad-dimension-input">';
         echo '<label>' . esc_html__( 'Length', 'wc-options-studio' ) . ' (' . esc_html( $unit_label ) . ')</label>';
-        echo '<input type="number" name="' . esc_attr( $field_name ) . '[length]" class="wcos-field wcos-dimension-length" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
+        echo '<input type="number" name="' . esc_attr( $field_name ) . '[length]" class="upad-field upad-dimension-length" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
         echo '</div>';
         
         // Width input
         if ( $inputs === 'length_width' || $inputs === 'length_width_height' ) {
-            echo '<div class="wcos-dimension-input">';
+            echo '<div class="upad-dimension-input">';
             echo '<label>' . esc_html__( 'Width', 'wc-options-studio' ) . ' (' . esc_html( $unit_label ) . ')</label>';
-            echo '<input type="number" name="' . esc_attr( $field_name ) . '[width]" class="wcos-field wcos-dimension-width" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
+            echo '<input type="number" name="' . esc_attr( $field_name ) . '[width]" class="upad-field upad-dimension-width" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
             echo '</div>';
         }
         
         // Height input
         if ( $inputs === 'length_width_height' ) {
-            echo '<div class="wcos-dimension-input">';
+            echo '<div class="upad-dimension-input">';
             echo '<label>' . esc_html__( 'Height', 'wc-options-studio' ) . ' (' . esc_html( $unit_label ) . ')</label>';
-            echo '<input type="number" name="' . esc_attr( $field_name ) . '[height]" class="wcos-field wcos-dimension-height" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
+            echo '<input type="number" name="' . esc_attr( $field_name ) . '[height]" class="upad-field upad-dimension-height" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
             echo '</div>';
         }
         
         // Calculated price display
-        echo '<div class="wcos-dimension-price">';
-        echo '<span class="wcos-dimension-price-label">' . esc_html__( 'Price:', 'wc-options-studio' ) . '</span> ';
-        echo '<span class="wcos-dimension-price-value">' . wc_price( 0 ) . '</span>';
+        echo '<div class="upad-dimension-price">';
+        echo '<span class="upad-dimension-price-label">' . esc_html__( 'Price:', 'wc-options-studio' ) . '</span> ';
+        echo '<span class="upad-dimension-price-value">' . wc_price( 0 ) . '</span>';
         echo '</div>';
         
         echo '</div>';
@@ -1012,7 +1012,7 @@ class WCOS_Display {
         
         // Sections are rendered differently - they wrap other addons
         // This is a marker that frontend JS will use to group addons
-        echo '<div class="wcos-section-marker" data-section-id="' . esc_attr( $addon->id ) . '" data-collapsed="' . ( $collapsed ? '1' : '0' ) . '" data-style="' . esc_attr( $style ) . '" data-show-count="' . ( $show_count ? '1' : '0' ) . '"></div>';
+        echo '<div class="upad-section-marker" data-section-id="' . esc_attr( $addon->id ) . '" data-collapsed="' . ( $collapsed ? '1' : '0' ) . '" data-style="' . esc_attr( $style ) . '" data-show-count="' . ( $show_count ? '1' : '0' ) . '"></div>';
     }
 
     /**
@@ -1050,7 +1050,7 @@ class WCOS_Display {
         $price_type = isset( $settings['price_type'] ) ? $settings['price_type'] : 'flat';
         $sign = $price >= 0 ? '+' : '';
 
-        echo '<div class="wcos-field-price-info">';
+        echo '<div class="upad-field-price-info">';
         
         switch ( $price_type ) {
             case 'percentage':
@@ -1085,7 +1085,7 @@ class WCOS_Display {
      * Get stock attributes for option
      */
     private function get_stock_attributes( $option ) {
-        $data = apply_filters( 'wcos_option_data', array(), $option );
+        $data = apply_filters( 'upad_option_data', array(), $option );
         
         if ( isset( $data['in_stock'] ) && ! $data['in_stock'] ) {
             return 'disabled data-out-of-stock="1"';
@@ -1098,14 +1098,14 @@ class WCOS_Display {
      * Get stock class for option
      */
     private function get_stock_class( $option ) {
-        $data = apply_filters( 'wcos_option_data', array(), $option );
+        $data = apply_filters( 'upad_option_data', array(), $option );
         
         if ( isset( $data['in_stock'] ) && ! $data['in_stock'] ) {
-            return 'wcos-out-of-stock';
+            return 'upad-out-of-stock';
         }
         
         if ( isset( $data['low_stock'] ) && $data['low_stock'] ) {
-            return 'wcos-low-stock';
+            return 'upad-low-stock';
         }
         
         return '';
@@ -1115,14 +1115,14 @@ class WCOS_Display {
      * Get stock badge for option
      */
     private function get_stock_badge( $option ) {
-        $data = apply_filters( 'wcos_option_data', array(), $option );
+        $data = apply_filters( 'upad_option_data', array(), $option );
         
         if ( isset( $data['in_stock'] ) && ! $data['in_stock'] ) {
-            return '<span class="wcos-stock-badge wcos-out-of-stock-badge">' . __( 'Out of stock', 'wc-options-studio' ) . '</span>';
+            return '<span class="upad-stock-badge upad-out-of-stock-badge">' . __( 'Out of stock', 'wc-options-studio' ) . '</span>';
         }
         
         if ( isset( $data['low_stock'] ) && $data['low_stock'] && isset( $data['stock_quantity'] ) ) {
-            return '<span class="wcos-stock-badge wcos-low-stock-badge">' . sprintf( __( 'Only %d left', 'wc-options-studio' ), $data['stock_quantity'] ) . '</span>';
+            return '<span class="upad-stock-badge upad-low-stock-badge">' . sprintf( __( 'Only %d left', 'wc-options-studio' ), $data['stock_quantity'] ) . '</span>';
         }
         
         return '';
@@ -1132,7 +1132,7 @@ class WCOS_Display {
      * Display totals section
      */
     public function display_totals() {
-        if ( 'yes' !== get_option( 'wcos_display_totals', 'yes' ) ) {
+        if ( 'yes' !== get_option( 'upad_display_totals', 'yes' ) ) {
             return;
         }
 
@@ -1147,16 +1147,16 @@ class WCOS_Display {
             return;
         }
 
-        if ( ! WCOS_Product_Addons::instance()->product_has_addons( $product->get_id() ) ) {
+        if ( ! UPAD_Product_Addons::instance()->product_has_addons( $product->get_id() ) ) {
             return;
         }
 
-        echo '<div class="wcos-totals-wrapper" style="display:none;">';
-        echo '<dl class="wcos-product-addon-totals">';
-        echo '<dt class="wcos-options-total-label">' . esc_html__( 'Options Total', 'wc-options-studio' ) . '</dt>';
-        echo '<dd class="wcos-options-total-value">' . wc_price( 0 ) . '</dd>';
-        echo '<dt class="wcos-grand-total-label">' . esc_html__( 'Grand Total', 'wc-options-studio' ) . '</dt>';
-        echo '<dd class="wcos-grand-total-value">' . wc_price( $product->get_price() ) . '</dd>';
+        echo '<div class="upad-totals-wrapper" style="display:none;">';
+        echo '<dl class="upad-product-addon-totals">';
+        echo '<dt class="upad-options-total-label">' . esc_html__( 'Options Total', 'wc-options-studio' ) . '</dt>';
+        echo '<dd class="upad-options-total-value">' . wc_price( 0 ) . '</dd>';
+        echo '<dt class="upad-grand-total-label">' . esc_html__( 'Grand Total', 'wc-options-studio' ) . '</dt>';
+        echo '<dd class="upad-grand-total-value">' . wc_price( $product->get_price() ) . '</dd>';
         echo '</dl>';
         echo '</div>';
     }

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Global_Addons {
+class UPAD_Global_Addons {
 
     protected static $_instance = null;
 
@@ -36,7 +36,7 @@ class WCOS_Global_Addons {
 
         $args = wp_parse_args( $args, $defaults );
 
-        $sql = "SELECT * FROM {$wpdb->prefix}wcos_global_groups WHERE 1=1";
+        $sql = "SELECT * FROM {$wpdb->prefix}upad_global_groups WHERE 1=1";
 
         if ( $args['enabled'] !== null ) {
             $sql .= $wpdb->prepare( " AND enabled = %d", $args['enabled'] ? 1 : 0 );
@@ -64,7 +64,7 @@ class WCOS_Global_Addons {
         global $wpdb;
 
         return $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_global_groups WHERE id = %d",
+            "SELECT * FROM {$wpdb->prefix}upad_global_groups WHERE id = %d",
             $group_id
         ) );
     }
@@ -89,7 +89,7 @@ class WCOS_Global_Addons {
         }
 
         $result = $wpdb->insert(
-            $wpdb->prefix . 'wcos_global_groups',
+            $wpdb->prefix . 'upad_global_groups',
             array(
                 'name'                   => sanitize_text_field( $data['name'] ),
                 'priority'               => absint( $data['priority'] ),
@@ -142,7 +142,7 @@ class WCOS_Global_Addons {
         }
 
         return $wpdb->update(
-            $wpdb->prefix . 'wcos_global_groups',
+            $wpdb->prefix . 'upad_global_groups',
             $update_data,
             array( 'id' => $group_id ),
             $format,
@@ -158,22 +158,22 @@ class WCOS_Global_Addons {
 
         // Delete addon options first
         $wpdb->query( $wpdb->prepare(
-            "DELETE o FROM {$wpdb->prefix}wcos_addon_options o
-             INNER JOIN {$wpdb->prefix}wcos_addons a ON o.addon_id = a.id
+            "DELETE o FROM {$wpdb->prefix}upad_addon_options o
+             INNER JOIN {$wpdb->prefix}upad_addons a ON o.addon_id = a.id
              WHERE a.group_id = %d",
             $group_id
         ) );
 
         // Delete addons
         $wpdb->delete(
-            $wpdb->prefix . 'wcos_addons',
+            $wpdb->prefix . 'upad_addons',
             array( 'group_id' => $group_id ),
             array( '%d' )
         );
 
         // Delete group
         return $wpdb->delete(
-            $wpdb->prefix . 'wcos_global_groups',
+            $wpdb->prefix . 'upad_global_groups',
             array( 'id' => $group_id ),
             array( '%d' )
         );
@@ -186,7 +186,7 @@ class WCOS_Global_Addons {
         global $wpdb;
 
         $results = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addons 
+            "SELECT * FROM {$wpdb->prefix}upad_addons 
              WHERE group_id = %d AND enabled = 1
              ORDER BY position ASC",
             $group_id
@@ -219,7 +219,7 @@ class WCOS_Global_Addons {
         }
 
         // Check if product excludes global addons
-        if ( 'no' === get_post_meta( $product->get_id(), '_wcos_use_global_addons', true ) ) {
+        if ( 'no' === get_post_meta( $product->get_id(), '_upad_use_global_addons', true ) ) {
             return array();
         }
 
@@ -256,7 +256,7 @@ class WCOS_Global_Addons {
         global $wpdb;
 
         $options = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addon_options 
+            "SELECT * FROM {$wpdb->prefix}upad_addon_options 
              WHERE addon_id = %d AND is_hidden = 0
              ORDER BY position ASC",
             $addon_id
@@ -297,13 +297,13 @@ class WCOS_Global_Addons {
         // Duplicate addons
         global $wpdb;
         $addons = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addons WHERE group_id = %d",
+            "SELECT * FROM {$wpdb->prefix}upad_addons WHERE group_id = %d",
             $group_id
         ) );
 
         foreach ( $addons as $addon ) {
             $new_addon_id = $wpdb->insert(
-                $wpdb->prefix . 'wcos_addons',
+                $wpdb->prefix . 'upad_addons',
                 array(
                     'group_id'     => $new_group_id,
                     'product_id'   => null,
@@ -324,13 +324,13 @@ class WCOS_Global_Addons {
 
                 // Duplicate options
                 $options = $wpdb->get_results( $wpdb->prepare(
-                    "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE addon_id = %d",
+                    "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d",
                     $addon->id
                 ) );
 
                 foreach ( $options as $option ) {
                     $wpdb->insert(
-                        $wpdb->prefix . 'wcos_addon_options',
+                        $wpdb->prefix . 'upad_addon_options',
                         array(
                             'addon_id'          => $new_addon_id,
                             'label'             => $option->label,

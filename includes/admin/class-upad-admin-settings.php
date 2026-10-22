@@ -13,23 +13,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class WCOS_Admin_Settings
+ * Class UPAD_Admin_Settings
  *
  * @since 1.0.0
  */
-class WCOS_Admin_Settings {
+class UPAD_Admin_Settings {
 
     /**
      * Single instance of the class.
      *
-     * @var WCOS_Admin_Settings
+     * @var UPAD_Admin_Settings
      */
     protected static $_instance = null;
 
     /**
      * Main Instance.
      *
-     * @return WCOS_Admin_Settings
+     * @return UPAD_Admin_Settings
      */
     public static function instance() {
         if ( is_null( self::$_instance ) ) {
@@ -50,22 +50,22 @@ class WCOS_Admin_Settings {
      */
     public function register_settings() {
         // File Upload Settings
-        register_setting( 'wcos_settings', 'wcos_file_upload_enabled' );
-        register_setting( 'wcos_settings', 'wcos_allowed_file_types' );
-        register_setting( 'wcos_settings', 'wcos_max_file_size' );
-        register_setting( 'wcos_settings', 'wcos_secure_uploads' );
+        register_setting( 'upad_settings', 'upad_file_upload_enabled' );
+        register_setting( 'upad_settings', 'upad_allowed_file_types' );
+        register_setting( 'upad_settings', 'upad_max_file_size' );
+        register_setting( 'upad_settings', 'upad_secure_uploads' );
 
         // Display Settings
-        register_setting( 'wcos_settings', 'wcos_display_option_prices' );
-        register_setting( 'wcos_settings', 'wcos_display_totals' );
+        register_setting( 'upad_settings', 'upad_display_option_prices' );
+        register_setting( 'upad_settings', 'upad_display_totals' );
 
         // Inventory Settings
-        register_setting( 'wcos_settings', 'wcos_enable_inventory_tracking' );
-        register_setting( 'wcos_settings', 'wcos_add_as_line_items' );
+        register_setting( 'upad_settings', 'upad_enable_inventory_tracking' );
+        register_setting( 'upad_settings', 'upad_add_as_line_items' );
 
         // General Settings
-        register_setting( 'wcos_settings', 'wcos_inherit_global_addons' );
-        register_setting( 'wcos_settings', 'wcos_delete_data_on_uninstall' );
+        register_setting( 'upad_settings', 'upad_inherit_global_addons' );
+        register_setting( 'upad_settings', 'upad_delete_data_on_uninstall' );
     }
 
     /**
@@ -92,14 +92,14 @@ class WCOS_Admin_Settings {
         return array(
             'general' => array(
                 array(
-                    'id'      => 'wcos_inherit_global_addons',
+                    'id'      => 'upad_inherit_global_addons',
                     'title'   => __( 'Inherit Global Add-ons', 'wc-options-studio' ),
                     'type'    => 'checkbox',
                     'default' => 'yes',
                     'desc'    => __( 'Products inherit global add-ons by default.', 'wc-options-studio' ),
                 ),
                 array(
-                    'id'      => 'wcos_delete_data_on_uninstall',
+                    'id'      => 'upad_delete_data_on_uninstall',
                     'title'   => __( 'Delete Data on Uninstall', 'wc-options-studio' ),
                     'type'    => 'checkbox',
                     'default' => 'no',
@@ -108,21 +108,21 @@ class WCOS_Admin_Settings {
             ),
             'file' => array(
                 array(
-                    'id'      => 'wcos_file_upload_enabled',
+                    'id'      => 'upad_file_upload_enabled',
                     'title'   => __( 'Enable File Uploads', 'wc-options-studio' ),
                     'type'    => 'checkbox',
                     'default' => 'yes',
                     'desc'    => __( 'Allow file upload add-ons.', 'wc-options-studio' ),
                 ),
                 array(
-                    'id'      => 'wcos_allowed_file_types',
+                    'id'      => 'upad_allowed_file_types',
                     'title'   => __( 'Default Allowed File Types', 'wc-options-studio' ),
                     'type'    => 'text',
                     'default' => 'jpg,jpeg,png,gif,pdf,doc,docx',
                     'desc'    => __( 'Comma-separated list of allowed extensions.', 'wc-options-studio' ),
                 ),
                 array(
-                    'id'      => 'wcos_max_file_size',
+                    'id'      => 'upad_max_file_size',
                     'title'   => __( 'Default Max File Size (MB)', 'wc-options-studio' ),
                     'type'    => 'number',
                     'default' => 5,
@@ -132,7 +132,7 @@ class WCOS_Admin_Settings {
                     'desc'    => __( 'Maximum file upload size in megabytes.', 'wc-options-studio' ),
                 ),
                 array(
-                    'id'      => 'wcos_secure_uploads',
+                    'id'      => 'upad_secure_uploads',
                     'title'   => __( 'Secure Uploads', 'wc-options-studio' ),
                     'type'    => 'checkbox',
                     'default' => 'yes',
@@ -141,14 +141,14 @@ class WCOS_Admin_Settings {
             ),
             'display' => array(
                 array(
-                    'id'      => 'wcos_display_option_prices',
+                    'id'      => 'upad_display_option_prices',
                     'title'   => __( 'Display Option Prices', 'wc-options-studio' ),
                     'type'    => 'checkbox',
                     'default' => 'yes',
                     'desc'    => __( 'Show prices next to add-on options.', 'wc-options-studio' ),
                 ),
                 array(
-                    'id'      => 'wcos_display_totals',
+                    'id'      => 'upad_display_totals',
                     'title'   => __( 'Display Totals', 'wc-options-studio' ),
                     'type'    => 'checkbox',
                     'default' => 'yes',
@@ -157,14 +157,14 @@ class WCOS_Admin_Settings {
             ),
             'inventory' => array(
                 array(
-                    'id'      => 'wcos_enable_inventory_tracking',
+                    'id'      => 'upad_enable_inventory_tracking',
                     'title'   => __( 'Inventory Tracking', 'wc-options-studio' ),
                     'type'    => 'checkbox',
                     'default' => 'no',
                     'desc'    => __( 'Track stock for options linked to products.', 'wc-options-studio' ),
                 ),
                 array(
-                    'id'      => 'wcos_add_as_line_items',
+                    'id'      => 'upad_add_as_line_items',
                     'title'   => __( 'Add as Line Items', 'wc-options-studio' ),
                     'type'    => 'checkbox',
                     'default' => 'no',

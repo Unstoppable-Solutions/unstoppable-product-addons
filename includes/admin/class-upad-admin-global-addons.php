@@ -13,23 +13,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class WCOS_Admin_Global_Addons
+ * Class UPAD_Admin_Global_Addons
  *
  * @since 1.0.0
  */
-class WCOS_Admin_Global_Addons {
+class UPAD_Admin_Global_Addons {
 
     /**
      * Single instance of the class.
      *
-     * @var WCOS_Admin_Global_Addons
+     * @var UPAD_Admin_Global_Addons
      */
     protected static $_instance = null;
 
     /**
      * Main Instance.
      *
-     * @return WCOS_Admin_Global_Addons
+     * @return UPAD_Admin_Global_Addons
      */
     public static function instance() {
         if ( is_null( self::$_instance ) ) {
@@ -42,8 +42,8 @@ class WCOS_Admin_Global_Addons {
      * Constructor.
      */
     public function __construct() {
-        add_action( 'wp_ajax_wcos_save_group', array( $this, 'save_group' ) );
-        add_action( 'wp_ajax_wcos_delete_group', array( $this, 'delete_group' ) );
+        add_action( 'wp_ajax_upad_save_group', array( $this, 'save_group' ) );
+        add_action( 'wp_ajax_upad_delete_group', array( $this, 'delete_group' ) );
     }
 
     /**
@@ -53,7 +53,7 @@ class WCOS_Admin_Global_Addons {
      */
     private function verify_admin_request() {
         // Verify nonce
-        if ( ! check_ajax_referer( 'wcos_admin_nonce', 'nonce', false ) ) {
+        if ( ! check_ajax_referer( 'upad_admin_nonce', 'nonce', false ) ) {
             wp_send_json_error( array( 
                 'message' => esc_html__( 'Security check failed. Please refresh the page and try again.', 'wc-options-studio' ) 
             ) );
@@ -117,7 +117,7 @@ class WCOS_Admin_Global_Addons {
 
         if ( $group_id ) {
             // Verify group exists before updating
-            $existing = WCOS_Global_Addons::instance()->get_group( $group_id );
+            $existing = UPAD_Global_Addons::instance()->get_group( $group_id );
             if ( ! $existing ) {
                 wp_send_json_error( array( 
                     'message' => esc_html__( 'Group not found.', 'wc-options-studio' ) 
@@ -125,9 +125,9 @@ class WCOS_Admin_Global_Addons {
                 return;
             }
 
-            $result = WCOS_Global_Addons::instance()->update_group( $group_id, $data );
+            $result = UPAD_Global_Addons::instance()->update_group( $group_id, $data );
         } else {
-            $result = WCOS_Global_Addons::instance()->create_group( $data );
+            $result = UPAD_Global_Addons::instance()->create_group( $data );
             if ( ! is_wp_error( $result ) ) {
                 $group_id = $result;
             }
@@ -166,7 +166,7 @@ class WCOS_Admin_Global_Addons {
         }
 
         // Verify group exists
-        $existing = WCOS_Global_Addons::instance()->get_group( $group_id );
+        $existing = UPAD_Global_Addons::instance()->get_group( $group_id );
         if ( ! $existing ) {
             wp_send_json_error( array( 
                 'message' => esc_html__( 'Group not found.', 'wc-options-studio' ) 
@@ -174,7 +174,7 @@ class WCOS_Admin_Global_Addons {
             return;
         }
 
-        $result = WCOS_Global_Addons::instance()->delete_group( $group_id );
+        $result = UPAD_Global_Addons::instance()->delete_group( $group_id );
 
         if ( is_wp_error( $result ) ) {
             wp_send_json_error( array( 

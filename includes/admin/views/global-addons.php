@@ -10,25 +10,25 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$groups = WCOS_Global_Addons::instance()->get_groups();
-$addon_types = WCOS_Addon_Types::instance()->get_types();
+$groups = UPAD_Global_Addons::instance()->get_groups();
+$addon_types = UPAD_Addon_Types::instance()->get_types();
 ?>
 
-<div class="wcos-global-addons-content">
+<div class="upad-global-addons-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h2 style="margin: 0;"><?php esc_html_e( 'Global Add-ons', 'wc-custom-addons' ); ?></h2>
-        <a href="#" class="button button-primary wcos-add-group-btn">
-            <?php esc_html_e( 'Add New Group', 'wc-custom-addons' ); ?>
+        <h2 style="margin: 0;"><?php esc_html_e( 'Global Add-ons', 'unstoppable-product-addons' ); ?></h2>
+        <a href="#" class="button button-primary upad-add-group-btn">
+            <?php esc_html_e( 'Add New Group', 'unstoppable-product-addons' ); ?>
         </a>
     </div>
 
     <p class="description">
-        <?php esc_html_e( 'Global add-ons are applied to products based on category. Create groups to organize your add-ons.', 'wc-custom-addons' ); ?>
+        <?php esc_html_e( 'Global add-ons are applied to products based on category. Create groups to organize your add-ons.', 'unstoppable-product-addons' ); ?>
     </p>
 
-    <div class="wcos-groups-container">
+    <div class="upad-groups-container">
         <?php if ( empty( $groups ) ) : ?>
-            <div class="wcos-no-groups">
+            <div class="upad-no-groups">
                 <p><?php esc_html_e( 'No global add-on groups yet. Create your first group to get started!', 'wc-options-studio' ); ?></p>
             </div>
         <?php else : ?>
@@ -46,11 +46,11 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                     }
                 }
                 ?>
-                <div class="wcos-group-card" data-group-id="<?php echo esc_attr( $group->id ); ?>">
-                    <div class="wcos-group-header">
-                        <div class="wcos-group-title-section">
+                <div class="upad-group-card" data-group-id="<?php echo esc_attr( $group->id ); ?>">
+                    <div class="upad-group-header">
+                        <div class="upad-group-title-section">
                             <h3><?php echo esc_html( $group->name ?? '' ); ?></h3>
-                            <span class="wcos-group-categories">
+                            <span class="upad-group-categories">
                                 <?php if ( empty( $category_names ) ) : ?>
                                     <em><?php esc_html_e( 'Applies to: All Products', 'wc-options-studio' ); ?></em>
                                 <?php else : ?>
@@ -58,26 +58,26 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                                 <?php endif; ?>
                             </span>
                         </div>
-                        <div class="wcos-group-actions">
-                            <span class="wcos-priority">
+                        <div class="upad-group-actions">
+                            <span class="upad-priority">
                                 <?php echo esc_html( sprintf( __( 'Priority: %d', 'wc-options-studio' ), $group->priority ?? 10 ) ); ?>
                             </span>
-                            <span class="wcos-status <?php echo ! empty( $group->enabled ) ? 'active' : 'inactive'; ?>">
+                            <span class="upad-status <?php echo ! empty( $group->enabled ) ? 'active' : 'inactive'; ?>">
                                 <?php echo ! empty( $group->enabled ) ? esc_html__( 'Active', 'wc-options-studio' ) : esc_html__( 'Inactive', 'wc-options-studio' ); ?>
                             </span>
-                            <button type="button" class="button wcos-edit-group"><?php esc_html_e( 'Edit', 'wc-options-studio' ); ?></button>
-                            <button type="button" class="button wcos-delete-group"><?php esc_html_e( 'Delete', 'wc-options-studio' ); ?></button>
+                            <button type="button" class="button upad-edit-group"><?php esc_html_e( 'Edit', 'wc-options-studio' ); ?></button>
+                            <button type="button" class="button upad-delete-group"><?php esc_html_e( 'Delete', 'wc-options-studio' ); ?></button>
                         </div>
                     </div>
                     
-                    <div class="wcos-group-addons">
+                    <div class="upad-group-addons">
                         <?php
-                        $addons = WCOS_Global_Addons::instance()->get_group_addons( $group->id );
+                        $addons = UPAD_Global_Addons::instance()->get_group_addons( $group->id );
                         if ( empty( $addons ) ) :
                         ?>
-                            <p class="wcos-no-addons"><?php esc_html_e( 'No add-ons in this group.', 'wc-options-studio' ); ?></p>
+                            <p class="upad-no-addons"><?php esc_html_e( 'No add-ons in this group.', 'wc-options-studio' ); ?></p>
                         <?php else : ?>
-                            <table class="wcos-addons-table">
+                            <table class="upad-addons-table">
                                 <thead>
                                     <tr>
                                         <th><?php esc_html_e( 'Add-on', 'wc-options-studio' ); ?></th>
@@ -97,8 +97,8 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                                             ?></td>
                                             <td><?php echo ! empty( $addon->required ) ? '&#10003;' : '&mdash;'; ?></td>
                                             <td>
-                                                <button type="button" class="button-link wcos-edit-addon"><?php esc_html_e( 'Edit', 'wc-options-studio' ); ?></button>
-                                                <button type="button" class="button-link wcos-delete-addon"><?php esc_html_e( 'Delete', 'wc-options-studio' ); ?></button>
+                                                <button type="button" class="button-link upad-edit-addon"><?php esc_html_e( 'Edit', 'wc-options-studio' ); ?></button>
+                                                <button type="button" class="button-link upad-delete-addon"><?php esc_html_e( 'Delete', 'wc-options-studio' ); ?></button>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -106,14 +106,14 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                             </table>
                         <?php endif; ?>
                         
-                        <button type="button" class="button wcos-add-addon" data-group-id="<?php echo esc_attr( $group->id ); ?>"><?php esc_html_e( 'Add New Add-on', 'wc-options-studio' ); ?></button>
+                        <button type="button" class="button upad-add-addon" data-group-id="<?php echo esc_attr( $group->id ); ?>"><?php esc_html_e( 'Add New Add-on', 'wc-options-studio' ); ?></button>
                         </button>
                     </div>
 
-                    <div class="wcos-group-footer">
-                        <div class="wcos-import-export">
-                            <button type="button" class="button wcos-export-group"><?php esc_html_e( 'Export', 'wc-options-studio' ); ?></button>
-                            <button type="button" class="button wcos-import-group"><?php esc_html_e( 'Import', 'wc-options-studio' ); ?></button>
+                    <div class="upad-group-footer">
+                        <div class="upad-import-export">
+                            <button type="button" class="button upad-export-group"><?php esc_html_e( 'Export', 'wc-options-studio' ); ?></button>
+                            <button type="button" class="button upad-import-group"><?php esc_html_e( 'Import', 'wc-options-studio' ); ?></button>
                         </div>
                     </div>
                 </div>
@@ -123,15 +123,15 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
 </div>
 
 <!-- Group Modal Template -->
-<script type="text/template" id="tmpl-wcos-group-modal">
-    <div class="wcos-modal-overlay">
-        <div class="wcos-modal">
-            <div class="wcos-modal-header">
+<script type="text/template" id="tmpl-upad-group-modal">
+    <div class="upad-modal-overlay">
+        <div class="upad-modal">
+            <div class="upad-modal-header">
                 <h2>{{ data.title }}</h2>
-                <button type="button" class="wcos-modal-close">&times;</button>
+                <button type="button" class="upad-modal-close">&times;</button>
             </div>
-            <div class="wcos-modal-body">
-                <form class="wcos-group-form">
+            <div class="upad-modal-body">
+                <form class="upad-group-form">
                     <input type="hidden" name="group_id" value="{{ data.group_id }}">
                     
                     <p>
@@ -147,7 +147,7 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                     
                     <p>
                         <label><?php esc_html_e( 'Restrict to Categories', 'wc-options-studio' ); ?></label>
-                        <select name="categories[]" class="wcos-category-select" multiple>
+                        <select name="categories[]" class="upad-category-select" multiple>
                             <?php
                             $categories = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
                             foreach ( $categories as $cat ) :
@@ -168,31 +168,31 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                     </p>
                 </form>
             </div>
-            <div class="wcos-modal-footer">
-                <button type="button" class="button wcos-modal-cancel"><?php esc_html_e( 'Cancel', 'wc-options-studio' ); ?></button>
-                <button type="button" class="button button-primary wcos-save-group"><?php esc_html_e( 'Save Group', 'wc-options-studio' ); ?></button>
+            <div class="upad-modal-footer">
+                <button type="button" class="button upad-modal-cancel"><?php esc_html_e( 'Cancel', 'wc-options-studio' ); ?></button>
+                <button type="button" class="button button-primary upad-save-group"><?php esc_html_e( 'Save Group', 'wc-options-studio' ); ?></button>
             </div>
         </div>
     </div>
 </script>
 
 <!-- Addon Modal Template -->
-<script type="text/template" id="tmpl-wcos-addon-modal">
-    <div class="wcos-modal-overlay">
-        <div class="wcos-modal wcos-addon-modal">
-            <div class="wcos-modal-header">
+<script type="text/template" id="tmpl-upad-addon-modal">
+    <div class="upad-modal-overlay">
+        <div class="upad-modal upad-addon-modal">
+            <div class="upad-modal-header">
                 <h2>{{ data.title }}</h2>
-                <button type="button" class="wcos-modal-close">&times;</button>
+                <button type="button" class="upad-modal-close">&times;</button>
             </div>
-            <div class="wcos-modal-body">
-                <form class="wcos-addon-form">
+            <div class="upad-modal-body">
+                <form class="upad-addon-form">
                     <input type="hidden" name="addon_id" value="{{ data.addon_id }}">
                     <input type="hidden" name="group_id" value="{{ data.group_id }}">
                     <input type="hidden" name="product_id" value="{{ data.product_id }}">
                     
-                    <div class="wcos-form-row">
+                    <div class="upad-form-row">
                         <label><?php esc_html_e( 'Add-on Type', 'wc-options-studio' ); ?></label>
-                        <select name="addon_type" class="wcos-addon-type-field widefat">
+                        <select name="addon_type" class="upad-addon-type-field widefat">
                             <?php foreach ( $addon_types as $key => $type ) : ?>
                                 <option value="<?php echo esc_attr( $key ); ?>">
                                     <?php echo esc_html( $type['name'] ); ?>
@@ -202,15 +202,15 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                     </div>
                     
                     <!-- Type-specific settings -->
-                    <div class="wcos-type-settings">
+                    <div class="upad-type-settings">
                         <?php foreach ( $addon_types as $key => $type ) : ?>
                             <?php if ( ! empty( $type['settings'] ) ) : ?>
-                                <div class="wcos-type-setting-group" data-type="<?php echo esc_attr( $key ); ?>" style="display:none;">
+                                <div class="upad-type-setting-group" data-type="<?php echo esc_attr( $key ); ?>" style="display:none;">
                                     <?php foreach ( $type['settings'] as $setting_key => $setting ) : ?>
-                                        <div class="wcos-form-row">
+                                        <div class="upad-form-row">
                                             <label><?php echo esc_html( $setting['label'] ); ?></label>
                                             <?php if ( $setting['type'] === 'select' ) : ?>
-                                                <select name="settings[<?php echo esc_attr( $setting_key ); ?>]" class="widefat wcos-type-setting" data-setting="<?php echo esc_attr( $setting_key ); ?>">
+                                                <select name="settings[<?php echo esc_attr( $setting_key ); ?>]" class="widefat upad-type-setting" data-setting="<?php echo esc_attr( $setting_key ); ?>">
                                                     <?php foreach ( $setting['options'] as $opt_val => $opt_label ) : ?>
                                                         <option value="<?php echo esc_attr( $opt_val ); ?>" <?php selected( $setting['default'], $opt_val ); ?>>
                                                             <?php echo esc_html( $opt_label ); ?>
@@ -219,16 +219,16 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                                                 </select>
                                             <?php elseif ( $setting['type'] === 'checkbox' ) : ?>
                                                 <label>
-                                                    <input type="checkbox" name="settings[<?php echo esc_attr( $setting_key ); ?>]" value="1" class="wcos-type-setting" data-setting="<?php echo esc_attr( $setting_key ); ?>" <?php checked( $setting['default'], true ); ?>>
+                                                    <input type="checkbox" name="settings[<?php echo esc_attr( $setting_key ); ?>]" value="1" class="upad-type-setting" data-setting="<?php echo esc_attr( $setting_key ); ?>" <?php checked( $setting['default'], true ); ?>>
                                                     <?php if ( ! empty( $setting['desc'] ) ) echo esc_html( $setting['desc'] ); ?>
                                                 </label>
                                             <?php elseif ( $setting['type'] === 'number' ) : ?>
-                                                <input type="number" name="settings[<?php echo esc_attr( $setting_key ); ?>]" value="<?php echo esc_attr( $setting['default'] ); ?>" class="widefat wcos-type-setting" data-setting="<?php echo esc_attr( $setting_key ); ?>" <?php if ( isset( $setting['min'] ) ) echo 'min="' . esc_attr( $setting['min'] ) . '"'; ?>>
+                                                <input type="number" name="settings[<?php echo esc_attr( $setting_key ); ?>]" value="<?php echo esc_attr( $setting['default'] ); ?>" class="widefat upad-type-setting" data-setting="<?php echo esc_attr( $setting_key ); ?>" <?php if ( isset( $setting['min'] ) ) echo 'min="' . esc_attr( $setting['min'] ) . '"'; ?>>
                                                 <?php if ( ! empty( $setting['desc'] ) ) : ?>
                                                     <p class="description"><?php echo esc_html( $setting['desc'] ); ?></p>
                                                 <?php endif; ?>
                                             <?php elseif ( $setting['type'] === 'text' ) : ?>
-                                                <input type="text" name="settings[<?php echo esc_attr( $setting_key ); ?>]" value="<?php echo esc_attr( $setting['default'] ); ?>" class="widefat wcos-type-setting" data-setting="<?php echo esc_attr( $setting_key ); ?>">
+                                                <input type="text" name="settings[<?php echo esc_attr( $setting_key ); ?>]" value="<?php echo esc_attr( $setting['default'] ); ?>" class="widefat upad-type-setting" data-setting="<?php echo esc_attr( $setting_key ); ?>">
                                             <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>
@@ -237,12 +237,12 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                         <?php endforeach; ?>
                     </div>
                     
-                    <div class="wcos-form-row">
+                    <div class="upad-form-row">
                         <label><?php esc_html_e( 'Title', 'wc-options-studio' ); ?></label>
                         <input type="text" name="title" value="{{ data.addon_title }}" class="widefat" required>
                     </div>
                     
-                    <div class="wcos-form-row">
+                    <div class="upad-form-row">
                         <label><?php esc_html_e( 'Title Format', 'wc-options-studio' ); ?></label>
                         <select name="title_format" class="widefat">
                             <option value="label"><?php esc_html_e( 'Label', 'wc-options-studio' ); ?></option>
@@ -251,12 +251,12 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                         </select>
                     </div>
                     
-                    <div class="wcos-form-row">
+                    <div class="upad-form-row">
                         <label><?php esc_html_e( 'Description', 'wc-options-studio' ); ?></label>
                         <textarea name="description" class="widefat" rows="3">{{ data.description }}</textarea>
                     </div>
                     
-                    <div class="wcos-form-row wcos-checkboxes">
+                    <div class="upad-form-row upad-checkboxes">
                         <label>
                             <input type="checkbox" name="required" value="1" <# if (data.required) { #>checked<# } #>>
                             <?php esc_html_e( 'Required', 'wc-options-studio' ); ?>
@@ -267,20 +267,20 @@ $addon_types = WCOS_Addon_Types::instance()->get_types();
                         </label>
                     </div>
                     
-                    <div class="wcos-options-section">
+                    <div class="upad-options-section">
                         <h4><?php esc_html_e( 'Options', 'wc-options-studio' ); ?></h4>
-                        <div class="wcos-options-list">
+                        <div class="upad-options-list">
                             <!-- Options will be added here -->
                         </div>
-                        <button type="button" class="button wcos-add-option-btn">
+                        <button type="button" class="button upad-add-option-btn">
                             <?php esc_html_e( 'Add Option', 'wc-options-studio' ); ?>
                         </button>
                     </div>
                 </form>
             </div>
-            <div class="wcos-modal-footer">
-                <button type="button" class="button wcos-modal-cancel"><?php esc_html_e( 'Cancel', 'wc-options-studio' ); ?></button>
-                <button type="button" class="button button-primary wcos-save-addon"><?php esc_html_e( 'Save Add-on', 'wc-options-studio' ); ?></button>
+            <div class="upad-modal-footer">
+                <button type="button" class="button upad-modal-cancel"><?php esc_html_e( 'Cancel', 'wc-options-studio' ); ?></button>
+                <button type="button" class="button button-primary upad-save-addon"><?php esc_html_e( 'Save Add-on', 'wc-options-studio' ); ?></button>
             </div>
         </div>
     </div>

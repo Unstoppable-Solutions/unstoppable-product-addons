@@ -13,23 +13,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class WCOS_Ajax
+ * Class UPAD_Ajax
  *
  * @since 1.0.0
  */
-class WCOS_Ajax {
+class UPAD_Ajax {
 
     /**
      * Single instance of the class.
      *
-     * @var WCOS_Ajax
+     * @var UPAD_Ajax
      */
     protected static $_instance = null;
 
     /**
      * Main Instance.
      *
-     * @return WCOS_Ajax
+     * @return UPAD_Ajax
      */
     public static function instance() {
         if ( is_null( self::$_instance ) ) {
@@ -43,17 +43,17 @@ class WCOS_Ajax {
      */
     public function __construct() {
         // Admin-only AJAX actions
-        add_action( 'wp_ajax_wcos_save_addon', array( $this, 'save_addon' ) );
-        add_action( 'wp_ajax_wcos_delete_addon', array( $this, 'delete_addon' ) );
-        add_action( 'wp_ajax_wcos_duplicate_addon', array( $this, 'duplicate_addon' ) );
-        add_action( 'wp_ajax_wcos_reorder_addons', array( $this, 'reorder_addons' ) );
-        add_action( 'wp_ajax_wcos_get_addon', array( $this, 'get_addon' ) );
-        add_action( 'wp_ajax_wcos_get_group', array( $this, 'get_group' ) );
-        add_action( 'wp_ajax_wcos_search_products', array( $this, 'search_products' ) );
+        add_action( 'wp_ajax_upad_save_addon', array( $this, 'save_addon' ) );
+        add_action( 'wp_ajax_upad_delete_addon', array( $this, 'delete_addon' ) );
+        add_action( 'wp_ajax_upad_duplicate_addon', array( $this, 'duplicate_addon' ) );
+        add_action( 'wp_ajax_upad_reorder_addons', array( $this, 'reorder_addons' ) );
+        add_action( 'wp_ajax_upad_get_addon', array( $this, 'get_addon' ) );
+        add_action( 'wp_ajax_upad_get_group', array( $this, 'get_group' ) );
+        add_action( 'wp_ajax_upad_search_products', array( $this, 'search_products' ) );
         
         // Frontend AJAX actions (with and without auth)
-        add_action( 'wp_ajax_wcos_calculate_price', array( $this, 'calculate_price' ) );
-        add_action( 'wp_ajax_nopriv_wcos_calculate_price', array( $this, 'calculate_price' ) );
+        add_action( 'wp_ajax_upad_calculate_price', array( $this, 'calculate_price' ) );
+        add_action( 'wp_ajax_nopriv_upad_calculate_price', array( $this, 'calculate_price' ) );
     }
 
     /**
@@ -63,7 +63,7 @@ class WCOS_Ajax {
      * @param string $nonce_name   Nonce field name.
      * @return bool
      */
-    private function verify_admin_request( $nonce_action = 'wcos_admin_nonce', $nonce_name = 'nonce' ) {
+    private function verify_admin_request( $nonce_action = 'upad_admin_nonce', $nonce_name = 'nonce' ) {
         // Verify nonce
         if ( ! check_ajax_referer( $nonce_action, $nonce_name, false ) ) {
             wp_send_json_error( array( 
@@ -102,7 +102,7 @@ class WCOS_Ajax {
             return;
         }
 
-        $group = WCOS_Global_Addons::instance()->get_group( $group_id );
+        $group = UPAD_Global_Addons::instance()->get_group( $group_id );
 
         if ( ! $group ) {
             wp_send_json_error( array( 
@@ -147,7 +147,7 @@ class WCOS_Ajax {
         $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
 
         // Validate addon type against whitelist
-        $valid_types = array_keys( WCOS_Addon_Types::instance()->get_types() );
+        $valid_types = array_keys( UPAD_Addon_Types::instance()->get_types() );
         $addon_type  = isset( $_POST['addon_type'] ) ? sanitize_key( $_POST['addon_type'] ) : 'multiple_choice';
         if ( ! in_array( $addon_type, $valid_types, true ) ) {
             $addon_type = 'multiple_choice';
@@ -221,7 +221,7 @@ class WCOS_Ajax {
 
         // Verify group or product exists
         if ( $group_id ) {
-            $group = WCOS_Global_Addons::instance()->get_group( $group_id );
+            $group = UPAD_Global_Addons::instance()->get_group( $group_id );
             if ( ! $group ) {
                 wp_send_json_error( array( 
                     'message' => esc_html__( 'Invalid group.', 'wc-options-studio' ) 
@@ -238,7 +238,7 @@ class WCOS_Ajax {
             }
         }
 
-        $table_name = $wpdb->prefix . 'wcos_addons';
+        $table_name = $wpdb->prefix . 'upad_addons';
 
         if ( $addon_id ) {
             // Verify addon exists before updating
@@ -339,7 +339,7 @@ class WCOS_Ajax {
             return;
         }
 
-        $table_name = $wpdb->prefix . 'wcos_addon_options';
+        $table_name = $wpdb->prefix . 'upad_addon_options';
 
         // Get existing option IDs
         $existing = $wpdb->get_col( $wpdb->prepare(
@@ -433,7 +433,7 @@ class WCOS_Ajax {
         global $wpdb;
 
         $addon = $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addons WHERE id = %d",
+            "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
             $addon_id
         ) );
 
@@ -466,7 +466,7 @@ class WCOS_Ajax {
         }
 
         $addon->options = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE addon_id = %d ORDER BY position",
+            "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d ORDER BY position",
             $addon_id
         ) );
 
@@ -505,7 +505,7 @@ class WCOS_Ajax {
 
         // Verify addon exists
         $existing = $wpdb->get_var( $wpdb->prepare(
-            "SELECT id FROM {$wpdb->prefix}wcos_addons WHERE id = %d",
+            "SELECT id FROM {$wpdb->prefix}upad_addons WHERE id = %d",
             $addon_id
         ) );
 
@@ -518,14 +518,14 @@ class WCOS_Ajax {
 
         // Delete options first
         $wpdb->delete(
-            $wpdb->prefix . 'wcos_addon_options',
+            $wpdb->prefix . 'upad_addon_options',
             array( 'addon_id' => $addon_id ),
             array( '%d' )
         );
 
         // Delete addon
         $wpdb->delete(
-            $wpdb->prefix . 'wcos_addons',
+            $wpdb->prefix . 'upad_addons',
             array( 'id' => $addon_id ),
             array( '%d' )
         );
@@ -558,7 +558,7 @@ class WCOS_Ajax {
 
         // Get the original addon
         $addon = $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addons WHERE id = %d",
+            "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
             $addon_id
         ), ARRAY_A );
 
@@ -571,7 +571,7 @@ class WCOS_Ajax {
 
         // Get the original options
         $options = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE addon_id = %d ORDER BY position ASC",
+            "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE addon_id = %d ORDER BY position ASC",
             $addon_id
         ), ARRAY_A );
 
@@ -584,12 +584,12 @@ class WCOS_Ajax {
         // Get max position for this group/product
         if ( $group_id ) {
             $max_position = $wpdb->get_var( $wpdb->prepare(
-                "SELECT MAX(position) FROM {$wpdb->prefix}wcos_addons WHERE group_id = %d",
+                "SELECT MAX(position) FROM {$wpdb->prefix}upad_addons WHERE group_id = %d",
                 $group_id
             ) );
         } elseif ( $product_id ) {
             $max_position = $wpdb->get_var( $wpdb->prepare(
-                "SELECT MAX(position) FROM {$wpdb->prefix}wcos_addons WHERE product_id = %d",
+                "SELECT MAX(position) FROM {$wpdb->prefix}upad_addons WHERE product_id = %d",
                 $product_id
             ) );
         } else {
@@ -604,7 +604,7 @@ class WCOS_Ajax {
 
         // Insert the new addon
         $inserted = $wpdb->insert(
-            $wpdb->prefix . 'wcos_addons',
+            $wpdb->prefix . 'upad_addons',
             $addon
         );
 
@@ -624,7 +624,7 @@ class WCOS_Ajax {
                 $option['addon_id'] = $new_addon_id;
                 
                 $wpdb->insert(
-                    $wpdb->prefix . 'wcos_addon_options',
+                    $wpdb->prefix . 'upad_addon_options',
                     $option
                 );
             }
@@ -662,7 +662,7 @@ class WCOS_Ajax {
         }
 
         global $wpdb;
-        $table_name = $wpdb->prefix . 'wcos_addons';
+        $table_name = $wpdb->prefix . 'upad_addons';
 
         foreach ( $order as $position => $addon_id ) {
             if ( $addon_id > 0 ) {
@@ -698,7 +698,7 @@ class WCOS_Ajax {
             return;
         }
 
-        $results = WCOS_Inventory::instance()->search_products( $term );
+        $results = UPAD_Inventory::instance()->search_products( $term );
         
         // Sanitize results
         $sanitized = array();

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Inventory {
+class UPAD_Inventory {
 
     protected static $_instance = null;
 
@@ -21,7 +21,7 @@ class WCOS_Inventory {
 
     public function __construct() {
         // Stock checks during add to cart
-        add_filter( 'wcos_validate_addon_option', array( $this, 'check_linked_product_stock' ), 10, 4 );
+        add_filter( 'upad_validate_addon_option', array( $this, 'check_linked_product_stock' ), 10, 4 );
         
         // Reduce stock when order is placed
         add_action( 'woocommerce_checkout_order_processed', array( $this, 'reduce_linked_product_stock' ), 10, 3 );
@@ -31,10 +31,10 @@ class WCOS_Inventory {
         add_action( 'woocommerce_order_status_refunded', array( $this, 'restore_linked_product_stock' ) );
         
         // Display stock status on frontend
-        add_filter( 'wcos_option_data', array( $this, 'add_stock_status_to_option' ), 10, 2 );
+        add_filter( 'upad_option_data', array( $this, 'add_stock_status_to_option' ), 10, 2 );
         
         // Admin column for linked products
-        add_filter( 'wcos_admin_option_columns', array( $this, 'add_linked_product_column' ) );
+        add_filter( 'upad_admin_option_columns', array( $this, 'add_linked_product_column' ) );
     }
 
     /**
@@ -46,7 +46,7 @@ class WCOS_Inventory {
         }
 
         // Check if inventory tracking is enabled
-        if ( 'yes' !== get_option( 'wcos_enable_inventory_tracking', 'no' ) ) {
+        if ( 'yes' !== get_option( 'upad_enable_inventory_tracking', 'no' ) ) {
             return $valid;
         }
 
@@ -95,12 +95,12 @@ class WCOS_Inventory {
      * Reduce stock of linked products when order is placed
      */
     public function reduce_linked_product_stock( $order_id, $posted_data, $order ) {
-        if ( 'yes' !== get_option( 'wcos_enable_inventory_tracking', 'no' ) ) {
+        if ( 'yes' !== get_option( 'upad_enable_inventory_tracking', 'no' ) ) {
             return;
         }
 
         foreach ( $order->get_items() as $item_id => $item ) {
-            $addon_data = $item->get_meta( '_wcos_addon_data' );
+            $addon_data = $item->get_meta( '_upad_addon_data' );
             
             if ( empty( $addon_data ) || ! is_array( $addon_data ) ) {
                 continue;
@@ -144,7 +144,7 @@ class WCOS_Inventory {
      * Restore stock of linked products when order is cancelled/refunded
      */
     public function restore_linked_product_stock( $order_id ) {
-        if ( 'yes' !== get_option( 'wcos_enable_inventory_tracking', 'no' ) ) {
+        if ( 'yes' !== get_option( 'upad_enable_inventory_tracking', 'no' ) ) {
             return;
         }
 
@@ -154,12 +154,12 @@ class WCOS_Inventory {
         }
 
         // Check if stock was already restored
-        if ( $order->get_meta( '_wcos_stock_restored' ) ) {
+        if ( $order->get_meta( '_upad_stock_restored' ) ) {
             return;
         }
 
         foreach ( $order->get_items() as $item_id => $item ) {
-            $addon_data = $item->get_meta( '_wcos_addon_data' );
+            $addon_data = $item->get_meta( '_upad_addon_data' );
             
             if ( empty( $addon_data ) || ! is_array( $addon_data ) ) {
                 continue;
@@ -197,7 +197,7 @@ class WCOS_Inventory {
             }
         }
 
-        $order->update_meta_data( '_wcos_stock_restored', true );
+        $order->update_meta_data( '_upad_stock_restored', true );
         $order->save();
     }
 
@@ -205,7 +205,7 @@ class WCOS_Inventory {
      * Add stock status to option data for frontend display
      */
     public function add_stock_status_to_option( $option_data, $option ) {
-        if ( 'yes' !== get_option( 'wcos_enable_inventory_tracking', 'no' ) ) {
+        if ( 'yes' !== get_option( 'upad_enable_inventory_tracking', 'no' ) ) {
             return $option_data;
         }
 
@@ -247,8 +247,8 @@ class WCOS_Inventory {
             }
 
             // Check linked products in addons
-            if ( ! empty( $cart_item['wcos_addons'] ) ) {
-                foreach ( $cart_item['wcos_addons'] as $addon ) {
+            if ( ! empty( $cart_item['upad_addons'] ) ) {
+                foreach ( $cart_item['upad_addons'] as $addon ) {
                     if ( ! empty( $addon['options'] ) ) {
                         foreach ( $addon['options'] as $option ) {
                             if ( ! empty( $option['linked_product_id'] ) && 
@@ -271,7 +271,7 @@ class WCOS_Inventory {
     private function get_option( $option_id ) {
         global $wpdb;
         return $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addon_options WHERE id = %d",
+            "SELECT * FROM {$wpdb->prefix}upad_addon_options WHERE id = %d",
             $option_id
         ) );
     }
@@ -283,7 +283,7 @@ class WCOS_Inventory {
         global $wpdb;
 
         return $wpdb->update(
-            $wpdb->prefix . 'wcos_addon_options',
+            $wpdb->prefix . 'upad_addon_options',
             array( 'linked_product_id' => $product_id ),
             array( 'id' => $option_id ),
             array( '%d' ),
@@ -298,7 +298,7 @@ class WCOS_Inventory {
         global $wpdb;
 
         return $wpdb->update(
-            $wpdb->prefix . 'wcos_addon_options',
+            $wpdb->prefix . 'upad_addon_options',
             array( 'linked_product_id' => null ),
             array( 'id' => $option_id ),
             array( '%d' ),
@@ -314,8 +314,8 @@ class WCOS_Inventory {
 
         return $wpdb->get_results( $wpdb->prepare(
             "SELECT o.*, a.title as addon_title 
-             FROM {$wpdb->prefix}wcos_addon_options o
-             LEFT JOIN {$wpdb->prefix}wcos_addons a ON o.addon_id = a.id
+             FROM {$wpdb->prefix}upad_addon_options o
+             LEFT JOIN {$wpdb->prefix}upad_addons a ON o.addon_id = a.id
              WHERE o.linked_product_id = %d",
             $product_id
         ) );

@@ -6,7 +6,7 @@
 
     var WCOS_Frontend = {
         init: function() {
-            this.wrapper = $('.wcos-addons-wrapper');
+            this.wrapper = $('.upad-addons-wrapper');
             if (!this.wrapper.length) return;
 
             this.productId = this.wrapper.data('product-id');
@@ -25,12 +25,12 @@
             var self = this;
 
             // Field changes
-            this.wrapper.on('change', '.wcos-field', function() {
+            this.wrapper.on('change', '.upad-field', function() {
                 self.updateTotals();
             });
             
             // Checkbox min/max selection enforcement
-            this.wrapper.on('change', '.wcos-checkbox', function() {
+            this.wrapper.on('change', '.upad-checkbox', function() {
                 self.enforceCheckboxLimits($(this));
             });
             
@@ -43,8 +43,8 @@
             });
 
             // Quantity buttons
-            this.wrapper.on('click', '.wcos-qty-minus', function() {
-                var input = $(this).siblings('.wcos-quantity-input');
+            this.wrapper.on('click', '.upad-qty-minus', function() {
+                var input = $(this).siblings('.upad-quantity-input');
                 var val = parseInt(input.val()) || 0;
                 var min = parseInt(input.attr('min')) || 0;
                 var step = parseInt(input.attr('step')) || 1;
@@ -53,8 +53,8 @@
                 }
             });
 
-            this.wrapper.on('click', '.wcos-qty-plus', function() {
-                var input = $(this).siblings('.wcos-quantity-input');
+            this.wrapper.on('click', '.upad-qty-plus', function() {
+                var input = $(this).siblings('.upad-quantity-input');
                 var val = parseInt(input.val()) || 0;
                 var max = parseInt(input.attr('max')) || Infinity;
                 var step = parseInt(input.attr('step')) || 1;
@@ -64,10 +64,10 @@
             });
 
             // Character counter
-            this.wrapper.on('input', '.wcos-textarea[maxlength]', function() {
+            this.wrapper.on('input', '.upad-textarea[maxlength]', function() {
                 var max = parseInt($(this).attr('maxlength'));
                 var remaining = max - $(this).val().length;
-                $(this).siblings('.wcos-char-counter').find('.wcos-chars-remaining').text(remaining);
+                $(this).siblings('.upad-char-counter').find('.upad-chars-remaining').text(remaining);
             });
         },
         
@@ -75,13 +75,13 @@
          * Enforce checkbox max selection limit
          */
         enforceCheckboxLimits: function($checkbox) {
-            var $group = $checkbox.closest('.wcos-checkbox-group');
+            var $group = $checkbox.closest('.upad-checkbox-group');
             var maxSelections = parseInt($group.data('max-selections')) || 0;
             
             if (maxSelections <= 0) return;
             
-            var $checkboxes = $group.find('.wcos-checkbox');
-            var checkedCount = $group.find('.wcos-checkbox:checked').length;
+            var $checkboxes = $group.find('.upad-checkbox');
+            var checkedCount = $group.find('.upad-checkbox:checked').length;
             
             if (checkedCount >= maxSelections) {
                 // Disable unchecked checkboxes
@@ -103,15 +103,15 @@
             var productQty = parseInt($form.find('input[name="quantity"]').val()) || 1;
             
             // Check each visible checkbox group
-            this.wrapper.find('.wcos-addon:visible .wcos-checkbox-group').each(function() {
+            this.wrapper.find('.upad-addon:visible .upad-checkbox-group').each(function() {
                 var $group = $(this);
-                var $addon = $group.closest('.wcos-addon');
-                var addonTitle = $addon.find('.wcos-addon-title').text().trim();
+                var $addon = $group.closest('.upad-addon');
+                var addonTitle = $addon.find('.upad-addon-title').text().trim();
                 var linkToQty = $group.data('link-to-quantity') === 1 || $group.data('link-to-quantity') === '1';
                 var allowSame = $group.data('allow-same') === 1 || $group.data('allow-same') === '1';
                 
                 // Remove previous error state
-                $addon.removeClass('wcos-addon-error');
+                $addon.removeClass('upad-addon-error');
                 
                 if (linkToQty) {
                     // Quantity-linked validation
@@ -120,15 +120,15 @@
                         var totalSelected = self.getOptionQtyTotal($group);
                         if (totalSelected !== productQty) {
                             isValid = false;
-                            $addon.addClass('wcos-addon-error');
+                            $addon.addClass('upad-addon-error');
                             errorMessages.push(addonTitle + ': ' + wcos_params.i18n.select_qty_total.replace('%d', productQty).replace('%n', totalSelected));
                         }
                     } else {
                         // Standard checkbox count must match product quantity
-                        var checkedCount = $group.find('.wcos-checkbox:checked').length;
+                        var checkedCount = $group.find('.upad-checkbox:checked').length;
                         if (checkedCount !== productQty) {
                             isValid = false;
-                            $addon.addClass('wcos-addon-error');
+                            $addon.addClass('upad-addon-error');
                             errorMessages.push(addonTitle + ': ' + wcos_params.i18n.select_qty_options.replace('%d', productQty));
                         }
                     }
@@ -136,11 +136,11 @@
                     // Standard min/max validation
                     var minSelections = parseInt($group.data('min-selections')) || 0;
                     var maxSelections = parseInt($group.data('max-selections')) || 0;
-                    var checkedCount = $group.find('.wcos-checkbox:checked').length;
+                    var checkedCount = $group.find('.upad-checkbox:checked').length;
                     
                     if (minSelections > 0 && checkedCount < minSelections) {
                         isValid = false;
-                        $addon.addClass('wcos-addon-error');
+                        $addon.addClass('upad-addon-error');
                         if (minSelections === maxSelections) {
                             errorMessages.push(addonTitle + ': ' + wcos_params.i18n.select_exactly.replace('%d', minSelections));
                         } else {
@@ -153,7 +153,7 @@
             if (!isValid && errorMessages.length > 0) {
                 alert(errorMessages.join('\n'));
                 // Scroll to first error
-                var $firstError = this.wrapper.find('.wcos-addon-error').first();
+                var $firstError = this.wrapper.find('.upad-addon-error').first();
                 if ($firstError.length) {
                     $('html, body').animate({
                         scrollTop: $firstError.offset().top - 100
@@ -167,7 +167,7 @@
         initDatePickers: function() {
             if (!$.fn.datepicker) return;
 
-            this.wrapper.find('.wcos-datepicker').each(function() {
+            this.wrapper.find('.upad-datepicker').each(function() {
                 $(this).datepicker({
                     dateFormat: 'yy-mm-dd',
                     minDate: 0
@@ -209,7 +209,7 @@
         handleVariationChange: function(variationId) {
             var self = this;
             
-            this.wrapper.find('.wcos-addon[data-variations]').each(function() {
+            this.wrapper.find('.upad-addon[data-variations]').each(function() {
                 var $addon = $(this);
                 var allowedVariations = $addon.data('variations').toString().split(',').map(function(id) {
                     return parseInt(id.trim());
@@ -217,9 +217,9 @@
                 
                 if (!variationId) {
                     // No variation selected - hide variation-specific addons
-                    $addon.hide().addClass('wcos-addon-hidden');
+                    $addon.hide().addClass('upad-addon-hidden');
                     // Clear values to prevent accidental submission
-                    $addon.find('.wcos-field').each(function() {
+                    $addon.find('.upad-field').each(function() {
                         if ($(this).is('select')) {
                             $(this).val('');
                         } else if ($(this).is(':checkbox, :radio')) {
@@ -230,12 +230,12 @@
                     });
                 } else if (allowedVariations.indexOf(parseInt(variationId)) !== -1) {
                     // Variation matches - show addon
-                    $addon.show().removeClass('wcos-addon-hidden');
+                    $addon.show().removeClass('upad-addon-hidden');
                 } else {
                     // Variation doesn't match - hide addon
-                    $addon.hide().addClass('wcos-addon-hidden');
+                    $addon.hide().addClass('upad-addon-hidden');
                     // Clear values
-                    $addon.find('.wcos-field').each(function() {
+                    $addon.find('.upad-field').each(function() {
                         if ($(this).is('select')) {
                             $(this).val('');
                         } else if ($(this).is(':checkbox, :radio')) {
@@ -263,7 +263,7 @@
             var $qtyInput = $form.find('input[name="quantity"]');
             if (!$qtyInput.length) return;
             
-            var $linkedGroups = this.wrapper.find('.wcos-checkbox-group[data-link-to-quantity="1"]');
+            var $linkedGroups = this.wrapper.find('.upad-checkbox-group[data-link-to-quantity="1"]');
             if (!$linkedGroups.length) return;
             
             // Update on quantity change
@@ -279,17 +279,17 @@
             });
             
             // Handle option quantity +/- buttons (for allow_same mode)
-            this.wrapper.on('click', '.wcos-option-qty-minus', function() {
-                var $input = $(this).siblings('.wcos-option-qty-input');
+            this.wrapper.on('click', '.upad-option-qty-minus', function() {
+                var $input = $(this).siblings('.upad-option-qty-input');
                 var val = parseInt($input.val()) || 0;
                 if (val > 0) {
                     $input.val(val - 1).trigger('change');
                 }
             });
             
-            this.wrapper.on('click', '.wcos-option-qty-plus', function() {
-                var $input = $(this).siblings('.wcos-option-qty-input');
-                var $group = $input.closest('.wcos-checkbox-group');
+            this.wrapper.on('click', '.upad-option-qty-plus', function() {
+                var $input = $(this).siblings('.upad-option-qty-input');
+                var $group = $input.closest('.upad-checkbox-group');
                 var productQty = parseInt($qtyInput.val()) || 1;
                 var currentTotal = self.getOptionQtyTotal($group);
                 var val = parseInt($input.val()) || 0;
@@ -300,8 +300,8 @@
             });
             
             // Update totals when option qty changes
-            this.wrapper.on('change', '.wcos-option-qty-input', function() {
-                var $group = $(this).closest('.wcos-checkbox-group');
+            this.wrapper.on('change', '.upad-option-qty-input', function() {
+                var $group = $(this).closest('.upad-checkbox-group');
                 self.updateOptionQtyTotal($group);
                 self.updateTotals();
             });
@@ -316,13 +316,13 @@
         updateQuantityLinked: function(productQty) {
             var self = this;
             
-            this.wrapper.find('.wcos-checkbox-group[data-link-to-quantity="1"]').each(function() {
+            this.wrapper.find('.upad-checkbox-group[data-link-to-quantity="1"]').each(function() {
                 var $group = $(this);
                 var allowSame = $group.data('allow-same') === 1 || $group.data('allow-same') === '1';
                 
                 if (allowSame) {
                     // Update required total display
-                    $group.find('.wcos-qty-total-required').text(productQty);
+                    $group.find('.upad-qty-total-required').text(productQty);
                     self.updateOptionQtyTotal($group);
                 } else {
                     // Update min/max to match product quantity
@@ -330,13 +330,13 @@
                     $group.attr('data-max-selections', productQty);
                     
                     // Update hint text
-                    var $hint = $group.find('.wcos-qty-linked-hint');
+                    var $hint = $group.find('.upad-qty-linked-hint');
                     if ($hint.length) {
                         $hint.text(wcos_params.i18n.select_qty_options.replace('%d', productQty));
                     }
                     
                     // Re-enforce limits
-                    self.enforceCheckboxLimits($group.find('.wcos-checkbox').first());
+                    self.enforceCheckboxLimits($group.find('.upad-checkbox').first());
                 }
             });
         },
@@ -346,7 +346,7 @@
          */
         getOptionQtyTotal: function($group) {
             var total = 0;
-            $group.find('.wcos-option-qty-input').each(function() {
+            $group.find('.upad-option-qty-input').each(function() {
                 total += parseInt($(this).val()) || 0;
             });
             return total;
@@ -361,33 +361,33 @@
             var productQty = parseInt($form.find('input[name="quantity"]').val()) || 1;
             
             // Update counter
-            $group.find('.wcos-qty-total-count').text(total);
+            $group.find('.upad-qty-total-count').text(total);
             
             // Visual feedback
-            var $totalDiv = $group.find('.wcos-qty-total');
-            $totalDiv.removeClass('wcos-qty-complete wcos-qty-incomplete');
+            var $totalDiv = $group.find('.upad-qty-total');
+            $totalDiv.removeClass('upad-qty-complete upad-qty-incomplete');
             if (total === productQty) {
-                $totalDiv.addClass('wcos-qty-complete');
+                $totalDiv.addClass('upad-qty-complete');
             } else {
-                $totalDiv.addClass('wcos-qty-incomplete');
+                $totalDiv.addClass('upad-qty-incomplete');
             }
             
             // Disable + buttons if at limit
             if (total >= productQty) {
-                $group.find('.wcos-option-qty-plus').prop('disabled', true);
+                $group.find('.upad-option-qty-plus').prop('disabled', true);
             } else {
-                $group.find('.wcos-option-qty-plus').prop('disabled', false);
+                $group.find('.upad-option-qty-plus').prop('disabled', false);
             }
         },
 
         initFileUploads: function() {
             var self = this;
 
-            this.wrapper.find('.wcos-file-upload-wrapper').each(function() {
+            this.wrapper.find('.upad-file-upload-wrapper').each(function() {
                 var wrapper = $(this);
-                var dropzone = wrapper.find('.wcos-file-dropzone');
-                var input = wrapper.find('.wcos-file-input');
-                var filesList = wrapper.find('.wcos-uploaded-files-list');
+                var dropzone = wrapper.find('.upad-file-dropzone');
+                var input = wrapper.find('.upad-file-input');
+                var filesList = wrapper.find('.upad-uploaded-files-list');
                 var maxFiles = parseInt(wrapper.data('max-files')) || 1;
                 var addonId = wrapper.data('addon-id');
 
@@ -415,8 +415,8 @@
 
         handleFileUpload: function(files, wrapper, addonId) {
             var self = this;
-            var filesList = wrapper.find('.wcos-uploaded-files-list');
-            var hashInput = wrapper.find('.wcos-file-hash');
+            var filesList = wrapper.find('.upad-uploaded-files-list');
+            var hashInput = wrapper.find('.upad-file-hash');
 
             $.each(files, function(i, file) {
                 var formData = new FormData();
@@ -426,7 +426,7 @@
                 formData.append('addon_id', addonId);
                 formData.append('product_id', self.productId);
 
-                var fileItem = $('<div class="wcos-uploaded-file uploading"><span class="file-name">' + file.name + '</span><span class="file-size">' + wcos_params.i18n.uploading + '</span></div>');
+                var fileItem = $('<div class="upad-uploaded-file uploading"><span class="file-name">' + file.name + '</span><span class="file-size">' + wcos_params.i18n.uploading + '</span></div>');
                 filesList.append(fileItem);
 
                 $.ajax({
@@ -464,11 +464,11 @@
             var self = this;
             var addonTotal = 0;
 
-            this.wrapper.find('.wcos-addon').each(function() {
+            this.wrapper.find('.upad-addon').each(function() {
                 var addon = $(this);
                 
                 // Skip hidden addons (variation-restricted)
-                if (addon.hasClass('wcos-addon-hidden') || !addon.is(':visible')) {
+                if (addon.hasClass('upad-addon-hidden') || !addon.is(':visible')) {
                     return;
                 }
                 
@@ -477,30 +477,30 @@
 
                 switch(type) {
                     case 'multiple_choice':
-                        var selected = addon.find('.wcos-field:checked, .wcos-dropdown option:selected');
+                        var selected = addon.find('.upad-field:checked, .upad-dropdown option:selected');
                         if (selected.length && selected.val()) {
                             price = parseFloat(selected.data('price')) || 0;
                         }
                         break;
 
                     case 'checkboxes':
-                        addon.find('.wcos-checkbox:checked').each(function() {
+                        addon.find('.upad-checkbox:checked').each(function() {
                             price += parseFloat($(this).data('price')) || 0;
                         });
                         break;
 
                     case 'customer_price':
-                        price = parseFloat(addon.find('.wcos-price-input').val()) || 0;
+                        price = parseFloat(addon.find('.upad-price-input').val()) || 0;
                         break;
 
                     case 'quantity':
-                        var qty = parseInt(addon.find('.wcos-quantity-input').val()) || 0;
-                        var unitPrice = parseFloat(addon.find('.wcos-field-price-info').text().replace(/[^0-9.-]/g, '')) || 0;
+                        var qty = parseInt(addon.find('.upad-quantity-input').val()) || 0;
+                        var unitPrice = parseFloat(addon.find('.upad-field-price-info').text().replace(/[^0-9.-]/g, '')) || 0;
                         price = qty * unitPrice;
                         break;
                     
                     case 'image_swatches':
-                        addon.find('.wcos-swatch-input:checked').each(function() {
+                        addon.find('.upad-swatch-input:checked').each(function() {
                             price += parseFloat($(this).data('price')) || 0;
                         });
                         break;
@@ -521,14 +521,14 @@
             var grandTotal = this.basePrice + addonTotal;
 
             // Update display
-            var totalsWrapper = $('.wcos-totals-wrapper');
+            var totalsWrapper = $('.upad-totals-wrapper');
             if (addonTotal > 0) {
                 totalsWrapper.show();
-                totalsWrapper.find('.wcos-options-total-value').html(this.formatPrice(addonTotal));
+                totalsWrapper.find('.upad-options-total-value').html(this.formatPrice(addonTotal));
             } else {
                 totalsWrapper.hide();
             }
-            totalsWrapper.find('.wcos-grand-total-value').html(this.formatPrice(grandTotal));
+            totalsWrapper.find('.upad-grand-total-value').html(this.formatPrice(grandTotal));
 
             // Update WooCommerce price if possible
             if ($('.single_variation_wrap .woocommerce-Price-amount').length) {
@@ -550,12 +550,12 @@
          * Calculate dimension-based pricing
          */
         calculateDimensionPrice: function($addon) {
-            var $wrapper = $addon.find('.wcos-dimensions-wrapper');
+            var $wrapper = $addon.find('.upad-dimensions-wrapper');
             if (!$wrapper.length) return 0;
             
-            var length = parseFloat($wrapper.find('.wcos-dimension-length').val()) || 0;
-            var width = parseFloat($wrapper.find('.wcos-dimension-width').val()) || 0;
-            var height = parseFloat($wrapper.find('.wcos-dimension-height').val()) || 0;
+            var length = parseFloat($wrapper.find('.upad-dimension-length').val()) || 0;
+            var width = parseFloat($wrapper.find('.upad-dimension-width').val()) || 0;
+            var height = parseFloat($wrapper.find('.upad-dimension-height').val()) || 0;
             
             var formula = $wrapper.data('formula') || 'per_sq_unit';
             var pricePerUnit = parseFloat($wrapper.data('price-per-unit')) || 0;
@@ -596,7 +596,7 @@
             }
             
             // Update display
-            $wrapper.find('.wcos-dimension-price-value').html(this.formatPrice(price));
+            $wrapper.find('.upad-dimension-price-value').html(this.formatPrice(price));
             
             return price;
         },
@@ -605,7 +605,7 @@
          * Calculate text-based pricing (per character/word/line)
          */
         calculateTextPrice: function($addon) {
-            var $field = $addon.find('.wcos-field');
+            var $field = $addon.find('.upad-field');
             if (!$field.length) return 0;
             
             var text = $field.val() || '';
@@ -636,9 +636,9 @@
             var totalPrice = chargeableCount * price;
             
             // Update display if exists
-            var $priceInfo = $addon.find('.wcos-char-price-info');
+            var $priceInfo = $addon.find('.upad-char-price-info');
             if ($priceInfo.length) {
-                $priceInfo.find('.wcos-char-price-current').text(this.formatPrice(totalPrice));
+                $priceInfo.find('.upad-char-price-current').text(this.formatPrice(totalPrice));
             }
             
             return totalPrice;
@@ -650,15 +650,15 @@
         initDimensions: function() {
             var self = this;
             
-            this.wrapper.on('input change', '.wcos-dimension-length, .wcos-dimension-width, .wcos-dimension-height', function() {
-                var $addon = $(this).closest('.wcos-addon');
+            this.wrapper.on('input change', '.upad-dimension-length, .upad-dimension-width, .upad-dimension-height', function() {
+                var $addon = $(this).closest('.upad-addon');
                 self.calculateDimensionPrice($addon);
                 self.updateTotals();
             });
             
             // Initial calculation
-            this.wrapper.find('.wcos-dimensions-wrapper').each(function() {
-                var $addon = $(this).closest('.wcos-addon');
+            this.wrapper.find('.upad-dimensions-wrapper').each(function() {
+                var $addon = $(this).closest('.upad-addon');
                 self.calculateDimensionPrice($addon);
             });
         },
@@ -670,25 +670,25 @@
             var self = this;
             
             // Find section markers and wrap subsequent addons
-            this.wrapper.find('.wcos-section-marker').each(function() {
+            this.wrapper.find('.upad-section-marker').each(function() {
                 var $marker = $(this);
                 var sectionId = $marker.data('section-id');
                 var collapsed = $marker.data('collapsed') === 1 || $marker.data('collapsed') === '1';
                 var style = $marker.data('style');
                 var showCount = $marker.data('show-count') === 1 || $marker.data('show-count') === '1';
                 
-                var $sectionAddon = $marker.closest('.wcos-addon');
-                var sectionTitle = $sectionAddon.find('.wcos-addon-title').text();
+                var $sectionAddon = $marker.closest('.upad-addon');
+                var sectionTitle = $sectionAddon.find('.upad-addon-title').text();
                 
                 // Create section wrapper
-                var $sectionWrapper = $('<div class="wcos-section-wrapper' + (collapsed ? ' collapsed' : '') + '" data-section-id="' + sectionId + '">');
-                var $header = $('<div class="wcos-section-header"><h4 class="wcos-section-title">' + sectionTitle + '</h4>' + (showCount ? '<span class="wcos-section-count"></span>' : '') + '<span class="wcos-section-toggle"></span></div>');
-                var $content = $('<div class="wcos-section-content"></div>');
+                var $sectionWrapper = $('<div class="upad-section-wrapper' + (collapsed ? ' collapsed' : '') + '" data-section-id="' + sectionId + '">');
+                var $header = $('<div class="upad-section-header"><h4 class="upad-section-title">' + sectionTitle + '</h4>' + (showCount ? '<span class="upad-section-count"></span>' : '') + '<span class="upad-section-toggle"></span></div>');
+                var $content = $('<div class="upad-section-content"></div>');
                 
                 $sectionWrapper.append($header).append($content);
                 
                 // Find addons until next section or end
-                var $nextAddons = $sectionAddon.nextUntil('.wcos-addon:has(.wcos-section-marker)');
+                var $nextAddons = $sectionAddon.nextUntil('.upad-addon:has(.upad-section-marker)');
                 
                 // Move addons into section content
                 $content.append($nextAddons);
@@ -698,17 +698,17 @@
             });
             
             // Toggle functionality
-            this.wrapper.on('click', '.wcos-section-header', function() {
-                var $wrapper = $(this).closest('.wcos-section-wrapper');
+            this.wrapper.on('click', '.upad-section-header', function() {
+                var $wrapper = $(this).closest('.upad-section-wrapper');
                 $wrapper.toggleClass('collapsed');
             });
             
             // Update selection count
-            this.wrapper.on('change', '.wcos-section-content .wcos-field', function() {
-                var $section = $(this).closest('.wcos-section-wrapper');
-                var $count = $section.find('.wcos-section-count');
+            this.wrapper.on('change', '.upad-section-content .upad-field', function() {
+                var $section = $(this).closest('.upad-section-wrapper');
+                var $count = $section.find('.upad-section-count');
                 if ($count.length) {
-                    var selected = $section.find('.wcos-field:checked, .wcos-dropdown option:selected:not([value=""])').length;
+                    var selected = $section.find('.upad-field:checked, .upad-dropdown option:selected:not([value=""])').length;
                     $count.text(selected > 0 ? '(' + selected + ' selected)' : '');
                 }
             });
@@ -764,9 +764,9 @@
                 var shouldShow = self.evaluateConditions(conditions);
                 
                 if (shouldShow) {
-                    $addon.removeClass('wcos-condition-hidden').slideDown(200);
+                    $addon.removeClass('upad-condition-hidden').slideDown(200);
                 } else {
-                    $addon.addClass('wcos-condition-hidden').slideUp(200);
+                    $addon.addClass('upad-condition-hidden').slideUp(200);
                     // Clear values when hidden
                     self.clearAddonValues($addon);
                 }
@@ -822,12 +822,12 @@
          * Get the current value of an addon
          */
         getAddonValue: function($addon) {
-            var $field = $addon.find('.wcos-field');
+            var $field = $addon.find('.upad-field');
             
             // Checkboxes - return array of checked values
             if ($field.is(':checkbox')) {
                 var values = [];
-                $addon.find('.wcos-field:checked').each(function() {
+                $addon.find('.upad-field:checked').each(function() {
                     values.push($(this).val());
                 });
                 return values;
@@ -835,7 +835,7 @@
             
             // Radio buttons
             if ($field.is(':radio')) {
-                return $addon.find('.wcos-field:checked').val() || '';
+                return $addon.find('.upad-field:checked').val() || '';
             }
             
             // Select dropdown
@@ -896,7 +896,7 @@
          * Clear addon values when hidden by conditional logic
          */
         clearAddonValues: function($addon) {
-            $addon.find('.wcos-field').each(function() {
+            $addon.find('.upad-field').each(function() {
                 var $field = $(this);
                 if ($field.is(':checkbox, :radio')) {
                     $field.prop('checked', false);
@@ -944,18 +944,18 @@
                 
                 if ($parentAddon.length) {
                     // Store original options
-                    var $select = $addon.find('select.wcos-field');
+                    var $select = $addon.find('select.upad-field');
                     if ($select.length) {
                         $select.data('all-options', $select.find('option').clone());
                     }
                     
                     // Listen for parent changes
-                    $parentAddon.on('change', '.wcos-field', function() {
+                    $parentAddon.on('change', '.upad-field', function() {
                         self.updateDependentOptions($addon, $(this).val());
                     });
                     
                     // Initial filter
-                    var parentVal = $parentAddon.find('.wcos-field').val();
+                    var parentVal = $parentAddon.find('.upad-field').val();
                     if (parentVal) {
                         self.updateDependentOptions($addon, parentVal);
                     }
@@ -967,7 +967,7 @@
          * Update dependent dropdown options based on parent selection
          */
         updateDependentOptions: function($addon, parentValue) {
-            var $select = $addon.find('select.wcos-field');
+            var $select = $addon.find('select.upad-field');
             if (!$select.length) return;
             
             var allOptions = $select.data('all-options');

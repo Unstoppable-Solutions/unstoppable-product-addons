@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_REST_API {
+class UPAD_REST_API {
 
     protected static $_instance = null;
 
@@ -104,7 +104,7 @@ class WCOS_REST_API {
      * Get all groups
      */
     public function get_groups( $request ) {
-        $groups = WCOS_Global_Addons::instance()->get_groups();
+        $groups = UPAD_Global_Addons::instance()->get_groups();
         return rest_ensure_response( $groups );
     }
 
@@ -113,7 +113,7 @@ class WCOS_REST_API {
      */
     public function create_group( $request ) {
         $data = $request->get_params();
-        $result = WCOS_Global_Addons::instance()->create_group( $data );
+        $result = UPAD_Global_Addons::instance()->create_group( $data );
 
         if ( is_wp_error( $result ) ) {
             return $result;
@@ -126,7 +126,7 @@ class WCOS_REST_API {
      * Get single group
      */
     public function get_group( $request ) {
-        $group = WCOS_Global_Addons::instance()->get_group( $request['id'] );
+        $group = UPAD_Global_Addons::instance()->get_group( $request['id'] );
         
         if ( ! $group ) {
             return new WP_Error( 'not_found', __( 'Group not found.', 'wc-options-studio' ), array( 'status' => 404 ) );
@@ -140,7 +140,7 @@ class WCOS_REST_API {
      */
     public function update_group( $request ) {
         $data = $request->get_params();
-        $result = WCOS_Global_Addons::instance()->update_group( $request['id'], $data );
+        $result = UPAD_Global_Addons::instance()->update_group( $request['id'], $data );
 
         return rest_ensure_response( array( 'success' => (bool) $result ) );
     }
@@ -149,7 +149,7 @@ class WCOS_REST_API {
      * Delete group
      */
     public function delete_group( $request ) {
-        $result = WCOS_Global_Addons::instance()->delete_group( $request['id'] );
+        $result = UPAD_Global_Addons::instance()->delete_group( $request['id'] );
         return rest_ensure_response( array( 'success' => (bool) $result ) );
     }
 
@@ -157,7 +157,7 @@ class WCOS_REST_API {
      * Get product addons
      */
     public function get_product_addons( $request ) {
-        $addons = WCOS_Product_Addons::instance()->get_product_addons( $request['product_id'] );
+        $addons = UPAD_Product_Addons::instance()->get_product_addons( $request['product_id'] );
         return rest_ensure_response( $addons );
     }
 
@@ -166,7 +166,7 @@ class WCOS_REST_API {
      */
     public function create_product_addon( $request ) {
         $data = $request->get_params();
-        $result = WCOS_Product_Addons::instance()->create_addon( $request['product_id'], $data );
+        $result = UPAD_Product_Addons::instance()->create_addon( $request['product_id'], $data );
 
         if ( is_wp_error( $result ) ) {
             return $result;
@@ -182,7 +182,7 @@ class WCOS_REST_API {
         global $wpdb;
 
         $addon = $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addons WHERE id = %d",
+            "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
             $request['id']
         ) );
 
@@ -191,7 +191,7 @@ class WCOS_REST_API {
         }
 
         $addon->settings = maybe_unserialize( $addon->settings );
-        $addon->options = WCOS_Product_Addons::instance()->get_addon_options( $addon->id );
+        $addon->options = UPAD_Product_Addons::instance()->get_addon_options( $addon->id );
 
         return rest_ensure_response( $addon );
     }
@@ -201,7 +201,7 @@ class WCOS_REST_API {
      */
     public function update_addon( $request ) {
         $data = $request->get_params();
-        $result = WCOS_Product_Addons::instance()->update_addon( $request['id'], $data );
+        $result = UPAD_Product_Addons::instance()->update_addon( $request['id'], $data );
 
         return rest_ensure_response( array( 'success' => (bool) $result ) );
     }
@@ -210,7 +210,7 @@ class WCOS_REST_API {
      * Delete addon
      */
     public function delete_addon( $request ) {
-        $result = WCOS_Product_Addons::instance()->delete_addon( $request['id'] );
+        $result = UPAD_Product_Addons::instance()->delete_addon( $request['id'] );
         return rest_ensure_response( array( 'success' => (bool) $result ) );
     }
 }

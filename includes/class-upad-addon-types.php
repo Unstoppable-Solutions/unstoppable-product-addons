@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Addon_Types {
+class UPAD_Addon_Types {
 
     protected static $_instance = null;
 
@@ -469,14 +469,14 @@ class WCOS_Addon_Types {
         );
 
         // Allow filtering of default types
-        $this->types = apply_filters( 'wcos_addon_types', $this->types );
+        $this->types = apply_filters( 'upad_addon_types', $this->types );
     }
 
     /**
      * Allow plugins/themes to register custom types
      */
     public function allow_custom_types() {
-        do_action( 'wcos_register_addon_types', $this );
+        do_action( 'upad_register_addon_types', $this );
     }
 
     /**

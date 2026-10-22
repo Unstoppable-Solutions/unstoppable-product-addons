@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$settings = WCOS_Admin_Settings::instance();
+$settings = UPAD_Admin_Settings::instance();
 $sections = $settings->get_sections();
 $fields = $settings->get_fields();
 
@@ -19,13 +19,13 @@ $settings_sections = array_diff_key( $sections, array( 'license' => '' ) );
 $current_section = isset( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : 'general';
 
 // Handle settings save
-if ( isset( $_POST['wcos_save_settings'] ) ) {
-    if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'wcos_settings' ) ) {
-        wp_die( esc_html__( 'Security check failed.', 'wc-custom-addons' ) );
+if ( isset( $_POST['upad_save_settings'] ) ) {
+    if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'upad_settings' ) ) {
+        wp_die( esc_html__( 'Security check failed.', 'unstoppable-product-addons' ) );
     }
     
     if ( ! current_user_can( 'manage_woocommerce' ) ) {
-        wp_die( esc_html__( 'You do not have permission to save settings.', 'wc-custom-addons' ) );
+        wp_die( esc_html__( 'You do not have permission to save settings.', 'unstoppable-product-addons' ) );
     }
     
     foreach ( $fields as $section_id => $section_fields ) {
@@ -41,17 +41,17 @@ if ( isset( $_POST['wcos_save_settings'] ) ) {
             update_option( $field['id'], $value );
         }
     }
-    echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Settings saved.', 'wc-custom-addons' ) . '</p></div>';
+    echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Settings saved.', 'unstoppable-product-addons' ) . '</p></div>';
 }
 ?>
 
-<div class="wcos-settings-content">
-    <h2><?php esc_html_e( 'Plugin Settings', 'wc-custom-addons' ); ?></h2>
+<div class="upad-settings-content">
+    <h2><?php esc_html_e( 'Plugin Settings', 'unstoppable-product-addons' ); ?></h2>
 
     <?php if ( count( $settings_sections ) > 1 ) : ?>
     <nav class="nav-tab-wrapper" style="margin-bottom: 20px;">
         <?php foreach ( $settings_sections as $key => $label ) : ?>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=wcca-addons&tab=settings&section=' . $key ) ); ?>" 
+            <a href="<?php echo esc_url( admin_url( 'admin.php?page=upad-settings&tab=settings&section=' . $key ) ); ?>" 
                class="nav-tab <?php echo $current_section === $key ? 'nav-tab-active' : ''; ?>">
                 <?php echo esc_html( $label ); ?>
             </a>
@@ -59,8 +59,8 @@ if ( isset( $_POST['wcos_save_settings'] ) ) {
     </nav>
     <?php endif; ?>
 
-    <form method="post" action="" class="wcos-settings-form">
-        <?php wp_nonce_field( 'wcos_settings' ); ?>
+    <form method="post" action="" class="upad-settings-form">
+        <?php wp_nonce_field( 'upad_settings' ); ?>
         
         <?php if ( isset( $fields[ $current_section ] ) && ! empty( $fields[ $current_section ] ) ) : ?>
             <table class="form-table">
@@ -147,11 +147,11 @@ if ( isset( $_POST['wcos_save_settings'] ) ) {
                 <?php endforeach; ?>
             </table>
         <?php else : ?>
-            <p><?php esc_html_e( 'No settings available for this section.', 'wc-custom-addons' ); ?></p>
+            <p><?php esc_html_e( 'No settings available for this section.', 'unstoppable-product-addons' ); ?></p>
         <?php endif; ?>
 
         <p class="submit">
-            <button type="submit" name="wcos_save_settings" class="button button-primary">
+            <button type="submit" name="upad_save_settings" class="button button-primary">
                 <?php esc_html_e( 'Save Settings', 'unstoppable-product-addons' ); ?>
             </button>
         </p>
@@ -163,7 +163,7 @@ if ( isset( $_POST['wcos_save_settings'] ) ) {
     <table class="form-table">
         <tr>
             <th scope="row"><?php esc_html_e( 'Version', 'unstoppable-product-addons' ); ?></th>
-            <td><code><?php echo esc_html( WCCA_VERSION ); ?></code></td>
+            <td><code><?php echo esc_html( UPAD_VERSION ); ?></code></td>
         </tr>
     </table>
 </div>

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Order {
+class UPAD_Order {
 
     protected static $_instance = null;
 
@@ -43,18 +43,18 @@ class WCOS_Order {
      * Add addon data to order item meta
      */
     public function add_order_item_meta( $item, $cart_item_key, $values, $order ) {
-        if ( empty( $values['wcos_addons'] ) ) {
+        if ( empty( $values['upad_addons'] ) ) {
             return;
         }
 
         // Store full addon data
-        $item->add_meta_data( '_wcos_addon_data', $values['wcos_addons'], true );
+        $item->add_meta_data( '_upad_addon_data', $values['upad_addons'], true );
 
         // Store individual addons for display
-        foreach ( $values['wcos_addons'] as $addon ) {
+        foreach ( $values['upad_addons'] as $addon ) {
             $display_value = $addon['display'];
             
-            if ( 'yes' === get_option( 'wcos_display_option_prices', 'yes' ) && ! empty( $addon['price'] ) ) {
+            if ( 'yes' === get_option( 'upad_display_option_prices', 'yes' ) && ! empty( $addon['price'] ) ) {
                 if ( apply_filters( 'woocommerce_addons_add_order_price_to_value', false ) ) {
                     $display_value .= ' (' . wc_price( $addon['price'] ) . ')';
                 }
@@ -64,7 +64,7 @@ class WCOS_Order {
         }
 
         // Handle file uploads
-        $this->process_file_uploads( $item, $values['wcos_addons'], $order );
+        $this->process_file_uploads( $item, $values['upad_addons'], $order );
     }
 
     /**
@@ -77,7 +77,7 @@ class WCOS_Order {
             }
 
             foreach ( (array) $addon['value'] as $upload_hash ) {
-                WCOS_File_Upload::instance()->associate_uploads_with_order(
+                UPAD_File_Upload::instance()->associate_uploads_with_order(
                     $order->get_id(),
                     $item->get_id(),
                     $addon['addon_id'],
@@ -92,14 +92,14 @@ class WCOS_Order {
      * This addresses the competitor weakness for international shipping/customs
      */
     public function maybe_add_separate_line_items( $order, $data ) {
-        if ( 'yes' !== get_option( 'wcos_add_as_line_items', 'no' ) ) {
+        if ( 'yes' !== get_option( 'upad_add_as_line_items', 'no' ) ) {
             return;
         }
 
         $items_to_add = array();
 
         foreach ( $order->get_items() as $item_id => $item ) {
-            $addon_data = $item->get_meta( '_wcos_addon_data' );
+            $addon_data = $item->get_meta( '_upad_addon_data' );
             
             if ( empty( $addon_data ) || ! is_array( $addon_data ) ) {
                 continue;
@@ -139,8 +139,8 @@ class WCOS_Order {
             $line_item->set_quantity( $item_data['quantity'] );
             $line_item->set_subtotal( 0 ); // Price already included in parent
             $line_item->set_total( 0 );
-            $line_item->add_meta_data( '_wcos_linked_from', $item_data['parent_item'] );
-            $line_item->add_meta_data( '_wcos_addon_source', $item_data['addon_title'] . ': ' . $item_data['option_label'] );
+            $line_item->add_meta_data( '_upad_linked_from', $item_data['parent_item'] );
+            $line_item->add_meta_data( '_upad_addon_source', $item_data['addon_title'] . ': ' . $item_data['option_label'] );
             
             $order->add_item( $line_item );
         }
@@ -151,7 +151,7 @@ class WCOS_Order {
      */
     public function format_order_item_meta( $formatted_meta, $item ) {
         // Hide internal meta
-        $hidden_keys = array( '_wcos_addon_data', '_wcos_linked_from', '_wcos_addon_source' );
+        $hidden_keys = array( '_upad_addon_data', '_upad_linked_from', '_upad_addon_source' );
         
         foreach ( $formatted_meta as $key => $meta ) {
             if ( in_array( $meta->key, $hidden_keys, true ) ) {
@@ -170,28 +170,28 @@ class WCOS_Order {
             return;
         }
 
-        $addon_data = $item->get_meta( '_wcos_addon_data' );
+        $addon_data = $item->get_meta( '_upad_addon_data' );
         
         if ( empty( $addon_data ) || ! is_array( $addon_data ) ) {
             return;
         }
 
-        echo '<div class="wcos-order-item-addons">';
+        echo '<div class="upad-order-item-addons">';
         
         foreach ( $addon_data as $addon ) {
-            echo '<div class="wcos-addon-item">';
+            echo '<div class="upad-addon-item">';
             echo '<strong>' . esc_html( $addon['title'] ) . ':</strong> ';
             echo esc_html( $addon['display'] );
             
             if ( ! empty( $addon['price'] ) ) {
-                echo ' <span class="wcos-addon-price">(' . wc_price( $addon['price'] ) . ')</span>';
+                echo ' <span class="upad-addon-price">(' . wc_price( $addon['price'] ) . ')</span>';
             }
 
             // Show file upload links
             if ( $addon['type'] === 'file_upload' && ! empty( $addon['value'] ) ) {
-                echo '<div class="wcos-uploaded-files">';
+                echo '<div class="upad-uploaded-files">';
                 foreach ( (array) $addon['value'] as $upload_hash ) {
-                    $download_url = WCOS_File_Upload::instance()->get_download_url( $upload_hash );
+                    $download_url = UPAD_File_Upload::instance()->get_download_url( $upload_hash );
                     echo '<a href="' . esc_url( $download_url ) . '" target="_blank" class="button button-small">';
                     echo '<span class="dashicons dashicons-download"></span> ' . __( 'Download File', 'wc-options-studio' );
                     echo '</a> ';
@@ -205,7 +205,7 @@ class WCOS_Order {
                     if ( ! empty( $option['linked_product_id'] ) ) {
                         $linked = wc_get_product( $option['linked_product_id'] );
                         if ( $linked ) {
-                            echo '<div class="wcos-linked-product">';
+                            echo '<div class="upad-linked-product">';
                             echo '<small>' . __( 'Linked to:', 'wc-options-studio' ) . ' ';
                             echo '<a href="' . get_edit_post_link( $linked->get_id() ) . '">';
                             echo esc_html( $linked->get_name() );
@@ -234,9 +234,9 @@ class WCOS_Order {
         }
 
         // Check if this is a linked item
-        $linked_from = $item->get_meta( '_wcos_linked_from' );
+        $linked_from = $item->get_meta( '_upad_linked_from' );
         if ( $linked_from ) {
-            $source = $item->get_meta( '_wcos_addon_source' );
+            $source = $item->get_meta( '_upad_addon_source' );
             if ( $source ) {
                 $name .= '<br><small>' . __( 'Added via:', 'wc-options-studio' ) . ' ' . esc_html( $source ) . '</small>';
             }
@@ -263,7 +263,7 @@ class WCOS_Order {
         );
 
         foreach ( $order->get_items() as $item ) {
-            $addon_data = $item->get_meta( '_wcos_addon_data' );
+            $addon_data = $item->get_meta( '_upad_addon_data' );
             
             if ( empty( $addon_data ) || ! is_array( $addon_data ) ) {
                 continue;
@@ -285,7 +285,7 @@ class WCOS_Order {
         global $wpdb;
 
         return $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_uploads 
+            "SELECT * FROM {$wpdb->prefix}upad_uploads 
              WHERE order_id = %d 
              ORDER BY order_item_id, created_at",
             $order_id

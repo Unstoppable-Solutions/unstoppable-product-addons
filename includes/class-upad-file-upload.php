@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_File_Upload {
+class UPAD_File_Upload {
 
     protected static $_instance = null;
 
@@ -69,16 +69,16 @@ class WCOS_File_Upload {
     }
 
     public function __construct() {
-        add_action( 'wp_ajax_wcos_upload_file', array( $this, 'handle_upload' ) );
-        add_action( 'wp_ajax_nopriv_wcos_upload_file', array( $this, 'handle_upload' ) );
-        add_action( 'wp_ajax_wcos_remove_file', array( $this, 'handle_remove' ) );
-        add_action( 'wp_ajax_nopriv_wcos_remove_file', array( $this, 'handle_remove' ) );
-        add_action( 'wp_ajax_wcos_download_file', array( $this, 'handle_download' ) );
-        add_action( 'wcos_cleanup_temp_uploads', array( $this, 'cleanup_temp_uploads' ) );
+        add_action( 'wp_ajax_upad_upload_file', array( $this, 'handle_upload' ) );
+        add_action( 'wp_ajax_nopriv_upad_upload_file', array( $this, 'handle_upload' ) );
+        add_action( 'wp_ajax_upad_remove_file', array( $this, 'handle_remove' ) );
+        add_action( 'wp_ajax_nopriv_upad_remove_file', array( $this, 'handle_remove' ) );
+        add_action( 'wp_ajax_upad_download_file', array( $this, 'handle_download' ) );
+        add_action( 'upad_cleanup_temp_uploads', array( $this, 'cleanup_temp_uploads' ) );
         
         // Schedule cleanup if not scheduled
-        if ( ! wp_next_scheduled( 'wcos_cleanup_temp_uploads' ) ) {
-            wp_schedule_event( time(), 'daily', 'wcos_cleanup_temp_uploads' );
+        if ( ! wp_next_scheduled( 'upad_cleanup_temp_uploads' ) ) {
+            wp_schedule_event( time(), 'daily', 'upad_cleanup_temp_uploads' );
         }
     }
 
@@ -87,7 +87,7 @@ class WCOS_File_Upload {
      */
     public function handle_upload() {
         // Verify nonce
-        if ( ! check_ajax_referer( 'wcos_upload_nonce', 'nonce', false ) ) {
+        if ( ! check_ajax_referer( 'upad_upload_nonce', 'nonce', false ) ) {
             wp_send_json_error( array(
                 'message' => __( 'Security check failed. Please refresh the page and try again.', 'wc-options-studio' ),
             ) );
@@ -210,7 +210,7 @@ class WCOS_File_Upload {
         // Save upload record to database
         global $wpdb;
         $wpdb->insert(
-            $wpdb->prefix . 'wcos_uploads',
+            $wpdb->prefix . 'upad_uploads',
             array(
                 'product_id'  => $product_id,
                 'addon_id'    => $addon_id,
@@ -244,7 +244,7 @@ class WCOS_File_Upload {
      * Handle file removal via AJAX
      */
     public function handle_remove() {
-        if ( ! check_ajax_referer( 'wcos_upload_nonce', 'nonce', false ) ) {
+        if ( ! check_ajax_referer( 'upad_upload_nonce', 'nonce', false ) ) {
             wp_send_json_error( array(
                 'message' => __( 'Security check failed.', 'wc-options-studio' ),
             ) );
@@ -263,7 +263,7 @@ class WCOS_File_Upload {
 
         // Get upload record
         $upload = $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_uploads WHERE upload_hash = %s AND session_key = %s AND status = 'pending'",
+            "SELECT * FROM {$wpdb->prefix}upad_uploads WHERE upload_hash = %s AND session_key = %s AND status = 'pending'",
             $upload_hash,
             $session_key
         ) );
@@ -281,7 +281,7 @@ class WCOS_File_Upload {
 
         // Delete database record
         $wpdb->delete(
-            $wpdb->prefix . 'wcos_uploads',
+            $wpdb->prefix . 'upad_uploads',
             array( 'id' => $upload->id ),
             array( '%d' )
         );
@@ -298,14 +298,14 @@ class WCOS_File_Upload {
         $upload_hash = isset( $_GET['hash'] ) ? sanitize_text_field( $_GET['hash'] ) : '';
         $nonce = isset( $_GET['nonce'] ) ? sanitize_text_field( $_GET['nonce'] ) : '';
 
-        if ( ! wp_verify_nonce( $nonce, 'wcos_download_' . $upload_hash ) ) {
+        if ( ! wp_verify_nonce( $nonce, 'upad_download_' . $upload_hash ) ) {
             wp_die( __( 'Invalid download link.', 'wc-options-studio' ) );
         }
 
         global $wpdb;
 
         $upload = $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_uploads WHERE upload_hash = %s",
+            "SELECT * FROM {$wpdb->prefix}upad_uploads WHERE upload_hash = %s",
             $upload_hash
         ) );
 
@@ -444,7 +444,7 @@ class WCOS_File_Upload {
      */
     private function get_upload_directory() {
         $upload_dir = wp_upload_dir();
-        return $upload_dir['basedir'] . '/wcos-uploads';
+        return $upload_dir['basedir'] . '/upad-uploads';
     }
 
     /**
@@ -460,11 +460,11 @@ class WCOS_File_Upload {
             WC()->session->init();
         }
 
-        $session_key = WC()->session->get( 'wcos_upload_session' );
+        $session_key = WC()->session->get( 'upad_upload_session' );
         
         if ( ! $session_key ) {
             $session_key = 'guest_' . wp_generate_password( 16, false );
-            WC()->session->set( 'wcos_upload_session', $session_key );
+            WC()->session->set( 'upad_upload_session', $session_key );
         }
 
         return $session_key;
@@ -476,7 +476,7 @@ class WCOS_File_Upload {
     private function get_addon( $addon_id ) {
         global $wpdb;
         return $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_addons WHERE id = %d",
+            "SELECT * FROM {$wpdb->prefix}upad_addons WHERE id = %d",
             $addon_id
         ) );
     }
@@ -485,7 +485,7 @@ class WCOS_File_Upload {
      * Get global allowed extensions
      */
     private function get_global_allowed_extensions() {
-        $extensions = get_option( 'wcos_allowed_file_types', 'jpg,jpeg,png,gif,pdf,doc,docx' );
+        $extensions = get_option( 'upad_allowed_file_types', 'jpg,jpeg,png,gif,pdf,doc,docx' );
         if ( empty( $extensions ) || ! is_string( $extensions ) ) {
             $extensions = 'jpg,jpeg,png,gif,pdf,doc,docx';
         }
@@ -496,7 +496,7 @@ class WCOS_File_Upload {
      * Get global max file size in MB
      */
     private function get_global_max_file_size() {
-        $size = get_option( 'wcos_max_file_size', 5 );
+        $size = get_option( 'upad_max_file_size', 5 );
         return ! empty( $size ) ? floatval( $size ) : 5;
     }
 
@@ -529,7 +529,7 @@ class WCOS_File_Upload {
         $cutoff = date( 'Y-m-d H:i:s', strtotime( '-24 hours' ) );
 
         $old_uploads = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_uploads WHERE status = 'pending' AND created_at < %s",
+            "SELECT * FROM {$wpdb->prefix}upad_uploads WHERE status = 'pending' AND created_at < %s",
             $cutoff
         ) );
 
@@ -541,7 +541,7 @@ class WCOS_File_Upload {
 
             // Delete database record
             $wpdb->delete(
-                $wpdb->prefix . 'wcos_uploads',
+                $wpdb->prefix . 'upad_uploads',
                 array( 'id' => $upload->id ),
                 array( '%d' )
             );
@@ -574,7 +574,7 @@ class WCOS_File_Upload {
         $session_key = $this->get_session_key();
 
         return $wpdb->update(
-            $wpdb->prefix . 'wcos_uploads',
+            $wpdb->prefix . 'upad_uploads',
             array(
                 'order_id'      => $order_id,
                 'order_item_id' => $order_item_id,
@@ -594,9 +594,9 @@ class WCOS_File_Upload {
      * Get download URL for a file
      */
     public function get_download_url( $upload_hash ) {
-        $nonce = wp_create_nonce( 'wcos_download_' . $upload_hash );
+        $nonce = wp_create_nonce( 'upad_download_' . $upload_hash );
         return add_query_arg( array(
-            'action' => 'wcos_download_file',
+            'action' => 'upad_download_file',
             'hash'   => $upload_hash,
             'nonce'  => $nonce,
         ), admin_url( 'admin-ajax.php' ) );
@@ -609,7 +609,7 @@ class WCOS_File_Upload {
         global $wpdb;
 
         return $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wcos_uploads WHERE order_item_id = %d ORDER BY created_at ASC",
+            "SELECT * FROM {$wpdb->prefix}upad_uploads WHERE order_item_id = %d ORDER BY created_at ASC",
             $order_item_id
         ) );
     }

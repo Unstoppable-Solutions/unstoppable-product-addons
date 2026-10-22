@@ -15,23 +15,23 @@
             var self = this;
 
             // Add group button
-            $(document).on('click', '.wcos-add-group-btn', function(e) {
+            $(document).on('click', '.upad-add-group-btn', function(e) {
                 e.preventDefault();
                 self.openGroupModal();
             });
 
             // Edit group
-            $(document).on('click', '.wcos-edit-group', function() {
-                var card = $(this).closest('.wcos-group-card');
+            $(document).on('click', '.upad-edit-group', function() {
+                var card = $(this).closest('.upad-group-card');
                 var groupId = card.data('group-id');
                 self.openGroupModal(groupId);
             });
 
             // Delete group
-            $(document).on('click', '.wcos-delete-group', function() {
+            $(document).on('click', '.upad-delete-group', function() {
                 if (!confirm(wcos_admin.i18n.confirm_delete_group)) return;
                 
-                var card = $(this).closest('.wcos-group-card');
+                var card = $(this).closest('.upad-group-card');
                 var groupId = card.data('group-id');
 
                 $.post(wcos_admin.ajax_url, {
@@ -44,28 +44,28 @@
             });
 
             // Add new addon button (in global groups)
-            $(document).on('click', '.wcos-add-addon', function(e) {
+            $(document).on('click', '.upad-add-addon', function(e) {
                 e.preventDefault();
                 var groupId = $(this).data('group-id');
                 self.openAddonModal(null, groupId, null);
             });
 
             // Edit addon
-            $(document).on('click', '.wcos-edit-addon', function(e) {
+            $(document).on('click', '.upad-edit-addon', function(e) {
                 e.preventDefault();
-                var row = $(this).closest('tr, .wcos-addon-item');
+                var row = $(this).closest('tr, .upad-addon-item');
                 var addonId = row.data('addon-id');
-                var groupId = $(this).closest('.wcos-group-card').data('group-id') || null;
-                var productId = $('.wcos-addons-list').data('product-id') || null;
+                var groupId = $(this).closest('.upad-group-card').data('group-id') || null;
+                var productId = $('.upad-addons-list').data('product-id') || null;
                 self.openAddonModal(addonId, groupId, productId);
             });
 
             // Delete addon
-            $(document).on('click', '.wcos-delete-addon', function(e) {
+            $(document).on('click', '.upad-delete-addon', function(e) {
                 e.preventDefault();
                 if (!confirm(wcos_admin.i18n.confirm_delete)) return;
                 
-                var row = $(this).closest('tr, .wcos-addon-item');
+                var row = $(this).closest('tr, .upad-addon-item');
                 var addonId = row.data('addon-id');
 
                 $.post(wcos_admin.ajax_url, {
@@ -78,10 +78,10 @@
             });
 
             // Duplicate addon
-            $(document).on('click', '.wcos-duplicate-addon', function(e) {
+            $(document).on('click', '.upad-duplicate-addon', function(e) {
                 e.preventDefault();
                 
-                var $row = $(this).closest('tr, .wcos-addon-item');
+                var $row = $(this).closest('tr, .upad-addon-item');
                 var addonId = $row.data('addon-id');
                 var $btn = $(this);
                 var originalText = $btn.text();
@@ -99,7 +99,7 @@
                         
                         // Update the new row with duplicated addon data
                         $newRow.attr('data-addon-id', addon.id);
-                        $newRow.find('td:first, .wcos-addon-title').first().text(addon.title);
+                        $newRow.find('td:first, .upad-addon-title').first().text(addon.title);
                         
                         // Insert after original and highlight briefly
                         $newRow.hide().insertAfter($row).fadeIn(400);
@@ -121,17 +121,17 @@
             });
 
             // Add addon type select (product page)
-            $(document).on('change', '.wcos-addon-type-select', function() {
-                var btn = $(this).siblings('.wcos-add-addon-btn');
+            $(document).on('change', '.upad-addon-type-select', function() {
+                var btn = $(this).siblings('.upad-add-addon-btn');
                 btn.prop('disabled', !$(this).val());
             });
 
             // Add addon button (product page)
-            $(document).on('click', '.wcos-add-addon-btn', function(e) {
+            $(document).on('click', '.upad-add-addon-btn', function(e) {
                 e.preventDefault();
-                var select = $(this).siblings('.wcos-addon-type-select');
+                var select = $(this).siblings('.upad-addon-type-select');
                 var addonType = select.val();
-                var productId = $('.wcos-addons-list').data('product-id');
+                var productId = $('.upad-addons-list').data('product-id');
                 
                 if (addonType && productId) {
                     self.openAddonModal(null, null, productId, addonType);
@@ -139,48 +139,48 @@
             });
 
             // Modal close
-            $(document).on('click', '.wcos-modal-close, .wcos-modal-cancel', function() {
-                $('.wcos-modal-overlay').remove();
+            $(document).on('click', '.upad-modal-close, .upad-modal-cancel', function() {
+                $('.upad-modal-overlay').remove();
             });
 
             // Close modal on overlay click
-            $(document).on('click', '.wcos-modal-overlay', function(e) {
-                if ($(e.target).hasClass('wcos-modal-overlay')) {
+            $(document).on('click', '.upad-modal-overlay', function(e) {
+                if ($(e.target).hasClass('upad-modal-overlay')) {
                     $(this).remove();
                 }
             });
 
             // Modal save group
-            $(document).on('click', '.wcos-save-group', function() {
-                var modal = $(this).closest('.wcos-modal');
+            $(document).on('click', '.upad-save-group', function() {
+                var modal = $(this).closest('.upad-modal');
                 var form = modal.find('form');
                 self.saveGroup(form);
             });
 
             // Modal save addon
-            $(document).on('click', '.wcos-save-addon', function() {
-                var modal = $(this).closest('.wcos-modal');
+            $(document).on('click', '.upad-save-addon', function() {
+                var modal = $(this).closest('.upad-modal');
                 var form = modal.find('form');
                 self.saveAddon(form);
             });
 
             // Add option row
-            $(document).on('click', '.wcos-add-option-btn', function(e) {
+            $(document).on('click', '.upad-add-option-btn', function(e) {
                 e.preventDefault();
                 self.addOptionRow();
             });
 
             // Remove option row
-            $(document).on('click', '.wcos-remove-option', function(e) {
+            $(document).on('click', '.upad-remove-option', function(e) {
                 e.preventDefault();
-                $(this).closest('.wcos-option-row').remove();
+                $(this).closest('.upad-option-row').remove();
             });
 
             // Export
-            $(document).on('click', '.wcos-export-group, .wcos-export-btn', function(e) {
+            $(document).on('click', '.upad-export-group, .upad-export-btn', function(e) {
                 e.preventDefault();
-                var groupId = $(this).closest('.wcos-group-card').data('group-id');
-                var productId = $('.wcos-addons-list').data('product-id');
+                var groupId = $(this).closest('.upad-group-card').data('group-id');
+                var productId = $('.upad-addons-list').data('product-id');
 
                 $.post(wcos_admin.ajax_url, {
                     action: 'wcos_export_addons',
@@ -195,13 +195,13 @@
             });
 
             // Import
-            $(document).on('click', '.wcos-import-group, .wcos-import-btn', function(e) {
+            $(document).on('click', '.upad-import-group, .upad-import-btn', function(e) {
                 e.preventDefault();
                 var data = prompt('Paste import data:');
                 if (!data) return;
 
-                var groupId = $(this).closest('.wcos-group-card').data('group-id');
-                var productId = $('.wcos-addons-list').data('product-id');
+                var groupId = $(this).closest('.upad-group-card').data('group-id');
+                var productId = $('.upad-addons-list').data('product-id');
 
                 $.post(wcos_admin.ajax_url, {
                     action: 'wcos_import_addons',
@@ -220,27 +220,27 @@
             });
 
             // Addon type change in modal
-            $(document).on('change', '.wcos-addon-type-field', function() {
-                var $modal = $(this).closest('.wcos-addon-modal');
+            $(document).on('change', '.upad-addon-type-field', function() {
+                var $modal = $(this).closest('.upad-addon-modal');
                 var type = $(this).val();
                 var hasOptions = ['multiple_choice', 'checkboxes'].indexOf(type) !== -1;
                 
                 if (hasOptions) {
-                    $modal.find('.wcos-options-section').show();
+                    $modal.find('.upad-options-section').show();
                 } else {
-                    $modal.find('.wcos-options-section').hide();
+                    $modal.find('.upad-options-section').hide();
                 }
                 
                 // Show/hide type-specific settings
-                $modal.find('.wcos-type-setting-group').hide();
-                $modal.find('.wcos-type-setting-group[data-type="' + type + '"]').show();
+                $modal.find('.upad-type-setting-group').hide();
+                $modal.find('.upad-type-setting-group[data-type="' + type + '"]').show();
             });
         },
 
         initSortable: function() {
-            if ($('.wcos-addons-list').length && $.fn.sortable) {
-                $('.wcos-addons-list').sortable({
-                    handle: '.wcos-addon-drag-handle',
+            if ($('.upad-addons-list').length && $.fn.sortable) {
+                $('.upad-addons-list').sortable({
+                    handle: '.upad-addon-drag-handle',
                     update: function(event, ui) {
                         var order = $(this).sortable('toArray', { attribute: 'data-addon-id' });
                         var productId = $(this).data('product-id');
@@ -256,13 +256,13 @@
             }
 
             // Sortable options in modal
-            $(document).on('click', '.wcos-modal', function() {
+            $(document).on('click', '.upad-modal', function() {
                 var $modal = $(this);
-                var $optionsList = $modal.find('.wcos-options-list');
+                var $optionsList = $modal.find('.upad-options-list');
                 if ($optionsList.length && $.fn.sortable) {
                     $optionsList.sortable({
-                        handle: '.wcos-option-drag',
-                        items: '.wcos-option-row'
+                        handle: '.upad-option-drag',
+                        items: '.upad-option-row'
                     });
                 }
             });
@@ -270,8 +270,8 @@
 
         initSelect2: function() {
             if ($.fn.select2) {
-                var $modal = $('.wcos-modal-body');
-                $('.wcos-category-select').select2({
+                var $modal = $('.upad-modal-body');
+                $('.upad-category-select').select2({
                     placeholder: 'Select categories...',
                     allowClear: true,
                     width: '100%',
@@ -282,7 +282,7 @@
 
         openGroupModal: function(groupId) {
             var self = this;
-            var template = wp.template('wcos-group-modal');
+            var template = wp.template('upad-group-modal');
             var data = {
                 title: groupId ? wcos_admin.i18n.edit_group || 'Edit Group' : wcos_admin.i18n.add_group || 'Add New Group',
                 group_id: groupId || 0,
@@ -315,7 +315,7 @@
                             
                             // Set the selected categories
                             if (data.categories.length > 0) {
-                                $('.wcos-category-select').val(data.categories).trigger('change');
+                                $('.upad-category-select').val(data.categories).trigger('change');
                             }
                             
                             // Set form values
@@ -333,7 +333,7 @@
 
         openAddonModal: function(addonId, groupId, productId, addonType) {
             var self = this;
-            var template = wp.template('wcos-addon-modal');
+            var template = wp.template('upad-addon-modal');
             
             var data = {
                 title: addonId ? 'Edit Add-on' : 'Add New Add-on',
@@ -374,14 +374,14 @@
                             
                             $('body').append(template(data));
                             
-                            var $modal = $('.wcos-addon-modal');
+                            var $modal = $('.upad-addon-modal');
                             
                             self.initSelect2();
                             self.populateOptions(data.options);
                             self.populateSettings(data.settings, data.addon_type);
                             
                             // Set form values AFTER template is added to DOM - scoped to modal
-                            $modal.find('.wcos-addon-type-field').val(data.addon_type).trigger('change');
+                            $modal.find('.upad-addon-type-field').val(data.addon_type).trigger('change');
                             $modal.find('select[name="title_format"]').val(data.title_format);
                             $modal.find('input[name="title"]').val(data.addon_title);
                             $modal.find('textarea[name="description"]').val(data.description);
@@ -393,22 +393,22 @@
             } else {
                 $('body').append(template(data));
                 this.initSelect2();
-                $('.wcos-addon-type-field').trigger('change');
+                $('.upad-addon-type-field').trigger('change');
             }
         },
         
         populateSettings: function(settings, addonType) {
             if (!settings || typeof settings !== 'object') return;
             
-            var $modal = $('.wcos-addon-modal');
+            var $modal = $('.upad-addon-modal');
             
             // Show the correct settings group
-            $modal.find('.wcos-type-setting-group').hide();
-            $modal.find('.wcos-type-setting-group[data-type="' + addonType + '"]').show();
+            $modal.find('.upad-type-setting-group').hide();
+            $modal.find('.upad-type-setting-group[data-type="' + addonType + '"]').show();
             
             // Populate each setting value
             $.each(settings, function(key, value) {
-                var $field = $modal.find('.wcos-type-setting[data-setting="' + key + '"]');
+                var $field = $modal.find('.upad-type-setting[data-setting="' + key + '"]');
                 if ($field.length) {
                     if ($field.is(':checkbox')) {
                         $field.prop('checked', value == 1 || value === true || value === '1');
@@ -432,8 +432,8 @@
         },
 
         populateOptions: function(options) {
-            var $modal = $('.wcos-addon-modal');
-            var $list = $modal.find('.wcos-options-list');
+            var $modal = $('.upad-addon-modal');
+            var $list = $modal.find('.upad-options-list');
             $list.empty();
             
             if (options && options.length) {
@@ -446,26 +446,26 @@
 
         createOptionRow: function(data) {
             data = data || {};
-            var html = '<div class="wcos-option-row">' +
-                '<span class="wcos-option-drag dashicons dashicons-menu"></span>' +
+            var html = '<div class="upad-option-row">' +
+                '<span class="upad-option-drag dashicons dashicons-menu"></span>' +
                 '<input type="hidden" name="options[][id]" value="' + (data.id || '') + '">' +
-                '<input type="text" name="options[][label]" placeholder="Option label" value="' + (data.label || '') + '" class="wcos-option-label">' +
-                '<input type="text" name="options[][price]" placeholder="Price" value="' + (data.price || '') + '" class="wcos-option-price" style="width:80px;">' +
-                '<select name="options[][price_type]" class="wcos-option-price-type">' +
+                '<input type="text" name="options[][label]" placeholder="Option label" value="' + (data.label || '') + '" class="upad-option-label">' +
+                '<input type="text" name="options[][price]" placeholder="Price" value="' + (data.price || '') + '" class="upad-option-price" style="width:80px;">' +
+                '<select name="options[][price_type]" class="upad-option-price-type">' +
                 '<option value="flat"' + (data.price_type === 'flat' ? ' selected' : '') + '>Flat</option>' +
                 '<option value="quantity"' + (data.price_type === 'quantity' ? ' selected' : '') + '>Qty Based</option>' +
                 '<option value="percentage"' + (data.price_type === 'percentage' ? ' selected' : '') + '>Percentage</option>' +
                 '</select>' +
                 '<label><input type="checkbox" name="options[][is_default]" value="1"' + (parseInt(data.is_default) ? ' checked' : '') + '> Default</label>' +
-                '<button type="button" class="button-link wcos-remove-option" style="color:#a00;">Remove</button>' +
+                '<button type="button" class="button-link upad-remove-option" style="color:#a00;">Remove</button>' +
                 '</div>';
             return html;
         },
 
         addOptionRow: function() {
-            var $modal = $('.wcos-addon-modal');
+            var $modal = $('.upad-addon-modal');
             var row = this.createOptionRow();
-            $modal.find('.wcos-options-list').append(row);
+            $modal.find('.upad-options-list').append(row);
         },
 
         saveGroup: function(form) {
@@ -493,7 +493,7 @@
             
             // Collect options data properly
             var options = [];
-            form.find('.wcos-option-row').each(function(index) {
+            form.find('.upad-option-row').each(function(index) {
                 var $row = $(this);
                 options.push({
                     id: $row.find('input[name="options[][id]"]').val(),
@@ -507,7 +507,7 @@
             // Collect type-specific settings
             var settings = {};
             var addonType = form.find('[name="addon_type"]').val();
-            form.find('.wcos-type-setting-group[data-type="' + addonType + '"] .wcos-type-setting').each(function() {
+            form.find('.upad-type-setting-group[data-type="' + addonType + '"] .upad-type-setting').each(function() {
                 var $field = $(this);
                 var key = $field.data('setting');
                 if ($field.is(':checkbox')) {
@@ -528,12 +528,12 @@
                 rules: []
             };
             
-            form.find('.wcos-condition-rule').each(function() {
+            form.find('.upad-condition-rule').each(function() {
                 var $rule = $(this);
                 conditionalLogic.rules.push({
-                    addon_id: $rule.find('.wcos-condition-addon').val(),
-                    operator: $rule.find('.wcos-condition-operator').val(),
-                    value: $rule.find('.wcos-condition-value').val()
+                    addon_id: $rule.find('.upad-condition-addon').val(),
+                    operator: $rule.find('.upad-condition-operator').val(),
+                    value: $rule.find('.upad-condition-value').val()
                 });
             });
 
@@ -571,23 +571,23 @@
             var self = this;
             
             // Toggle conditional rules visibility
-            $(document).on('change', '.wcos-conditional-toggle', function() {
-                var $section = $(this).closest('.wcos-conditional-logic-section');
-                $section.find('.wcos-conditional-rules').toggle($(this).is(':checked'));
+            $(document).on('change', '.upad-conditional-toggle', function() {
+                var $section = $(this).closest('.upad-conditional-logic-section');
+                $section.find('.upad-conditional-rules').toggle($(this).is(':checked'));
             });
             
             // Add condition rule
-            $(document).on('click', '.wcos-add-condition-rule', function() {
-                self.addConditionRule($(this).closest('.wcos-conditional-logic-section'));
+            $(document).on('click', '.upad-add-condition-rule', function() {
+                self.addConditionRule($(this).closest('.upad-conditional-logic-section'));
             });
             
             // Remove condition rule
-            $(document).on('click', '.wcos-remove-condition-rule', function() {
-                $(this).closest('.wcos-condition-rule').remove();
+            $(document).on('click', '.upad-remove-condition-rule', function() {
+                $(this).closest('.upad-condition-rule').remove();
             });
             
             // Update value field based on selected addon
-            $(document).on('change', '.wcos-condition-addon', function() {
+            $(document).on('change', '.upad-condition-addon', function() {
                 self.updateConditionValueOptions($(this));
             });
         },
@@ -597,14 +597,14 @@
          */
         addConditionRule: function($section) {
             var self = this;
-            var $rulesList = $section.find('.wcos-condition-rules-list');
-            var ruleIndex = $rulesList.find('.wcos-condition-rule').length;
+            var $rulesList = $section.find('.upad-condition-rules-list');
+            var ruleIndex = $rulesList.find('.upad-condition-rule').length;
             
-            var ruleHtml = '<div class="wcos-condition-rule" data-index="' + ruleIndex + '">' +
-                '<select class="wcos-condition-addon">' +
+            var ruleHtml = '<div class="upad-condition-rule" data-index="' + ruleIndex + '">' +
+                '<select class="upad-condition-addon">' +
                 '<option value="">' + wcos_admin.i18n.select_addon + '</option>' +
                 '</select>' +
-                '<select class="wcos-condition-operator">' +
+                '<select class="upad-condition-operator">' +
                 '<option value="is">' + wcos_admin.i18n.is + '</option>' +
                 '<option value="is_not">' + wcos_admin.i18n.is_not + '</option>' +
                 '<option value="is_empty">' + wcos_admin.i18n.is_empty + '</option>' +
@@ -613,22 +613,22 @@
                 '<option value="greater_than">' + wcos_admin.i18n.greater_than + '</option>' +
                 '<option value="less_than">' + wcos_admin.i18n.less_than + '</option>' +
                 '</select>' +
-                '<input type="text" class="wcos-condition-value" placeholder="' + wcos_admin.i18n.value + '">' +
-                '<button type="button" class="button wcos-remove-condition-rule">&times;</button>' +
+                '<input type="text" class="upad-condition-value" placeholder="' + wcos_admin.i18n.value + '">' +
+                '<button type="button" class="button upad-remove-condition-rule">&times;</button>' +
                 '</div>';
             
             $rulesList.append(ruleHtml);
             
             // Populate addon options
-            this.populateConditionAddons($rulesList.find('.wcos-condition-rule').last().find('.wcos-condition-addon'));
+            this.populateConditionAddons($rulesList.find('.upad-condition-rule').last().find('.upad-condition-addon'));
         },
         
         /**
          * Populate addon dropdown in condition rule
          */
         populateConditionAddons: function($select) {
-            var currentAddonId = $('.wcos-addon-modal').find('[name="addon_id"]').val();
-            var $modal = $('.wcos-addon-modal');
+            var currentAddonId = $('.upad-addon-modal').find('[name="addon_id"]').val();
+            var $modal = $('.upad-addon-modal');
             var productId = $modal.find('[name="product_id"]').val();
             var groupId = $modal.find('[name="group_id"]').val();
             
@@ -636,18 +636,18 @@
             var addons = [];
             
             // From product addons list
-            $('.wcos-addons-list tr[data-addon-id]').each(function() {
+            $('.upad-addons-list tr[data-addon-id]').each(function() {
                 var id = $(this).data('addon-id');
-                var title = $(this).find('.wcos-addon-title').text().trim();
+                var title = $(this).find('.upad-addon-title').text().trim();
                 if (id && id != currentAddonId) {
                     addons.push({ id: id, title: title });
                 }
             });
             
             // From global group addons
-            $('.wcos-group-card .wcos-addon-item').each(function() {
+            $('.upad-group-card .upad-addon-item').each(function() {
                 var id = $(this).data('addon-id');
-                var title = $(this).find('.wcos-addon-title').text().trim();
+                var title = $(this).find('.upad-addon-title').text().trim();
                 if (id && id != currentAddonId) {
                     addons.push({ id: id, title: title });
                 }
@@ -664,8 +664,8 @@
          */
         updateConditionValueOptions: function($addonSelect) {
             var addonId = $addonSelect.val();
-            var $rule = $addonSelect.closest('.wcos-condition-rule');
-            var $valueField = $rule.find('.wcos-condition-value');
+            var $rule = $addonSelect.closest('.upad-condition-rule');
+            var $valueField = $rule.find('.upad-condition-value');
             
             // For now, just show text input. Can be enhanced to show dropdown for choice addons
             $valueField.show();
@@ -677,11 +677,11 @@
         populateConditionalLogic: function(conditionalLogic) {
             if (!conditionalLogic || !conditionalLogic.enabled) return;
             
-            var $modal = $('.wcos-addon-modal');
-            var $section = $modal.find('.wcos-conditional-logic-section');
+            var $modal = $('.upad-addon-modal');
+            var $section = $modal.find('.upad-conditional-logic-section');
             
-            $section.find('.wcos-conditional-toggle').prop('checked', true);
-            $section.find('.wcos-conditional-rules').show();
+            $section.find('.upad-conditional-toggle').prop('checked', true);
+            $section.find('.upad-conditional-rules').show();
             $section.find('[name="conditional_logic[action]"]').val(conditionalLogic.action || 'show');
             $section.find('[name="conditional_logic[relation]"]').val(conditionalLogic.relation || 'all');
             
@@ -690,10 +690,10 @@
                 var self = this;
                 conditionalLogic.rules.forEach(function(rule) {
                     self.addConditionRule($section);
-                    var $lastRule = $section.find('.wcos-condition-rule').last();
-                    $lastRule.find('.wcos-condition-addon').val(rule.addon_id);
-                    $lastRule.find('.wcos-condition-operator').val(rule.operator);
-                    $lastRule.find('.wcos-condition-value').val(rule.value);
+                    var $lastRule = $section.find('.upad-condition-rule').last();
+                    $lastRule.find('.upad-condition-addon').val(rule.addon_id);
+                    $lastRule.find('.upad-condition-operator').val(rule.operator);
+                    $lastRule.find('.upad-condition-value').val(rule.value);
                 });
             }
         }

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WCOS_Admin_Product_Addons {
+class UPAD_Admin_Product_Addons {
 
     protected static $_instance = null;
 
@@ -28,9 +28,9 @@ class WCOS_Admin_Product_Addons {
      * Add product data tab
      */
     public function add_product_tab( $tabs ) {
-        $tabs['wcos_addons'] = array(
+        $tabs['upad_addons'] = array(
             'label'    => __( 'Add-ons', 'wc-options-studio' ),
-            'target'   => 'wcos_addons_data',
+            'target'   => 'upad_addons_data',
             'class'    => array(),
             'priority' => 70,
         );
@@ -42,7 +42,7 @@ class WCOS_Admin_Product_Addons {
      */
     public function product_tab_content() {
         global $post;
-        include WCOS_PLUGIN_DIR . 'includes/admin/views/product-addons.php';
+        include UPAD_PLUGIN_DIR . 'includes/admin/views/product-addons.php';
     }
 
     /**
@@ -50,7 +50,7 @@ class WCOS_Admin_Product_Addons {
      */
     public function save_product_meta( $post_id ) {
         // Save global addons setting
-        $use_global = isset( $_POST['_wcos_use_global_addons'] ) ? 'yes' : 'no';
-        update_post_meta( $post_id, '_wcos_use_global_addons', $use_global );
+        $use_global = isset( $_POST['_upad_use_global_addons'] ) ? 'yes' : 'no';
+        update_post_meta( $post_id, '_upad_use_global_addons', $use_global );
     }
 }
