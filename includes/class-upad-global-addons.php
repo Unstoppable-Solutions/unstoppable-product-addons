@@ -47,6 +47,7 @@ class UPAD_Global_Addons {
         // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Safe identifier from defaults array.
         $sql .= " ORDER BY {$args['orderby']} {$args['order']}";
 
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $sql built from prepare() plus hardcoded defaults; custom plugin table.
         $results = $wpdb->get_results( $sql );
 
         // Sanitize null values
