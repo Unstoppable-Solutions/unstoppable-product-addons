@@ -93,7 +93,7 @@ class UPAD_Ajax {
             return;
         }
         // Nonce verified in verify_admin_request() above.
-        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        // phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 
         $group_id = isset( $_GET['group_id'] ) ? absint( wp_unslash( $_GET['group_id'] ) ) : 0;
 
@@ -250,7 +250,7 @@ class UPAD_Ajax {
 
         if ( $addon_id ) {
             // Verify addon exists before updating
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom table requires direct query; table name is safe prefix + constant.
             $existing = $wpdb->get_var(
                 // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                 $wpdb->prepare(
@@ -286,7 +286,7 @@ class UPAD_Ajax {
         } else {
             // Get next position
             if ( $group_id ) {
-                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom table requires direct query; table name is safe prefix + constant.
                 $max_position = $wpdb->get_var(
                     // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                     $wpdb->prepare(
@@ -295,7 +295,7 @@ class UPAD_Ajax {
                     )
                 );
             } else {
-                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom table requires direct query; table name is safe prefix + constant.
                 $max_position = $wpdb->get_var(
                     // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
                     $wpdb->prepare(
@@ -366,7 +366,7 @@ class UPAD_Ajax {
         $table_name = $wpdb->prefix . 'upad_addon_options';
 
         // Get existing option IDs.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom table requires direct query; table name is safe prefix + constant.
         $existing = $wpdb->get_col(
             // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant.
             $wpdb->prepare( "SELECT id FROM {$table_name} WHERE addon_id = %d", $addon_id )
@@ -449,7 +449,7 @@ class UPAD_Ajax {
             return;
         }
         // Nonce verified in verify_admin_request() above.
-        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        // phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 
         $addon_id = isset( $_GET['addon_id'] ) ? absint( wp_unslash( $_GET['addon_id'] ) ) : 0;
 
@@ -770,7 +770,7 @@ class UPAD_Ajax {
             return;
         }
         // Nonce verified in verify_admin_request() above.
-        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        // phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 
         $term = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
         

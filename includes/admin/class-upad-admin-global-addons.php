@@ -97,6 +97,7 @@ class UPAD_Admin_Global_Addons {
         // Sanitize categories - ensure all are valid term IDs
         $categories = array();
         if ( isset( $_POST['categories'] ) && is_array( $_POST['categories'] ) ) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each value sanitized with absint() in loop.
             foreach ( $_POST['categories'] as $cat_id ) {
                 $cat_id = absint( $cat_id );
                 if ( $cat_id > 0 ) {
@@ -113,6 +114,7 @@ class UPAD_Admin_Global_Addons {
             'name'                   => $name,
             'priority'               => isset( $_POST['priority'] ) ? absint( $_POST['priority'] ) : 10,
             'restrict_to_categories' => $categories,
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Boolean check, cast to int.
             'enabled'                => isset( $_POST['enabled'] ) && $_POST['enabled'] ? 1 : 0,
         );
 

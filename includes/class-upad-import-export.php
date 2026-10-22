@@ -47,7 +47,7 @@ class UPAD_Import_Export {
             wp_send_json_error( array( 'message' => __( 'Invalid request.', 'unstoppable-product-addons' ) ) );
         }
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table requires direct query.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom table requires direct query; $where is prepared above.
         // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix + constant, $where is prepared.
         $addons = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}upad_addons {$where} ORDER BY position" );
 
