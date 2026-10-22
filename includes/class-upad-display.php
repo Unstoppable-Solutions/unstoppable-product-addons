@@ -198,38 +198,39 @@ class UPAD_Display {
             return '';
         }
 
-        $product = wc_get_product( $product_id );
-        if ( ! $product ) {
+        $upad_product = wc_get_product( $product_id );
+        if ( ! $upad_product ) {
             return '';
         }
 
-        // Enqueue scripts
+        // Enqueue scripts.
         $this->enqueue_frontend_assets();
 
         ob_start();
-        $this->render_addons_for_product( $product );
+        $this->render_addons_for_product( $upad_product );
         return ob_get_clean();
     }
 
     /**
-     * AJAX handler to get product addons HTML
+     * AJAX handler to get product addons HTML.
      */
     public function ajax_get_product_addons_html() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only public product display, no state change.
         $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
-        
+
         if ( ! $product_id ) {
             wp_send_json_error( array( 'message' => 'Invalid product ID' ) );
             return;
         }
 
-        $product = wc_get_product( $product_id );
-        if ( ! $product ) {
+        $upad_product = wc_get_product( $product_id );
+        if ( ! $upad_product ) {
             wp_send_json_error( array( 'message' => 'Product not found' ) );
             return;
         }
 
         ob_start();
-        $this->render_addons_for_product( $product );
+        $this->render_addons_for_product( $upad_product );
         $html = ob_get_clean();
 
         wp_send_json_success( array( 'html' => $html ) );
@@ -347,13 +348,15 @@ class UPAD_Display {
     private $displayed_products = array();
 
     /**
-     * Display addons on product page
+     * Display addons on product page.
      */
     public function display_addons() {
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce globals.
         global $post, $product;
 
-        // Ensure we have a proper product object
+        // Ensure we have a proper product object.
         if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce global.
             $product = wc_get_product( $post );
         }
 
@@ -361,7 +364,7 @@ class UPAD_Display {
             return;
         }
 
-        // Prevent duplicate display on the same page
+        // Prevent duplicate display on the same page.
         $product_id = $product->get_id();
         if ( isset( $this->displayed_products[ $product_id ] ) ) {
             return;
@@ -1151,10 +1154,12 @@ class UPAD_Display {
             return;
         }
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce globals.
         global $post, $product;
 
-        // Ensure we have a proper product object
+        // Ensure we have a proper product object.
         if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce global.
             $product = wc_get_product( $post );
         }
 
