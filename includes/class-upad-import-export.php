@@ -30,7 +30,7 @@ class UPAD_Import_Export {
         check_ajax_referer( 'upad_admin_nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wc-options-studio' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'unstoppable-product-addons' ) ) );
         }
 
         $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
@@ -44,7 +44,7 @@ class UPAD_Import_Export {
         } elseif ( $group_id ) {
             $where = $wpdb->prepare( "WHERE group_id = %d", $group_id );
         } else {
-            wp_send_json_error( array( 'message' => __( 'Invalid request.', 'wc-options-studio' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid request.', 'unstoppable-product-addons' ) ) );
         }
 
         $addons = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}upad_addons {$where} ORDER BY position" );
@@ -86,7 +86,7 @@ class UPAD_Import_Export {
         check_ajax_referer( 'upad_admin_nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wc-options-studio' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'unstoppable-product-addons' ) ) );
         }
 
         $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
@@ -94,14 +94,14 @@ class UPAD_Import_Export {
         $import_data = isset( $_POST['import_data'] ) ? $_POST['import_data'] : '';
 
         if ( empty( $import_data ) ) {
-            wp_send_json_error( array( 'message' => __( 'No import data provided.', 'wc-options-studio' ) ) );
+            wp_send_json_error( array( 'message' => __( 'No import data provided.', 'unstoppable-product-addons' ) ) );
         }
 
         // Decode
         $decoded = json_decode( base64_decode( $import_data ), true );
 
         if ( ! $decoded || ! isset( $decoded['addons'] ) ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid import data format.', 'wc-options-studio' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid import data format.', 'unstoppable-product-addons' ) ) );
         }
 
         global $wpdb;
@@ -151,7 +151,7 @@ class UPAD_Import_Export {
         }
 
         wp_send_json_success( array(
-            'message' => sprintf( __( 'Successfully imported %d addon(s).', 'wc-options-studio' ), $imported ),
+            'message' => sprintf( __( 'Successfully imported %d addon(s).', 'unstoppable-product-addons' ), $imported ),
         ) );
     }
 }

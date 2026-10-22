@@ -97,7 +97,7 @@ class UPAD_Display {
         }
 
         if ( $this->product_has_required_addons( $product ) ) {
-            return __( 'Select options', 'wc-options-studio' );
+            return __( 'Select options', 'unstoppable-product-addons' );
         }
 
         return $text;
@@ -293,22 +293,22 @@ class UPAD_Display {
             'thousand_sep'   => wc_get_price_thousand_separator(),
             'decimals'       => wc_get_price_decimals(),
             'i18n'           => array(
-                'required'          => __( 'This field is required.', 'wc-options-studio' ),
-                'uploading'         => __( 'Uploading...', 'wc-options-studio' ),
-                'upload_error'      => __( 'Upload failed. Please try again.', 'wc-options-studio' ),
-                'remove'            => __( 'Remove', 'wc-options-studio' ),
-                'options_total'     => __( 'Options Total', 'wc-options-studio' ),
-                'grand_total'       => __( 'Grand Total', 'wc-options-studio' ),
-                'select_option'     => __( 'Select an option...', 'wc-options-studio' ),
-                'none'              => __( 'None', 'wc-options-studio' ),
-                'chars_remaining'   => __( 'characters remaining', 'wc-options-studio' ),
-                'out_of_stock'      => __( 'Out of stock', 'wc-options-studio' ),
-                'low_stock'         => __( 'Only %d left', 'wc-options-studio' ),
-                'select_minimum'    => __( 'Please select at least %d option(s)', 'wc-options-studio' ),
-                'select_exactly'    => __( 'Please select exactly %d option(s)', 'wc-options-studio' ),
-                'select_maximum'    => __( 'You can select up to %d option(s)', 'wc-options-studio' ),
-                'select_qty_options' => __( 'Select %d option(s) to match your quantity', 'wc-options-studio' ),
-                'select_qty_total'  => __( 'Please select %d total (you selected %n)', 'wc-options-studio' ),
+                'required'          => __( 'This field is required.', 'unstoppable-product-addons' ),
+                'uploading'         => __( 'Uploading...', 'unstoppable-product-addons' ),
+                'upload_error'      => __( 'Upload failed. Please try again.', 'unstoppable-product-addons' ),
+                'remove'            => __( 'Remove', 'unstoppable-product-addons' ),
+                'options_total'     => __( 'Options Total', 'unstoppable-product-addons' ),
+                'grand_total'       => __( 'Grand Total', 'unstoppable-product-addons' ),
+                'select_option'     => __( 'Select an option...', 'unstoppable-product-addons' ),
+                'none'              => __( 'None', 'unstoppable-product-addons' ),
+                'chars_remaining'   => __( 'characters remaining', 'unstoppable-product-addons' ),
+                'out_of_stock'      => __( 'Out of stock', 'unstoppable-product-addons' ),
+                'low_stock'         => __( 'Only %d left', 'unstoppable-product-addons' ),
+                'select_minimum'    => __( 'Please select at least %d option(s)', 'unstoppable-product-addons' ),
+                'select_exactly'    => __( 'Please select exactly %d option(s)', 'unstoppable-product-addons' ),
+                'select_maximum'    => __( 'You can select up to %d option(s)', 'unstoppable-product-addons' ),
+                'select_qty_options' => __( 'Select %d option(s) to match your quantity', 'unstoppable-product-addons' ),
+                'select_qty_total'  => __( 'Please select %d total (you selected %n)', 'unstoppable-product-addons' ),
             ),
         ) );
     }
@@ -469,7 +469,7 @@ class UPAD_Display {
         switch ( $display_type ) {
             case 'dropdown':
                 echo '<select name="' . esc_attr( $field_name ) . '" class="upad-field upad-dropdown">';
-                echo '<option value="">' . esc_html__( 'Select an option...', 'wc-options-studio' ) . '</option>';
+                echo '<option value="">' . esc_html__( 'Select an option...', 'unstoppable-product-addons' ) . '</option>';
                 
                 foreach ( $addon->options as $option ) {
                     $price_display = $this->get_price_display( $option );
@@ -495,7 +495,7 @@ class UPAD_Display {
                     $checked = empty( $default_value ) ? 'checked' : '';
                     echo '<label class="upad-radio-label">';
                     echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="" class="upad-field upad-radio" ' . $checked . '>';
-                    echo '<span class="upad-radio-text">' . esc_html__( 'None', 'wc-options-studio' ) . '</span>';
+                    echo '<span class="upad-radio-text">' . esc_html__( 'None', 'unstoppable-product-addons' ) . '</span>';
                     echo '</label>';
                 }
 
@@ -574,9 +574,9 @@ class UPAD_Display {
         if ( $link_to_quantity ) {
             echo '<p class="upad-selection-hint upad-qty-linked-hint">';
             if ( $allow_same_option ) {
-                esc_html_e( 'Select flavors to match your quantity (can repeat)', 'wc-options-studio' );
+                esc_html_e( 'Select flavors to match your quantity (can repeat)', 'unstoppable-product-addons' );
             } else {
-                esc_html_e( 'Select one option per item in your quantity', 'wc-options-studio' );
+                esc_html_e( 'Select one option per item in your quantity', 'unstoppable-product-addons' );
             }
             echo '</p>';
         } elseif ( $min_selections > 0 || $max_selections > 0 ) {
@@ -584,24 +584,24 @@ class UPAD_Display {
             if ( $min_selections > 0 && $max_selections > 0 ) {
                 if ( $min_selections === $max_selections ) {
                     printf( 
-                        esc_html__( 'Select exactly %d option(s)', 'wc-options-studio' ), 
+                        esc_html__( 'Select exactly %d option(s)', 'unstoppable-product-addons' ), 
                         $min_selections 
                     );
                 } else {
                     printf( 
-                        esc_html__( 'Select %d to %d options', 'wc-options-studio' ), 
+                        esc_html__( 'Select %d to %d options', 'unstoppable-product-addons' ), 
                         $min_selections, 
                         $max_selections 
                     );
                 }
             } elseif ( $min_selections > 0 ) {
                 printf( 
-                    esc_html__( 'Select at least %d option(s)', 'wc-options-studio' ), 
+                    esc_html__( 'Select at least %d option(s)', 'unstoppable-product-addons' ), 
                     $min_selections 
                 );
             } elseif ( $max_selections > 0 ) {
                 printf( 
-                    esc_html__( 'Select up to %d option(s)', 'wc-options-studio' ), 
+                    esc_html__( 'Select up to %d option(s)', 'unstoppable-product-addons' ), 
                     $max_selections 
                 );
             }
@@ -619,7 +619,7 @@ class UPAD_Display {
                 echo '<div class="upad-qty-option ' . esc_attr( $stock_class ) . '" data-option-id="' . esc_attr( $option->id ) . '">';
                 echo '<span class="upad-option-label">' . esc_html( $option->label ) . '</span>';
                 if ( $price_display ) {
-                    echo '<span class="upad-option-price">' . $price_display . ' ' . esc_html__( 'each', 'wc-options-studio' ) . '</span>';
+                    echo '<span class="upad-option-price">' . $price_display . ' ' . esc_html__( 'each', 'unstoppable-product-addons' ) . '</span>';
                 }
                 echo '<div class="upad-qty-selector">';
                 echo '<button type="button" class="upad-option-qty-minus">−</button>';
@@ -632,7 +632,7 @@ class UPAD_Display {
             
             // Total counter
             echo '<div class="upad-qty-total">';
-            echo '<span class="upad-qty-total-label">' . esc_html__( 'Selected:', 'wc-options-studio' ) . '</span> ';
+            echo '<span class="upad-qty-total-label">' . esc_html__( 'Selected:', 'unstoppable-product-addons' ) . '</span> ';
             echo '<span class="upad-qty-total-count">0</span> / <span class="upad-qty-total-required">1</span>';
             echo '</div>';
         } else {
@@ -700,7 +700,7 @@ class UPAD_Display {
         echo '<textarea name="' . esc_attr( $field_name ) . '" class="upad-field upad-textarea" placeholder="' . esc_attr( $placeholder ) . '" rows="' . esc_attr( $rows ) . '"' . $attrs . '></textarea>';
         
         if ( $show_counter && $max_length ) {
-            echo '<div class="upad-char-counter"><span class="upad-chars-remaining">' . $max_length . '</span> ' . esc_html__( 'characters remaining', 'wc-options-studio' ) . '</div>';
+            echo '<div class="upad-char-counter"><span class="upad-chars-remaining">' . $max_length . '</span> ' . esc_html__( 'characters remaining', 'unstoppable-product-addons' ) . '</div>';
         }
 
         $this->render_price_info( $addon );
@@ -723,12 +723,12 @@ class UPAD_Display {
         echo '<input type="hidden" name="' . esc_attr( $field_name ) . '" class="upad-file-hash">';
         echo '<div class="upad-dropzone-content">';
         echo '<span class="upad-dropzone-icon dashicons dashicons-upload"></span>';
-        echo '<span class="upad-dropzone-text">' . esc_html__( 'Drop files here or click to upload', 'wc-options-studio' ) . '</span>';
+        echo '<span class="upad-dropzone-text">' . esc_html__( 'Drop files here or click to upload', 'unstoppable-product-addons' ) . '</span>';
         echo '<span class="upad-dropzone-info">';
         if ( $allowed_types ) {
-            echo esc_html( sprintf( __( 'Allowed: %s', 'wc-options-studio' ), strtoupper( $allowed_types ) ) ) . '<br>';
+            echo esc_html( sprintf( __( 'Allowed: %s', 'unstoppable-product-addons' ), strtoupper( $allowed_types ) ) ) . '<br>';
         }
-        echo esc_html( sprintf( __( 'Max size: %s MB', 'wc-options-studio' ), $max_size ) );
+        echo esc_html( sprintf( __( 'Max size: %s MB', 'unstoppable-product-addons' ), $max_size ) );
         echo '</span>';
         echo '</div>';
         echo '</div>';
@@ -911,7 +911,7 @@ class UPAD_Display {
         
         // Date input
         echo '<div class="upad-datetime-date">';
-        echo '<label>' . esc_html__( 'Date', 'wc-options-studio' ) . '</label>';
+        echo '<label>' . esc_html__( 'Date', 'unstoppable-product-addons' ) . '</label>';
         
         $min_date_val = '';
         if ( $min_date === 'today' ) {
@@ -927,9 +927,9 @@ class UPAD_Display {
         
         // Time input
         echo '<div class="upad-datetime-time">';
-        echo '<label>' . esc_html__( 'Time', 'wc-options-studio' ) . '</label>';
+        echo '<label>' . esc_html__( 'Time', 'unstoppable-product-addons' ) . '</label>';
         echo '<select name="' . esc_attr( $field_name ) . '[time]" class="upad-field upad-datetime-time-input">';
-        echo '<option value="">' . esc_html__( 'Select time...', 'wc-options-studio' ) . '</option>';
+        echo '<option value="">' . esc_html__( 'Select time...', 'unstoppable-product-addons' ) . '</option>';
         
         // Generate time slots
         $start = strtotime( $time_start );
@@ -971,14 +971,14 @@ class UPAD_Display {
         
         // Length input
         echo '<div class="upad-dimension-input">';
-        echo '<label>' . esc_html__( 'Length', 'wc-options-studio' ) . ' (' . esc_html( $unit_label ) . ')</label>';
+        echo '<label>' . esc_html__( 'Length', 'unstoppable-product-addons' ) . ' (' . esc_html( $unit_label ) . ')</label>';
         echo '<input type="number" name="' . esc_attr( $field_name ) . '[length]" class="upad-field upad-dimension-length" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
         echo '</div>';
         
         // Width input
         if ( $inputs === 'length_width' || $inputs === 'length_width_height' ) {
             echo '<div class="upad-dimension-input">';
-            echo '<label>' . esc_html__( 'Width', 'wc-options-studio' ) . ' (' . esc_html( $unit_label ) . ')</label>';
+            echo '<label>' . esc_html__( 'Width', 'unstoppable-product-addons' ) . ' (' . esc_html( $unit_label ) . ')</label>';
             echo '<input type="number" name="' . esc_attr( $field_name ) . '[width]" class="upad-field upad-dimension-width" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
             echo '</div>';
         }
@@ -986,14 +986,14 @@ class UPAD_Display {
         // Height input
         if ( $inputs === 'length_width_height' ) {
             echo '<div class="upad-dimension-input">';
-            echo '<label>' . esc_html__( 'Height', 'wc-options-studio' ) . ' (' . esc_html( $unit_label ) . ')</label>';
+            echo '<label>' . esc_html__( 'Height', 'unstoppable-product-addons' ) . ' (' . esc_html( $unit_label ) . ')</label>';
             echo '<input type="number" name="' . esc_attr( $field_name ) . '[height]" class="upad-field upad-dimension-height" min="' . esc_attr( $min_value ) . '" max="' . esc_attr( $max_value ) . '" step="' . esc_attr( $step ) . '" value="' . esc_attr( $min_value ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
             echo '</div>';
         }
         
         // Calculated price display
         echo '<div class="upad-dimension-price">';
-        echo '<span class="upad-dimension-price-label">' . esc_html__( 'Price:', 'wc-options-studio' ) . '</span> ';
+        echo '<span class="upad-dimension-price-label">' . esc_html__( 'Price:', 'unstoppable-product-addons' ) . '</span> ';
         echo '<span class="upad-dimension-price-value">' . wc_price( 0 ) . '</span>';
         echo '</div>';
         
@@ -1030,7 +1030,7 @@ class UPAD_Display {
             case 'percentage':
                 return '(' . $sign . $price . '%)';
             case 'quantity':
-                return '(' . $sign . wc_price( $price ) . ' ' . __( 'each', 'wc-options-studio' ) . ')';
+                return '(' . $sign . wc_price( $price ) . ' ' . __( 'each', 'unstoppable-product-addons' ) . ')';
             default:
                 return '(' . $sign . wc_price( $price ) . ')';
         }
@@ -1057,7 +1057,7 @@ class UPAD_Display {
                 echo $sign . $price . '%';
                 break;
             case 'quantity':
-                echo $sign . wc_price( $price ) . ' ' . __( 'per item', 'wc-options-studio' );
+                echo $sign . wc_price( $price ) . ' ' . __( 'per item', 'unstoppable-product-addons' );
                 break;
             default:
                 echo $sign . wc_price( $price );
@@ -1118,11 +1118,11 @@ class UPAD_Display {
         $data = apply_filters( 'upad_option_data', array(), $option );
         
         if ( isset( $data['in_stock'] ) && ! $data['in_stock'] ) {
-            return '<span class="upad-stock-badge upad-out-of-stock-badge">' . __( 'Out of stock', 'wc-options-studio' ) . '</span>';
+            return '<span class="upad-stock-badge upad-out-of-stock-badge">' . __( 'Out of stock', 'unstoppable-product-addons' ) . '</span>';
         }
         
         if ( isset( $data['low_stock'] ) && $data['low_stock'] && isset( $data['stock_quantity'] ) ) {
-            return '<span class="upad-stock-badge upad-low-stock-badge">' . sprintf( __( 'Only %d left', 'wc-options-studio' ), $data['stock_quantity'] ) . '</span>';
+            return '<span class="upad-stock-badge upad-low-stock-badge">' . sprintf( __( 'Only %d left', 'unstoppable-product-addons' ), $data['stock_quantity'] ) . '</span>';
         }
         
         return '';
@@ -1153,9 +1153,9 @@ class UPAD_Display {
 
         echo '<div class="upad-totals-wrapper" style="display:none;">';
         echo '<dl class="upad-product-addon-totals">';
-        echo '<dt class="upad-options-total-label">' . esc_html__( 'Options Total', 'wc-options-studio' ) . '</dt>';
+        echo '<dt class="upad-options-total-label">' . esc_html__( 'Options Total', 'unstoppable-product-addons' ) . '</dt>';
         echo '<dd class="upad-options-total-value">' . wc_price( 0 ) . '</dd>';
-        echo '<dt class="upad-grand-total-label">' . esc_html__( 'Grand Total', 'wc-options-studio' ) . '</dt>';
+        echo '<dt class="upad-grand-total-label">' . esc_html__( 'Grand Total', 'unstoppable-product-addons' ) . '</dt>';
         echo '<dd class="upad-grand-total-value">' . wc_price( $product->get_price() ) . '</dd>';
         echo '</dl>';
         echo '</div>';

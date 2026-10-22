@@ -67,7 +67,7 @@ class UPAD_Ajax {
         // Verify nonce
         if ( ! check_ajax_referer( $nonce_action, $nonce_name, false ) ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Security check failed. Please refresh the page and try again.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Security check failed. Please refresh the page and try again.', 'unstoppable-product-addons' ) 
             ) );
             return false;
         }
@@ -75,7 +75,7 @@ class UPAD_Ajax {
         // Check capabilities
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'You do not have permission to perform this action.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'You do not have permission to perform this action.', 'unstoppable-product-addons' ) 
             ) );
             return false;
         }
@@ -97,7 +97,7 @@ class UPAD_Ajax {
 
         if ( ! $group_id ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Invalid group ID.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Invalid group ID.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -106,7 +106,7 @@ class UPAD_Ajax {
 
         if ( ! $group ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Group not found.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Group not found.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -214,7 +214,7 @@ class UPAD_Ajax {
         // Validate required fields
         if ( empty( $data['title'] ) ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Title is required.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Title is required.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -224,7 +224,7 @@ class UPAD_Ajax {
             $group = UPAD_Global_Addons::instance()->get_group( $group_id );
             if ( ! $group ) {
                 wp_send_json_error( array( 
-                    'message' => esc_html__( 'Invalid group.', 'wc-options-studio' ) 
+                    'message' => esc_html__( 'Invalid group.', 'unstoppable-product-addons' ) 
                 ) );
                 return;
             }
@@ -232,7 +232,7 @@ class UPAD_Ajax {
             $product = wc_get_product( $product_id );
             if ( ! $product ) {
                 wp_send_json_error( array( 
-                    'message' => esc_html__( 'Invalid product.', 'wc-options-studio' ) 
+                    'message' => esc_html__( 'Invalid product.', 'unstoppable-product-addons' ) 
                 ) );
                 return;
             }
@@ -249,7 +249,7 @@ class UPAD_Ajax {
 
             if ( ! $existing ) {
                 wp_send_json_error( array( 
-                    'message' => esc_html__( 'Add-on not found.', 'wc-options-studio' ) 
+                    'message' => esc_html__( 'Add-on not found.', 'unstoppable-product-addons' ) 
                 ) );
                 return;
             }
@@ -307,7 +307,7 @@ class UPAD_Ajax {
 
             if ( ! $addon_id ) {
                 wp_send_json_error( array( 
-                    'message' => esc_html__( 'Failed to create add-on. Please try again.', 'wc-options-studio' ) 
+                    'message' => esc_html__( 'Failed to create add-on. Please try again.', 'unstoppable-product-addons' ) 
                 ) );
                 return;
             }
@@ -319,7 +319,7 @@ class UPAD_Ajax {
         }
 
         wp_send_json_success( array(
-            'message'  => esc_html__( 'Add-on saved successfully.', 'wc-options-studio' ),
+            'message'  => esc_html__( 'Add-on saved successfully.', 'unstoppable-product-addons' ),
             'addon_id' => absint( $addon_id ),
         ) );
     }
@@ -425,7 +425,7 @@ class UPAD_Ajax {
 
         if ( ! $addon_id ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Invalid add-on ID.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Invalid add-on ID.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -439,7 +439,7 @@ class UPAD_Ajax {
 
         if ( ! $addon ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Add-on not found.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Add-on not found.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -496,7 +496,7 @@ class UPAD_Ajax {
 
         if ( ! $addon_id ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Invalid add-on ID.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Invalid add-on ID.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -511,7 +511,7 @@ class UPAD_Ajax {
 
         if ( ! $existing ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Add-on not found.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Add-on not found.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -531,7 +531,7 @@ class UPAD_Ajax {
         );
 
         wp_send_json_success( array(
-            'message' => esc_html__( 'Add-on deleted successfully.', 'wc-options-studio' ),
+            'message' => esc_html__( 'Add-on deleted successfully.', 'unstoppable-product-addons' ),
         ) );
     }
 
@@ -549,7 +549,7 @@ class UPAD_Ajax {
 
         if ( ! $addon_id ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Invalid add-on ID.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Invalid add-on ID.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -564,7 +564,7 @@ class UPAD_Ajax {
 
         if ( ! $addon ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Add-on not found.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Add-on not found.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -598,7 +598,7 @@ class UPAD_Ajax {
 
         // Prepare new addon data
         unset( $addon['id'] );
-        $new_title = $addon['title'] . ' ' . __( '(Copy)', 'wc-options-studio' );
+        $new_title = $addon['title'] . ' ' . __( '(Copy)', 'unstoppable-product-addons' );
         $addon['title'] = $new_title;
         $addon['position'] = ( $max_position !== null ) ? absint( $max_position ) + 1 : 0;
 
@@ -610,7 +610,7 @@ class UPAD_Ajax {
 
         if ( ! $inserted ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Failed to duplicate add-on.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Failed to duplicate add-on.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -631,7 +631,7 @@ class UPAD_Ajax {
         }
 
         wp_send_json_success( array(
-            'message'      => esc_html__( 'Add-on duplicated successfully.', 'wc-options-studio' ),
+            'message'      => esc_html__( 'Add-on duplicated successfully.', 'unstoppable-product-addons' ),
             'new_addon_id' => $new_addon_id,
             'addon'        => array(
                 'id'       => $new_addon_id,
@@ -656,7 +656,7 @@ class UPAD_Ajax {
 
         if ( empty( $order ) ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'No order data provided.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'No order data provided.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -677,7 +677,7 @@ class UPAD_Ajax {
         }
 
         wp_send_json_success( array(
-            'message' => esc_html__( 'Order saved.', 'wc-options-studio' ),
+            'message' => esc_html__( 'Order saved.', 'unstoppable-product-addons' ),
         ) );
     }
 
@@ -725,7 +725,7 @@ class UPAD_Ajax {
         
         if ( ! $product_id ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Invalid product.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Invalid product.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -734,7 +734,7 @@ class UPAD_Ajax {
 
         if ( ! $product ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Product not found.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Product not found.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }

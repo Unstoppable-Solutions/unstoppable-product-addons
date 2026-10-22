@@ -75,7 +75,7 @@ class UPAD_Cart {
                 if ( $is_empty ) {
                     wc_add_notice(
                         sprintf(
-                            __( '"%s" is a required field.', 'wc-options-studio' ),
+                            __( '"%s" is a required field.', 'unstoppable-product-addons' ),
                             $addon->title
                         ),
                         'error'
@@ -201,7 +201,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'min_length',
                 sprintf(
-                    __( 'Please enter at least %d characters.', 'wc-options-studio' ),
+                    __( 'Please enter at least %d characters.', 'unstoppable-product-addons' ),
                     $settings['min_length']
                 )
             );
@@ -212,7 +212,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'max_length',
                 sprintf(
-                    __( 'Please enter no more than %d characters.', 'wc-options-studio' ),
+                    __( 'Please enter no more than %d characters.', 'unstoppable-product-addons' ),
                     $settings['max_length']
                 )
             );
@@ -223,25 +223,25 @@ class UPAD_Cart {
             switch ( $settings['restriction'] ) {
                 case 'letters':
                     if ( ! preg_match( '/^[\p{L}\s]+$/u', $value ) ) {
-                        return new WP_Error( 'letters_only', __( 'Please enter only letters.', 'wc-options-studio' ) );
+                        return new WP_Error( 'letters_only', __( 'Please enter only letters.', 'unstoppable-product-addons' ) );
                     }
                     break;
                     
                 case 'numbers':
                     if ( ! preg_match( '/^[0-9]+$/', $value ) ) {
-                        return new WP_Error( 'numbers_only', __( 'Please enter only numbers.', 'wc-options-studio' ) );
+                        return new WP_Error( 'numbers_only', __( 'Please enter only numbers.', 'unstoppable-product-addons' ) );
                     }
                     break;
                     
                 case 'alphanumeric':
                     if ( ! preg_match( '/^[\p{L}0-9\s]+$/u', $value ) ) {
-                        return new WP_Error( 'alphanumeric_only', __( 'Please enter only letters and numbers.', 'wc-options-studio' ) );
+                        return new WP_Error( 'alphanumeric_only', __( 'Please enter only letters and numbers.', 'unstoppable-product-addons' ) );
                     }
                     break;
                     
                 case 'email':
                     if ( ! is_email( $value ) ) {
-                        return new WP_Error( 'invalid_email', __( 'Please enter a valid email address.', 'wc-options-studio' ) );
+                        return new WP_Error( 'invalid_email', __( 'Please enter a valid email address.', 'unstoppable-product-addons' ) );
                     }
                     break;
             }
@@ -257,14 +257,14 @@ class UPAD_Cart {
         $price = floatval( $value );
 
         if ( $price < 0 ) {
-            return new WP_Error( 'negative_price', __( 'Please enter a positive amount.', 'wc-options-studio' ) );
+            return new WP_Error( 'negative_price', __( 'Please enter a positive amount.', 'unstoppable-product-addons' ) );
         }
 
         if ( ! empty( $settings['min_price'] ) && $price < floatval( $settings['min_price'] ) ) {
             return new WP_Error(
                 'min_price',
                 sprintf(
-                    __( 'Minimum amount is %s.', 'wc-options-studio' ),
+                    __( 'Minimum amount is %s.', 'unstoppable-product-addons' ),
                     wc_price( $settings['min_price'] )
                 )
             );
@@ -274,7 +274,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'max_price',
                 sprintf(
-                    __( 'Maximum amount is %s.', 'wc-options-studio' ),
+                    __( 'Maximum amount is %s.', 'unstoppable-product-addons' ),
                     wc_price( $settings['max_price'] )
                 )
             );
@@ -293,7 +293,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'min_quantity',
                 sprintf(
-                    __( 'Minimum quantity is %d.', 'wc-options-studio' ),
+                    __( 'Minimum quantity is %d.', 'unstoppable-product-addons' ),
                     $settings['min_quantity']
                 )
             );
@@ -303,7 +303,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'max_quantity',
                 sprintf(
-                    __( 'Maximum quantity is %d.', 'wc-options-studio' ),
+                    __( 'Maximum quantity is %d.', 'unstoppable-product-addons' ),
                     $settings['max_quantity']
                 )
             );
@@ -335,7 +335,7 @@ class UPAD_Cart {
                 return new WP_Error(
                     'qty_mismatch',
                     sprintf(
-                        __( 'Please select exactly %d total for "%s" (you selected %d).', 'wc-options-studio' ),
+                        __( 'Please select exactly %d total for "%s" (you selected %d).', 'unstoppable-product-addons' ),
                         $quantity,
                         $addon->title,
                         $total_selected
@@ -359,7 +359,7 @@ class UPAD_Cart {
                 return new WP_Error(
                     'qty_mismatch',
                     sprintf(
-                        __( 'Please select exactly %d options for "%s" to match your quantity.', 'wc-options-studio' ),
+                        __( 'Please select exactly %d options for "%s" to match your quantity.', 'unstoppable-product-addons' ),
                         $quantity,
                         $addon->title
                     )
@@ -373,7 +373,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'min_selections',
                 sprintf(
-                    __( 'Please select at least %d options for "%s".', 'wc-options-studio' ),
+                    __( 'Please select at least %d options for "%s".', 'unstoppable-product-addons' ),
                     $settings['min_selections'],
                     $addon->title
                 )
@@ -384,7 +384,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'max_selections',
                 sprintf(
-                    __( 'Please select no more than %d options for "%s".', 'wc-options-studio' ),
+                    __( 'Please select no more than %d options for "%s".', 'unstoppable-product-addons' ),
                     $settings['max_selections'],
                     $addon->title
                 )
@@ -409,7 +409,7 @@ class UPAD_Cart {
         ) );
 
         if ( ! $exists ) {
-            return new WP_Error( 'invalid_option', __( 'Please select a valid option.', 'wc-options-studio' ) );
+            return new WP_Error( 'invalid_option', __( 'Please select a valid option.', 'unstoppable-product-addons' ) );
         }
 
         return true;
@@ -422,7 +422,7 @@ class UPAD_Cart {
         $date = strtotime( $value );
         
         if ( ! $date ) {
-            return new WP_Error( 'invalid_date', __( 'Please enter a valid date.', 'wc-options-studio' ) );
+            return new WP_Error( 'invalid_date', __( 'Please enter a valid date.', 'unstoppable-product-addons' ) );
         }
 
         $today = strtotime( 'today' );
@@ -432,13 +432,13 @@ class UPAD_Cart {
             switch ( $settings['min_date'] ) {
                 case 'today':
                     if ( $date < $today ) {
-                        return new WP_Error( 'past_date', __( 'Please select today or a future date.', 'wc-options-studio' ) );
+                        return new WP_Error( 'past_date', __( 'Please select today or a future date.', 'unstoppable-product-addons' ) );
                     }
                     break;
                     
                 case 'tomorrow':
                     if ( $date < strtotime( 'tomorrow' ) ) {
-                        return new WP_Error( 'past_date', __( 'Please select a date starting from tomorrow.', 'wc-options-studio' ) );
+                        return new WP_Error( 'past_date', __( 'Please select a date starting from tomorrow.', 'unstoppable-product-addons' ) );
                     }
                     break;
                     
@@ -447,7 +447,7 @@ class UPAD_Cart {
                         return new WP_Error(
                             'before_min_date',
                             sprintf(
-                                __( 'Please select a date on or after %s.', 'wc-options-studio' ),
+                                __( 'Please select a date on or after %s.', 'unstoppable-product-addons' ),
                                 date_i18n( get_option( 'date_format' ), strtotime( $settings['min_date_custom'] ) )
                             )
                         );
@@ -645,7 +645,7 @@ class UPAD_Cart {
             case 'file_upload':
                 if ( is_array( $value ) ) {
                     $data['value'] = array_map( 'sanitize_text_field', $value );
-                    $data['display'] = count( $data['value'] ) . ' ' . _n( 'file', 'files', count( $data['value'] ), 'wc-options-studio' );
+                    $data['display'] = count( $data['value'] ) . ' ' . _n( 'file', 'files', count( $data['value'] ), 'unstoppable-product-addons' );
                     $data['price'] = $this->calculate_field_price( $addon );
                 }
                 break;
@@ -835,9 +835,12 @@ class UPAD_Cart {
                         array( $length, $width, $height ),
                         $custom_formula
                     );
-                    // Safe evaluation - only allow numbers and basic math operators
-                    if ( preg_match( '/^[\d\.\s\+\-\*\/\(\)]+$/', $formula_str ) ) {
-                        $price = @eval( 'return ' . $formula_str . ';' );
+                    // Safe arithmetic evaluation — numbers, parens, and + - * / only.
+                    // WordPress.org forbids eval() even behind a regex guard; we parse the
+                    // expression manually with a shunting-yard pass instead.
+                    $result = self::safe_eval_math( $formula_str );
+                    if ( null !== $result ) {
+                        $price = $result;
                     }
                 }
                 break;
@@ -862,6 +865,132 @@ class UPAD_Cart {
         }
 
         return floatval( $settings['price'] ) * $quantity;
+    }
+
+    /**
+     * Safely evaluate a numeric expression without eval().
+     *
+     * Accepts only numbers (integers / decimals), whitespace, and the four
+     * arithmetic operators and parentheses. Uses the shunting-yard algorithm
+     * to tokenize and then evaluates in reverse-Polish notation.
+     *
+     * @param string $expression Arithmetic expression (e.g. "(2 + 3) * 4.5").
+     * @return float|null Result, or null if the expression is invalid or divides by zero.
+     */
+    public static function safe_eval_math( $expression ) {
+        $expression = (string) $expression;
+
+        // Reject anything that isn't numbers, whitespace, parens, or + - * /.
+        if ( ! preg_match( '/^[\d\.\s\+\-\*\/\(\)]+$/', $expression ) ) {
+            return null;
+        }
+
+        // Tokenize.
+        $tokens  = array();
+        $len     = strlen( $expression );
+        $buffer  = '';
+        for ( $i = 0; $i < $len; $i++ ) {
+            $ch = $expression[ $i ];
+            if ( ctype_space( $ch ) ) {
+                if ( '' !== $buffer ) {
+                    $tokens[] = $buffer;
+                    $buffer   = '';
+                }
+                continue;
+            }
+            if ( ctype_digit( $ch ) || '.' === $ch ) {
+                $buffer .= $ch;
+                continue;
+            }
+            if ( '' !== $buffer ) {
+                $tokens[] = $buffer;
+                $buffer   = '';
+            }
+            $tokens[] = $ch;
+        }
+        if ( '' !== $buffer ) {
+            $tokens[] = $buffer;
+        }
+
+        // Shunting-yard: convert infix tokens to RPN.
+        $output = array();
+        $stack  = array();
+        $prec   = array(
+            '+' => 1,
+            '-' => 1,
+            '*' => 2,
+            '/' => 2,
+        );
+        foreach ( $tokens as $tok ) {
+            if ( is_numeric( $tok ) ) {
+                $output[] = (float) $tok;
+                continue;
+            }
+            if ( '(' === $tok ) {
+                $stack[] = $tok;
+                continue;
+            }
+            if ( ')' === $tok ) {
+                while ( ! empty( $stack ) && '(' !== end( $stack ) ) {
+                    $output[] = array_pop( $stack );
+                }
+                if ( empty( $stack ) ) {
+                    return null; // Mismatched parens.
+                }
+                array_pop( $stack );
+                continue;
+            }
+            if ( isset( $prec[ $tok ] ) ) {
+                while ( ! empty( $stack ) && isset( $prec[ end( $stack ) ] ) && $prec[ end( $stack ) ] >= $prec[ $tok ] ) {
+                    $output[] = array_pop( $stack );
+                }
+                $stack[] = $tok;
+                continue;
+            }
+            return null; // Unknown token.
+        }
+        while ( ! empty( $stack ) ) {
+            $top = array_pop( $stack );
+            if ( '(' === $top ) {
+                return null;
+            }
+            $output[] = $top;
+        }
+
+        // Evaluate RPN.
+        $eval_stack = array();
+        foreach ( $output as $tok ) {
+            if ( is_float( $tok ) || is_int( $tok ) ) {
+                $eval_stack[] = (float) $tok;
+                continue;
+            }
+            if ( count( $eval_stack ) < 2 ) {
+                return null;
+            }
+            $b = array_pop( $eval_stack );
+            $a = array_pop( $eval_stack );
+            switch ( $tok ) {
+                case '+':
+                    $eval_stack[] = $a + $b;
+                    break;
+                case '-':
+                    $eval_stack[] = $a - $b;
+                    break;
+                case '*':
+                    $eval_stack[] = $a * $b;
+                    break;
+                case '/':
+                    if ( 0.0 === (float) $b ) {
+                        return null;
+                    }
+                    $eval_stack[] = $a / $b;
+                    break;
+                default:
+                    return null;
+            }
+        }
+
+        return count( $eval_stack ) === 1 ? (float) $eval_stack[0] : null;
     }
 
     /**

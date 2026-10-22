@@ -153,7 +153,7 @@ class UPAD_Product_Addons {
         );
 
         if ( ! $result ) {
-            return new WP_Error( 'db_error', __( 'Failed to create addon.', 'wc-options-studio' ) );
+            return new WP_Error( 'db_error', __( 'Failed to create addon.', 'unstoppable-product-addons' ) );
         }
 
         return $wpdb->insert_id;
@@ -290,7 +290,7 @@ class UPAD_Product_Addons {
         );
 
         if ( ! $result ) {
-            return new WP_Error( 'db_error', __( 'Failed to add option.', 'wc-options-studio' ) );
+            return new WP_Error( 'db_error', __( 'Failed to add option.', 'unstoppable-product-addons' ) );
         }
 
         return $wpdb->insert_id;

@@ -193,7 +193,7 @@ class UPAD_Order {
                 foreach ( (array) $addon['value'] as $upload_hash ) {
                     $download_url = UPAD_File_Upload::instance()->get_download_url( $upload_hash );
                     echo '<a href="' . esc_url( $download_url ) . '" target="_blank" class="button button-small">';
-                    echo '<span class="dashicons dashicons-download"></span> ' . __( 'Download File', 'wc-options-studio' );
+                    echo '<span class="dashicons dashicons-download"></span> ' . __( 'Download File', 'unstoppable-product-addons' );
                     echo '</a> ';
                 }
                 echo '</div>';
@@ -206,7 +206,7 @@ class UPAD_Order {
                         $linked = wc_get_product( $option['linked_product_id'] );
                         if ( $linked ) {
                             echo '<div class="upad-linked-product">';
-                            echo '<small>' . __( 'Linked to:', 'wc-options-studio' ) . ' ';
+                            echo '<small>' . __( 'Linked to:', 'unstoppable-product-addons' ) . ' ';
                             echo '<a href="' . get_edit_post_link( $linked->get_id() ) . '">';
                             echo esc_html( $linked->get_name() );
                             if ( $linked->get_sku() ) {
@@ -238,7 +238,7 @@ class UPAD_Order {
         if ( $linked_from ) {
             $source = $item->get_meta( '_upad_addon_source' );
             if ( $source ) {
-                $name .= '<br><small>' . __( 'Added via:', 'wc-options-studio' ) . ' ' . esc_html( $source ) . '</small>';
+                $name .= '<br><small>' . __( 'Added via:', 'unstoppable-product-addons' ) . ' ' . esc_html( $source ) . '</small>';
             }
         }
 

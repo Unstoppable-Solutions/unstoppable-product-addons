@@ -55,7 +55,7 @@ class UPAD_Admin_Global_Addons {
         // Verify nonce
         if ( ! check_ajax_referer( 'upad_admin_nonce', 'nonce', false ) ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Security check failed. Please refresh the page and try again.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Security check failed. Please refresh the page and try again.', 'unstoppable-product-addons' ) 
             ) );
             return false;
         }
@@ -63,7 +63,7 @@ class UPAD_Admin_Global_Addons {
         // Check capabilities
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'You do not have permission to perform this action.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'You do not have permission to perform this action.', 'unstoppable-product-addons' ) 
             ) );
             return false;
         }
@@ -88,7 +88,7 @@ class UPAD_Admin_Global_Addons {
         
         if ( empty( $name ) ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Group name is required.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Group name is required.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -120,7 +120,7 @@ class UPAD_Admin_Global_Addons {
             $existing = UPAD_Global_Addons::instance()->get_group( $group_id );
             if ( ! $existing ) {
                 wp_send_json_error( array( 
-                    'message' => esc_html__( 'Group not found.', 'wc-options-studio' ) 
+                    'message' => esc_html__( 'Group not found.', 'unstoppable-product-addons' ) 
                 ) );
                 return;
             }
@@ -141,7 +141,7 @@ class UPAD_Admin_Global_Addons {
         }
 
         wp_send_json_success( array(
-            'message'  => esc_html__( 'Group saved successfully.', 'wc-options-studio' ),
+            'message'  => esc_html__( 'Group saved successfully.', 'unstoppable-product-addons' ),
             'group_id' => absint( $group_id ),
         ) );
     }
@@ -160,7 +160,7 @@ class UPAD_Admin_Global_Addons {
 
         if ( ! $group_id ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Invalid group ID.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Invalid group ID.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -169,7 +169,7 @@ class UPAD_Admin_Global_Addons {
         $existing = UPAD_Global_Addons::instance()->get_group( $group_id );
         if ( ! $existing ) {
             wp_send_json_error( array( 
-                'message' => esc_html__( 'Group not found.', 'wc-options-studio' ) 
+                'message' => esc_html__( 'Group not found.', 'unstoppable-product-addons' ) 
             ) );
             return;
         }
@@ -184,7 +184,7 @@ class UPAD_Admin_Global_Addons {
         }
 
         wp_send_json_success( array(
-            'message' => esc_html__( 'Group deleted successfully.', 'wc-options-studio' ),
+            'message' => esc_html__( 'Group deleted successfully.', 'unstoppable-product-addons' ),
         ) );
     }
 }

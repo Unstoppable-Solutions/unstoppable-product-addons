@@ -46,25 +46,25 @@ if ( $is_variable ) {
         <div class="upad-global-toggle">
             <label>
                 <input type="checkbox" name="_upad_use_global_addons" value="yes" <?php checked( $use_global ); ?>>
-                <?php esc_html_e( 'Use Global Add-ons', 'wc-options-studio' ); ?>
+                <?php esc_html_e( 'Use Global Add-ons', 'unstoppable-product-addons' ); ?>
             </label>
             <p class="description">
-                <?php esc_html_e( 'When enabled, this product will inherit add-ons from matching global groups.', 'wc-options-studio' ); ?>
+                <?php esc_html_e( 'When enabled, this product will inherit add-ons from matching global groups.', 'unstoppable-product-addons' ); ?>
             </p>
         </div>
 
         <div class="upad-addons-header">
-            <h4><?php esc_html_e( 'Product Add-ons', 'wc-options-studio' ); ?></h4>
+            <h4><?php esc_html_e( 'Product Add-ons', 'unstoppable-product-addons' ); ?></h4>
             <div class="upad-addons-actions">
-                <button type="button" class="button upad-import-btn"><?php esc_html_e( 'Import', 'wc-options-studio' ); ?></button>
-                <button type="button" class="button upad-export-btn" <?php echo empty( $addons ) ? 'disabled' : ''; ?>><?php esc_html_e( 'Export', 'wc-options-studio' ); ?></button>
+                <button type="button" class="button upad-import-btn"><?php esc_html_e( 'Import', 'unstoppable-product-addons' ); ?></button>
+                <button type="button" class="button upad-export-btn" <?php echo empty( $addons ) ? 'disabled' : ''; ?>><?php esc_html_e( 'Export', 'unstoppable-product-addons' ); ?></button>
             </div>
         </div>
 
         <div class="upad-addons-list" data-product-id="<?php echo esc_attr( $product_id ); ?>">
             <?php if ( empty( $addons ) ) : ?>
                 <div class="upad-no-addons">
-                    <p><?php esc_html_e( 'No add-ons yet. Add your first add-on below.', 'wc-options-studio' ); ?></p>
+                    <p><?php esc_html_e( 'No add-ons yet. Add your first add-on below.', 'unstoppable-product-addons' ); ?></p>
                 </div>
             <?php else : ?>
                 <?php foreach ( $addons as $addon ) : ?>
@@ -78,12 +78,12 @@ if ( $is_variable ) {
                                 echo esc_html( $type_name ); 
                             ?></span>
                             <?php if ( ! empty( $addon->required ) ) : ?>
-                                <span class="upad-addon-required-badge"><?php esc_html_e( 'Required', 'wc-options-studio' ); ?></span>
+                                <span class="upad-addon-required-badge"><?php esc_html_e( 'Required', 'unstoppable-product-addons' ); ?></span>
                             <?php endif; ?>
                             <div class="upad-addon-actions">
-                                <button type="button" class="button-link upad-edit-addon"><?php esc_html_e( 'Edit', 'wc-options-studio' ); ?></button>
-                                <button type="button" class="button-link upad-duplicate-addon"><?php esc_html_e( 'Duplicate', 'wc-options-studio' ); ?></button>
-                                <button type="button" class="button-link upad-delete-addon"><?php esc_html_e( 'Delete', 'wc-options-studio' ); ?></button>
+                                <button type="button" class="button-link upad-edit-addon"><?php esc_html_e( 'Edit', 'unstoppable-product-addons' ); ?></button>
+                                <button type="button" class="button-link upad-duplicate-addon"><?php esc_html_e( 'Duplicate', 'unstoppable-product-addons' ); ?></button>
+                                <button type="button" class="button-link upad-delete-addon"><?php esc_html_e( 'Delete', 'unstoppable-product-addons' ); ?></button>
                             </div>
                         </div>
                     </div>
@@ -92,9 +92,9 @@ if ( $is_variable ) {
         </div>
 
         <div class="upad-add-addon-section">
-            <label><?php esc_html_e( 'Add new add-on:', 'wc-options-studio' ); ?></label>
+            <label><?php esc_html_e( 'Add new add-on:', 'unstoppable-product-addons' ); ?></label>
             <select class="upad-addon-type-select">
-                <option value=""><?php esc_html_e( 'Select type...', 'wc-options-studio' ); ?></option>
+                <option value=""><?php esc_html_e( 'Select type...', 'unstoppable-product-addons' ); ?></option>
                 <?php foreach ( $addon_types as $key => $type ) : ?>
                     <option value="<?php echo esc_attr( $key ); ?>">
                         <?php echo esc_html( $type['name'] ); ?>
@@ -102,7 +102,7 @@ if ( $is_variable ) {
                 <?php endforeach; ?>
             </select>
             <button type="button" class="button upad-add-addon-btn" disabled>
-                <?php esc_html_e( 'Add', 'wc-options-studio' ); ?>
+                <?php esc_html_e( 'Add', 'unstoppable-product-addons' ); ?>
             </button>
         </div>
 
@@ -124,7 +124,7 @@ if ( $is_variable ) {
                     <input type="hidden" name="product_id" value="{{ data.product_id }}">
                     
                     <div class="upad-form-row">
-                        <label><?php esc_html_e( 'Add-on Type', 'wc-options-studio' ); ?></label>
+                        <label><?php esc_html_e( 'Add-on Type', 'unstoppable-product-addons' ); ?></label>
                         <select name="addon_type" class="upad-addon-type-field widefat">
                             <?php foreach ( $addon_types as $key => $type ) : ?>
                                 <option value="<?php echo esc_attr( $key ); ?>">
@@ -171,38 +171,38 @@ if ( $is_variable ) {
                     </div>
                     
                     <div class="upad-form-row">
-                        <label><?php esc_html_e( 'Title', 'wc-options-studio' ); ?></label>
+                        <label><?php esc_html_e( 'Title', 'unstoppable-product-addons' ); ?></label>
                         <input type="text" name="title" value="{{ data.addon_title }}" class="widefat" required>
                     </div>
                     
                     <div class="upad-form-row">
-                        <label><?php esc_html_e( 'Title Format', 'wc-options-studio' ); ?></label>
+                        <label><?php esc_html_e( 'Title Format', 'unstoppable-product-addons' ); ?></label>
                         <select name="title_format" class="widefat">
-                            <option value="label"><?php esc_html_e( 'Label', 'wc-options-studio' ); ?></option>
-                            <option value="heading"><?php esc_html_e( 'Heading', 'wc-options-studio' ); ?></option>
-                            <option value="hide"><?php esc_html_e( 'Hide', 'wc-options-studio' ); ?></option>
+                            <option value="label"><?php esc_html_e( 'Label', 'unstoppable-product-addons' ); ?></option>
+                            <option value="heading"><?php esc_html_e( 'Heading', 'unstoppable-product-addons' ); ?></option>
+                            <option value="hide"><?php esc_html_e( 'Hide', 'unstoppable-product-addons' ); ?></option>
                         </select>
                     </div>
                     
                     <div class="upad-form-row">
-                        <label><?php esc_html_e( 'Description', 'wc-options-studio' ); ?></label>
+                        <label><?php esc_html_e( 'Description', 'unstoppable-product-addons' ); ?></label>
                         <textarea name="description" class="widefat" rows="3">{{ data.description }}</textarea>
                     </div>
                     
                     <div class="upad-form-row upad-checkboxes">
                         <label>
                             <input type="checkbox" name="required" value="1" <# if (data.required) { #>checked<# } #>>
-                            <?php esc_html_e( 'Required', 'wc-options-studio' ); ?>
+                            <?php esc_html_e( 'Required', 'unstoppable-product-addons' ); ?>
                         </label>
                         <label>
                             <input type="checkbox" name="enabled" value="1" <# if (data.enabled) { #>checked<# } #>>
-                            <?php esc_html_e( 'Enabled', 'wc-options-studio' ); ?>
+                            <?php esc_html_e( 'Enabled', 'unstoppable-product-addons' ); ?>
                         </label>
                     </div>
                     
                     <?php if ( $is_variable && ! empty( $variations ) ) : ?>
                     <div class="upad-form-row upad-variations-row">
-                        <label><?php esc_html_e( 'Apply to Variations', 'wc-options-studio' ); ?></label>
+                        <label><?php esc_html_e( 'Apply to Variations', 'unstoppable-product-addons' ); ?></label>
                         <select name="apply_to_variations[]" class="upad-variation-select widefat" multiple="multiple" style="height: auto; min-height: 100px;">
                             <?php foreach ( $variations as $var_id => $var_name ) : ?>
                                 <option value="<?php echo esc_attr( $var_id ); ?>">
@@ -210,24 +210,24 @@ if ( $is_variable ) {
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <p class="description"><?php esc_html_e( 'Leave empty to show this add-on for all variations. Select specific variations to show this add-on only when those variations are selected.', 'wc-options-studio' ); ?></p>
+                        <p class="description"><?php esc_html_e( 'Leave empty to show this add-on for all variations. Select specific variations to show this add-on only when those variations are selected.', 'unstoppable-product-addons' ); ?></p>
                     </div>
                     <?php endif; ?>
                     
                     <div class="upad-options-section">
-                        <h4><?php esc_html_e( 'Options', 'wc-options-studio' ); ?></h4>
+                        <h4><?php esc_html_e( 'Options', 'unstoppable-product-addons' ); ?></h4>
                         <div class="upad-options-list">
                             <!-- Options will be added here -->
                         </div>
                         <button type="button" class="button upad-add-option-btn">
-                            <?php esc_html_e( 'Add Option', 'wc-options-studio' ); ?>
+                            <?php esc_html_e( 'Add Option', 'unstoppable-product-addons' ); ?>
                         </button>
                     </div>
                 </form>
             </div>
             <div class="upad-modal-footer">
-                <button type="button" class="button upad-modal-cancel"><?php esc_html_e( 'Cancel', 'wc-options-studio' ); ?></button>
-                <button type="button" class="button button-primary upad-save-addon"><?php esc_html_e( 'Save Add-on', 'wc-options-studio' ); ?></button>
+                <button type="button" class="button upad-modal-cancel"><?php esc_html_e( 'Cancel', 'unstoppable-product-addons' ); ?></button>
+                <button type="button" class="button button-primary upad-save-addon"><?php esc_html_e( 'Save Add-on', 'unstoppable-product-addons' ); ?></button>
             </div>
         </div>
     </div>

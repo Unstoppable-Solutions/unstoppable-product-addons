@@ -29,7 +29,7 @@ class UPAD_Admin_Product_Addons {
      */
     public function add_product_tab( $tabs ) {
         $tabs['upad_addons'] = array(
-            'label'    => __( 'Add-ons', 'wc-options-studio' ),
+            'label'    => __( 'Add-ons', 'unstoppable-product-addons' ),
             'target'   => 'upad_addons_data',
             'class'    => array(),
             'priority' => 70,

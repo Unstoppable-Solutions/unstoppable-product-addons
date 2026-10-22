@@ -100,7 +100,7 @@ class UPAD_Global_Addons {
         );
 
         if ( ! $result ) {
-            return new WP_Error( 'db_error', __( 'Failed to create group.', 'wc-options-studio' ) );
+            return new WP_Error( 'db_error', __( 'Failed to create group.', 'unstoppable-product-addons' ) );
         }
 
         return $wpdb->insert_id;
@@ -279,7 +279,7 @@ class UPAD_Global_Addons {
     public function duplicate_group( $group_id ) {
         $group = $this->get_group( $group_id );
         if ( ! $group ) {
-            return new WP_Error( 'not_found', __( 'Group not found.', 'wc-options-studio' ) );
+            return new WP_Error( 'not_found', __( 'Group not found.', 'unstoppable-product-addons' ) );
         }
 
         // Create new group

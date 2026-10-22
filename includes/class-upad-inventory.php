@@ -65,7 +65,7 @@ class UPAD_Inventory {
             return new WP_Error(
                 'out_of_stock',
                 sprintf(
-                    __( '"%s" is currently out of stock.', 'wc-options-studio' ),
+                    __( '"%s" is currently out of stock.', 'unstoppable-product-addons' ),
                     $option->label
                 )
             );
@@ -80,7 +80,7 @@ class UPAD_Inventory {
                 return new WP_Error(
                     'insufficient_stock',
                     sprintf(
-                        __( 'Not enough stock for "%s". Available: %d', 'wc-options-studio' ),
+                        __( 'Not enough stock for "%s". Available: %d', 'unstoppable-product-addons' ),
                         $option->label,
                         max( 0, $stock_quantity - $cart_quantity )
                     )
@@ -129,7 +129,7 @@ class UPAD_Inventory {
                     // Add order note
                     $order->add_order_note(
                         sprintf(
-                            __( 'Reduced stock for linked product "%s" (Add-on: %s) by %d', 'wc-options-studio' ),
+                            __( 'Reduced stock for linked product "%s" (Add-on: %s) by %d', 'unstoppable-product-addons' ),
                             $linked_product->get_name(),
                             $addon['title'],
                             $quantity
@@ -187,7 +187,7 @@ class UPAD_Inventory {
 
                     $order->add_order_note(
                         sprintf(
-                            __( 'Restored stock for linked product "%s" (Add-on: %s) by %d', 'wc-options-studio' ),
+                            __( 'Restored stock for linked product "%s" (Add-on: %s) by %d', 'unstoppable-product-addons' ),
                             $linked_product->get_name(),
                             $addon['title'],
                             $quantity
@@ -359,7 +359,7 @@ class UPAD_Inventory {
      * Add linked product column to admin
      */
     public function add_linked_product_column( $columns ) {
-        $columns['linked_product'] = __( 'Linked Product', 'wc-options-studio' );
+        $columns['linked_product'] = __( 'Linked Product', 'unstoppable-product-addons' );
         return $columns;
     }
 }

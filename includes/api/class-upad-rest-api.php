@@ -129,7 +129,7 @@ class UPAD_REST_API {
         $group = UPAD_Global_Addons::instance()->get_group( $request['id'] );
         
         if ( ! $group ) {
-            return new WP_Error( 'not_found', __( 'Group not found.', 'wc-options-studio' ), array( 'status' => 404 ) );
+            return new WP_Error( 'not_found', __( 'Group not found.', 'unstoppable-product-addons' ), array( 'status' => 404 ) );
         }
 
         return rest_ensure_response( $group );
@@ -187,7 +187,7 @@ class UPAD_REST_API {
         ) );
 
         if ( ! $addon ) {
-            return new WP_Error( 'not_found', __( 'Addon not found.', 'wc-options-studio' ), array( 'status' => 404 ) );
+            return new WP_Error( 'not_found', __( 'Addon not found.', 'unstoppable-product-addons' ), array( 'status' => 404 ) );
         }
 
         $addon->settings = maybe_unserialize( $addon->settings );

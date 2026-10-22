@@ -89,7 +89,7 @@ class UPAD_File_Upload {
         // Verify nonce
         if ( ! check_ajax_referer( 'upad_upload_nonce', 'nonce', false ) ) {
             wp_send_json_error( array(
-                'message' => __( 'Security check failed. Please refresh the page and try again.', 'wc-options-studio' ),
+                'message' => __( 'Security check failed. Please refresh the page and try again.', 'unstoppable-product-addons' ),
             ) );
         }
 
@@ -99,7 +99,7 @@ class UPAD_File_Upload {
 
         if ( ! $addon_id || ! $product_id ) {
             wp_send_json_error( array(
-                'message' => __( 'Invalid request.', 'wc-options-studio' ),
+                'message' => __( 'Invalid request.', 'unstoppable-product-addons' ),
             ) );
         }
 
@@ -107,14 +107,14 @@ class UPAD_File_Upload {
         $addon = $this->get_addon( $addon_id );
         if ( ! $addon ) {
             wp_send_json_error( array(
-                'message' => __( 'Add-on not found.', 'wc-options-studio' ),
+                'message' => __( 'Add-on not found.', 'unstoppable-product-addons' ),
             ) );
         }
 
         // Check if file was uploaded
         if ( empty( $_FILES['file'] ) ) {
             wp_send_json_error( array(
-                'message' => __( 'No file was uploaded.', 'wc-options-studio' ),
+                'message' => __( 'No file was uploaded.', 'unstoppable-product-addons' ),
             ) );
         }
 
@@ -146,7 +146,7 @@ class UPAD_File_Upload {
         if ( ! in_array( $file_ext, $allowed_extensions, true ) ) {
             wp_send_json_error( array(
                 'message' => sprintf(
-                    __( 'File type not allowed. Allowed types: %s', 'wc-options-studio' ),
+                    __( 'File type not allowed. Allowed types: %s', 'unstoppable-product-addons' ),
                     implode( ', ', $allowed_extensions )
                 ),
             ) );
@@ -156,7 +156,7 @@ class UPAD_File_Upload {
         if ( $file['size'] > $max_file_size ) {
             wp_send_json_error( array(
                 'message' => sprintf(
-                    __( 'File is too large. Maximum size: %s MB', 'wc-options-studio' ),
+                    __( 'File is too large. Maximum size: %s MB', 'unstoppable-product-addons' ),
                     number_format( $max_file_size / 1024 / 1024, 1 )
                 ),
             ) );
@@ -197,12 +197,44 @@ class UPAD_File_Upload {
         $safe_filename = $this->generate_safe_filename( $file['name'] );
         $file_path = $unique_folder . '/' . $safe_filename;
 
-        // Move uploaded file
-        if ( ! move_uploaded_file( $file['tmp_name'], $file_path ) ) {
-            wp_send_json_error( array(
-                'message' => __( 'Failed to save uploaded file.', 'wc-options-studio' ),
-            ) );
+        // Move the uploaded file using WordPress's helper so hosts that remap
+        // move_uploaded_file() (or run under PHP-FPM / open_basedir restrictions)
+        // still work. WP's wrapper performs the is_uploaded_file() check for us.
+        if ( ! function_exists( 'wp_handle_upload' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
         }
+        $overrides = array(
+            'test_form'                => false,
+            'test_type'                => false, // We've already validated MIME above.
+            'unique_filename_callback' => function () use ( $safe_filename ) {
+                return $safe_filename;
+            },
+            'upload_error_handler'     => function ( $file_arr, $message ) {
+                return array( 'error' => $message );
+            },
+        );
+
+        // Point WP's upload helper at our chosen folder for this request only.
+        $target_dir     = $unique_folder;
+        $target_url_dir = str_replace( wp_upload_dir()['basedir'], wp_upload_dir()['baseurl'], $target_dir );
+        $upload_filter  = function ( $dirs ) use ( $target_dir, $target_url_dir ) {
+            $dirs['path']   = $target_dir;
+            $dirs['url']    = $target_url_dir;
+            $dirs['subdir'] = '';
+            return $dirs;
+        };
+        add_filter( 'upload_dir', $upload_filter );
+        $moved = wp_handle_upload( $file, $overrides );
+        remove_filter( 'upload_dir', $upload_filter );
+
+        if ( empty( $moved['file'] ) || ! empty( $moved['error'] ) ) {
+            wp_send_json_error(
+                array(
+                    'message' => isset( $moved['error'] ) ? $moved['error'] : __( 'Failed to save uploaded file.', 'unstoppable-product-addons' ),
+                )
+            );
+        }
+        $file_path = $moved['file'];
 
         // Generate upload hash for tracking
         $upload_hash = wp_generate_password( 32, false );
@@ -231,7 +263,7 @@ class UPAD_File_Upload {
         $upload_id = $wpdb->insert_id;
 
         wp_send_json_success( array(
-            'message'     => __( 'File uploaded successfully.', 'wc-options-studio' ),
+            'message'     => __( 'File uploaded successfully.', 'unstoppable-product-addons' ),
             'upload_id'   => $upload_id,
             'upload_hash' => $upload_hash,
             'file_name'   => $safe_filename,
@@ -246,7 +278,7 @@ class UPAD_File_Upload {
     public function handle_remove() {
         if ( ! check_ajax_referer( 'upad_upload_nonce', 'nonce', false ) ) {
             wp_send_json_error( array(
-                'message' => __( 'Security check failed.', 'wc-options-studio' ),
+                'message' => __( 'Security check failed.', 'unstoppable-product-addons' ),
             ) );
         }
 
@@ -255,7 +287,7 @@ class UPAD_File_Upload {
 
         if ( empty( $upload_hash ) ) {
             wp_send_json_error( array(
-                'message' => __( 'Invalid request.', 'wc-options-studio' ),
+                'message' => __( 'Invalid request.', 'unstoppable-product-addons' ),
             ) );
         }
 
@@ -270,7 +302,7 @@ class UPAD_File_Upload {
 
         if ( ! $upload ) {
             wp_send_json_error( array(
-                'message' => __( 'File not found.', 'wc-options-studio' ),
+                'message' => __( 'File not found.', 'unstoppable-product-addons' ),
             ) );
         }
 
@@ -287,7 +319,7 @@ class UPAD_File_Upload {
         );
 
         wp_send_json_success( array(
-            'message' => __( 'File removed successfully.', 'wc-options-studio' ),
+            'message' => __( 'File removed successfully.', 'unstoppable-product-addons' ),
         ) );
     }
 
@@ -299,7 +331,7 @@ class UPAD_File_Upload {
         $nonce = isset( $_GET['nonce'] ) ? sanitize_text_field( $_GET['nonce'] ) : '';
 
         if ( ! wp_verify_nonce( $nonce, 'upad_download_' . $upload_hash ) ) {
-            wp_die( __( 'Invalid download link.', 'wc-options-studio' ) );
+            wp_die( __( 'Invalid download link.', 'unstoppable-product-addons' ) );
         }
 
         global $wpdb;
@@ -310,7 +342,7 @@ class UPAD_File_Upload {
         ) );
 
         if ( ! $upload || ! file_exists( $upload->file_path ) ) {
-            wp_die( __( 'File not found.', 'wc-options-studio' ) );
+            wp_die( __( 'File not found.', 'unstoppable-product-addons' ) );
         }
 
         // Check permissions
@@ -319,7 +351,7 @@ class UPAD_File_Upload {
             if ( $upload->order_id ) {
                 $order = wc_get_order( $upload->order_id );
                 if ( $order && $order->get_customer_id() !== get_current_user_id() ) {
-                    wp_die( __( 'You do not have permission to download this file.', 'wc-options-studio' ) );
+                    wp_die( __( 'You do not have permission to download this file.', 'unstoppable-product-addons' ) );
                 }
             }
         }
@@ -341,7 +373,7 @@ class UPAD_File_Upload {
     private function validate_mime_type( $file_path, $extension ) {
         // Get expected MIME types for this extension
         if ( ! isset( $this->mime_types[ $extension ] ) ) {
-            return new WP_Error( 'invalid_mime', __( 'File type not recognized.', 'wc-options-studio' ) );
+            return new WP_Error( 'invalid_mime', __( 'File type not recognized.', 'unstoppable-product-addons' ) );
         }
 
         $expected_mimes = $this->mime_types[ $extension ];
@@ -358,7 +390,7 @@ class UPAD_File_Upload {
             if ( empty( $wp_check['type'] ) || ! in_array( $wp_check['type'], $expected_mimes, true ) ) {
                 return new WP_Error( 
                     'mime_mismatch', 
-                    __( 'File content does not match file extension. This may indicate a potentially dangerous file.', 'wc-options-studio' )
+                    __( 'File content does not match file extension. This may indicate a potentially dangerous file.', 'unstoppable-product-addons' )
                 );
             }
         }
@@ -373,7 +405,7 @@ class UPAD_File_Upload {
         $image_size = getimagesize( $file_path );
         
         if ( ! $image_size ) {
-            return new WP_Error( 'invalid_image', __( 'Could not read image dimensions.', 'wc-options-studio' ) );
+            return new WP_Error( 'invalid_image', __( 'Could not read image dimensions.', 'unstoppable-product-addons' ) );
         }
 
         $width = $image_size[0];
@@ -390,7 +422,7 @@ class UPAD_File_Upload {
                     return new WP_Error( 
                         'image_too_small', 
                         sprintf(
-                            __( 'Image is too small. Minimum dimensions: %dx%d pixels. Your image: %dx%d pixels.', 'wc-options-studio' ),
+                            __( 'Image is too small. Minimum dimensions: %dx%d pixels. Your image: %dx%d pixels.', 'unstoppable-product-addons' ),
                             $min_width, $min_height, $width, $height
                         )
                     );
@@ -409,7 +441,7 @@ class UPAD_File_Upload {
                     return new WP_Error( 
                         'image_too_large', 
                         sprintf(
-                            __( 'Image is too large. Maximum dimensions: %dx%d pixels. Your image: %dx%d pixels.', 'wc-options-studio' ),
+                            __( 'Image is too large. Maximum dimensions: %dx%d pixels. Your image: %dx%d pixels.', 'unstoppable-product-addons' ),
                             $max_width, $max_height, $width, $height
                         )
                     );
@@ -505,18 +537,18 @@ class UPAD_File_Upload {
      */
     private function get_upload_error_message( $error_code ) {
         $messages = array(
-            UPLOAD_ERR_INI_SIZE   => __( 'The uploaded file exceeds the server limit.', 'wc-options-studio' ),
-            UPLOAD_ERR_FORM_SIZE  => __( 'The uploaded file exceeds the maximum allowed size.', 'wc-options-studio' ),
-            UPLOAD_ERR_PARTIAL    => __( 'The file was only partially uploaded. Please try again.', 'wc-options-studio' ),
-            UPLOAD_ERR_NO_FILE    => __( 'No file was uploaded.', 'wc-options-studio' ),
-            UPLOAD_ERR_NO_TMP_DIR => __( 'Server configuration error. Please contact support.', 'wc-options-studio' ),
-            UPLOAD_ERR_CANT_WRITE => __( 'Failed to write file to disk. Please contact support.', 'wc-options-studio' ),
-            UPLOAD_ERR_EXTENSION  => __( 'File upload stopped by a server extension.', 'wc-options-studio' ),
+            UPLOAD_ERR_INI_SIZE   => __( 'The uploaded file exceeds the server limit.', 'unstoppable-product-addons' ),
+            UPLOAD_ERR_FORM_SIZE  => __( 'The uploaded file exceeds the maximum allowed size.', 'unstoppable-product-addons' ),
+            UPLOAD_ERR_PARTIAL    => __( 'The file was only partially uploaded. Please try again.', 'unstoppable-product-addons' ),
+            UPLOAD_ERR_NO_FILE    => __( 'No file was uploaded.', 'unstoppable-product-addons' ),
+            UPLOAD_ERR_NO_TMP_DIR => __( 'Server configuration error. Please contact support.', 'unstoppable-product-addons' ),
+            UPLOAD_ERR_CANT_WRITE => __( 'Failed to write file to disk. Please contact support.', 'unstoppable-product-addons' ),
+            UPLOAD_ERR_EXTENSION  => __( 'File upload stopped by a server extension.', 'unstoppable-product-addons' ),
         );
 
         return isset( $messages[ $error_code ] ) 
             ? $messages[ $error_code ] 
-            : __( 'An unknown error occurred during upload.', 'wc-options-studio' );
+            : __( 'An unknown error occurred during upload.', 'unstoppable-product-addons' );
     }
 
     /**
