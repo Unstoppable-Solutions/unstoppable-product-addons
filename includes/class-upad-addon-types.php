@@ -361,11 +361,11 @@ class UPAD_Addon_Types {
                     'label'   => __( 'Date format', 'unstoppable-product-addons' ),
                     'default' => 'Y-m-d',
                     'options' => array(
-                        'Y-m-d'   => date( 'Y-m-d' ) . ' (YYYY-MM-DD)',
-                        'm/d/Y'   => date( 'm/d/Y' ) . ' (MM/DD/YYYY)',
-                        'd/m/Y'   => date( 'd/m/Y' ) . ' (DD/MM/YYYY)',
-                        'F j, Y'  => date( 'F j, Y' ),
-                        'j F Y'   => date( 'j F Y' ),
+                        'Y-m-d'   => wp_date( 'Y-m-d' ) . ' (YYYY-MM-DD)',
+                        'm/d/Y'   => wp_date( 'm/d/Y' ) . ' (MM/DD/YYYY)',
+                        'd/m/Y'   => wp_date( 'd/m/Y' ) . ' (DD/MM/YYYY)',
+                        'F j, Y'  => wp_date( 'F j, Y' ),
+                        'j F Y'   => wp_date( 'j F Y' ),
                     ),
                 ),
                 'min_date' => array(

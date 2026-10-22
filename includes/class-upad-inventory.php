@@ -60,27 +60,29 @@ class UPAD_Inventory {
             return $valid;
         }
 
-        // Check if product is in stock
+        // Check if product is in stock.
         if ( ! $linked_product->is_in_stock() ) {
             return new WP_Error(
                 'out_of_stock',
                 sprintf(
+                    /* translators: %s: option label */
                     __( '"%s" is currently out of stock.', 'unstoppable-product-addons' ),
                     $option->label
                 )
             );
         }
 
-        // Check if product has enough stock
+        // Check if product has enough stock.
         if ( $linked_product->managing_stock() ) {
             $stock_quantity = $linked_product->get_stock_quantity();
             $cart_quantity = $this->get_cart_quantity_for_linked_product( $option->linked_product_id );
-            
+
             if ( $stock_quantity <= $cart_quantity ) {
                 return new WP_Error(
                     'insufficient_stock',
                     sprintf(
-                        __( 'Not enough stock for "%s". Available: %d', 'unstoppable-product-addons' ),
+                        /* translators: %1$s: option label, %2$d: available quantity */
+                        __( 'Not enough stock for "%1$s". Available: %2$d', 'unstoppable-product-addons' ),
                         $option->label,
                         max( 0, $stock_quantity - $cart_quantity )
                     )
@@ -126,10 +128,11 @@ class UPAD_Inventory {
 
                     wc_reduce_stock_levels( $linked_product->get_id(), $quantity );
 
-                    // Add order note
+                    // Add order note.
+                    /* translators: %1$s: product name, %2$s: addon title, %3$d: quantity reduced */
                     $order->add_order_note(
                         sprintf(
-                            __( 'Reduced stock for linked product "%s" (Add-on: %s) by %d', 'unstoppable-product-addons' ),
+                            __( 'Reduced stock for linked product "%1$s" (Add-on: %2$s) by %3$d', 'unstoppable-product-addons' ),
                             $linked_product->get_name(),
                             $addon['title'],
                             $quantity
@@ -185,9 +188,10 @@ class UPAD_Inventory {
 
                     wc_update_product_stock( $linked_product, $quantity, 'increase' );
 
+                    /* translators: %1$s: product name, %2$s: addon title, %3$d: quantity restored */
                     $order->add_order_note(
                         sprintf(
-                            __( 'Restored stock for linked product "%s" (Add-on: %s) by %d', 'unstoppable-product-addons' ),
+                            __( 'Restored stock for linked product "%1$s" (Add-on: %2$s) by %3$d', 'unstoppable-product-addons' ),
                             $linked_product->get_name(),
                             $addon['title'],
                             $quantity

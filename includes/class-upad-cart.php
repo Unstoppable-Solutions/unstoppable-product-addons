@@ -75,6 +75,7 @@ class UPAD_Cart {
                 if ( $is_empty ) {
                     wc_add_notice(
                         sprintf(
+                            /* translators: %s: addon field name */
                             __( '"%s" is a required field.', 'unstoppable-product-addons' ),
                             $addon->title
                         ),
@@ -196,22 +197,24 @@ class UPAD_Cart {
         $value = sanitize_textarea_field( $value );
         $length = mb_strlen( $value );
 
-        // Check min length
+        // Check min length.
         if ( ! empty( $settings['min_length'] ) && $length < absint( $settings['min_length'] ) ) {
             return new WP_Error(
                 'min_length',
                 sprintf(
+                    /* translators: %d: minimum character count */
                     __( 'Please enter at least %d characters.', 'unstoppable-product-addons' ),
                     $settings['min_length']
                 )
             );
         }
 
-        // Check max length
+        // Check max length.
         if ( ! empty( $settings['max_length'] ) && $length > absint( $settings['max_length'] ) ) {
             return new WP_Error(
                 'max_length',
                 sprintf(
+                    /* translators: %d: maximum character count */
                     __( 'Please enter no more than %d characters.', 'unstoppable-product-addons' ),
                     $settings['max_length']
                 )
@@ -264,6 +267,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'min_price',
                 sprintf(
+                    /* translators: %s: minimum price amount */
                     __( 'Minimum amount is %s.', 'unstoppable-product-addons' ),
                     wc_price( $settings['min_price'] )
                 )
@@ -274,6 +278,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'max_price',
                 sprintf(
+                    /* translators: %s: maximum price amount */
                     __( 'Maximum amount is %s.', 'unstoppable-product-addons' ),
                     wc_price( $settings['max_price'] )
                 )
@@ -284,7 +289,11 @@ class UPAD_Cart {
     }
 
     /**
-     * Validate quantity field
+     * Validate quantity field.
+     *
+     * @param mixed $value    Field value.
+     * @param array $settings Field settings.
+     * @return true|WP_Error
      */
     private function validate_quantity_field( $value, $settings ) {
         $quantity = absint( $value );
@@ -293,6 +302,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'min_quantity',
                 sprintf(
+                    /* translators: %d: minimum quantity */
                     __( 'Minimum quantity is %d.', 'unstoppable-product-addons' ),
                     $settings['min_quantity']
                 )
@@ -303,6 +313,7 @@ class UPAD_Cart {
             return new WP_Error(
                 'max_quantity',
                 sprintf(
+                    /* translators: %d: maximum quantity */
                     __( 'Maximum quantity is %d.', 'unstoppable-product-addons' ),
                     $settings['max_quantity']
                 )
@@ -335,7 +346,8 @@ class UPAD_Cart {
                 return new WP_Error(
                     'qty_mismatch',
                     sprintf(
-                        __( 'Please select exactly %d total for "%s" (you selected %d).', 'unstoppable-product-addons' ),
+                        /* translators: %1$d: required quantity, %2$s: addon name, %3$d: selected quantity */
+                        __( 'Please select exactly %1$d total for "%2$s" (you selected %3$d).', 'unstoppable-product-addons' ),
                         $quantity,
                         $addon->title,
                         $total_selected
@@ -353,13 +365,14 @@ class UPAD_Cart {
 
         $count = count( array_filter( $value ) );
         
-        // Quantity-linked validation (standard checkboxes)
+        // Quantity-linked validation (standard checkboxes).
         if ( $link_to_quantity ) {
             if ( $count !== $quantity ) {
                 return new WP_Error(
                     'qty_mismatch',
                     sprintf(
-                        __( 'Please select exactly %d options for "%s" to match your quantity.', 'unstoppable-product-addons' ),
+                        /* translators: %1$d: required quantity, %2$s: addon name */
+                        __( 'Please select exactly %1$d options for "%2$s" to match your quantity.', 'unstoppable-product-addons' ),
                         $quantity,
                         $addon->title
                     )
@@ -368,12 +381,13 @@ class UPAD_Cart {
             return true;
         }
 
-        // Standard min/max validation
+        // Standard min/max validation.
         if ( ! empty( $settings['min_selections'] ) && $count < absint( $settings['min_selections'] ) ) {
             return new WP_Error(
                 'min_selections',
                 sprintf(
-                    __( 'Please select at least %d options for "%s".', 'unstoppable-product-addons' ),
+                    /* translators: %1$d: minimum selections, %2$s: addon name */
+                    __( 'Please select at least %1$d options for "%2$s".', 'unstoppable-product-addons' ),
                     $settings['min_selections'],
                     $addon->title
                 )
@@ -384,7 +398,8 @@ class UPAD_Cart {
             return new WP_Error(
                 'max_selections',
                 sprintf(
-                    __( 'Please select no more than %d options for "%s".', 'unstoppable-product-addons' ),
+                    /* translators: %1$d: maximum selections, %2$s: addon name */
+                    __( 'Please select no more than %1$d options for "%2$s".', 'unstoppable-product-addons' ),
                     $settings['max_selections'],
                     $addon->title
                 )
@@ -447,6 +462,7 @@ class UPAD_Cart {
                         return new WP_Error(
                             'before_min_date',
                             sprintf(
+                                /* translators: %s: minimum allowed date */
                                 __( 'Please select a date on or after %s.', 'unstoppable-product-addons' ),
                                 date_i18n( get_option( 'date_format' ), strtotime( $settings['min_date_custom'] ) )
                             )

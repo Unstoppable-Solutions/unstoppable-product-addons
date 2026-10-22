@@ -87,12 +87,13 @@ class UPAD_Admin_Migrate {
                         <?php if ( $detected['found'] ) : ?>
                             <div class="upad-detected-info">
                                 <span class="dashicons dashicons-yes-alt"></span>
-                                <?php 
-                                printf( 
-                                    esc_html__( 'Detected: %d products with add-ons, %d global add-on groups', 'unstoppable-product-addons' ),
+                                <?php
+                                /* translators: %1$d: number of products, %2$d: number of global groups */
+                                printf(
+                                    esc_html__( 'Detected: %1$d products with add-ons, %2$d global add-on groups', 'unstoppable-product-addons' ),
                                     $detected['products'],
                                     $detected['globals']
-                                ); 
+                                );
                                 ?>
                             </div>
                             <button type="button" class="button button-primary upad-scan-btn" data-source="<?php echo esc_attr( $key ); ?>">
@@ -558,6 +559,7 @@ class UPAD_Admin_Migrate {
             ) );
 
             if ( ! $group_id ) {
+                /* translators: %s: group name */
                 $result['errors'][] = sprintf( __( 'Failed to create group: %s', 'unstoppable-product-addons' ), $post->post_title );
                 continue;
             }
@@ -756,6 +758,7 @@ class UPAD_Admin_Migrate {
             ) );
 
             if ( ! $group_id ) {
+                /* translators: %s: group name */
                 $result['errors'][] = sprintf( __( 'Failed to create group: %s', 'unstoppable-product-addons' ), $post->post_title );
                 continue;
             }

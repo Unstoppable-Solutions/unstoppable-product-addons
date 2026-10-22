@@ -583,26 +583,30 @@ class UPAD_Display {
             echo '<p class="upad-selection-hint">';
             if ( $min_selections > 0 && $max_selections > 0 ) {
                 if ( $min_selections === $max_selections ) {
-                    printf( 
-                        esc_html__( 'Select exactly %d option(s)', 'unstoppable-product-addons' ), 
-                        $min_selections 
+                    /* translators: %d: number of options to select */
+                    printf(
+                        esc_html__( 'Select exactly %d option(s)', 'unstoppable-product-addons' ),
+                        $min_selections
                     );
                 } else {
-                    printf( 
-                        esc_html__( 'Select %d to %d options', 'unstoppable-product-addons' ), 
-                        $min_selections, 
-                        $max_selections 
+                    /* translators: %1$d: minimum options, %2$d: maximum options */
+                    printf(
+                        esc_html__( 'Select %1$d to %2$d options', 'unstoppable-product-addons' ),
+                        $min_selections,
+                        $max_selections
                     );
                 }
             } elseif ( $min_selections > 0 ) {
-                printf( 
-                    esc_html__( 'Select at least %d option(s)', 'unstoppable-product-addons' ), 
-                    $min_selections 
+                /* translators: %d: minimum number of options to select */
+                printf(
+                    esc_html__( 'Select at least %d option(s)', 'unstoppable-product-addons' ),
+                    $min_selections
                 );
             } elseif ( $max_selections > 0 ) {
-                printf( 
-                    esc_html__( 'Select up to %d option(s)', 'unstoppable-product-addons' ), 
-                    $max_selections 
+                /* translators: %d: maximum number of options to select */
+                printf(
+                    esc_html__( 'Select up to %d option(s)', 'unstoppable-product-addons' ),
+                    $max_selections
                 );
             }
             echo '</p>';
@@ -726,8 +730,10 @@ class UPAD_Display {
         echo '<span class="upad-dropzone-text">' . esc_html__( 'Drop files here or click to upload', 'unstoppable-product-addons' ) . '</span>';
         echo '<span class="upad-dropzone-info">';
         if ( $allowed_types ) {
+            /* translators: %s: allowed file extensions */
             echo esc_html( sprintf( __( 'Allowed: %s', 'unstoppable-product-addons' ), strtoupper( $allowed_types ) ) ) . '<br>';
         }
+        /* translators: %s: maximum file size in megabytes */
         echo esc_html( sprintf( __( 'Max size: %s MB', 'unstoppable-product-addons' ), $max_size ) );
         echo '</span>';
         echo '</div>';
@@ -915,11 +921,11 @@ class UPAD_Display {
         
         $min_date_val = '';
         if ( $min_date === 'today' ) {
-            $min_date_val = date( 'Y-m-d' );
+            $min_date_val = wp_date( 'Y-m-d' );
         } elseif ( $min_date === 'tomorrow' ) {
-            $min_date_val = date( 'Y-m-d', strtotime( '+1 day' ) );
+            $min_date_val = wp_date( 'Y-m-d', strtotime( '+1 day' ) );
         } elseif ( $min_date === 'days_ahead' ) {
-            $min_date_val = date( 'Y-m-d', strtotime( '+' . $min_days_ahead . ' days' ) );
+            $min_date_val = wp_date( 'Y-m-d', strtotime( '+' . $min_days_ahead . ' days' ) );
         }
         
         echo '<input type="date" name="' . esc_attr( $field_name ) . '[date]" class="upad-field upad-datetime-date-input" min="' . esc_attr( $min_date_val ) . '"' . ( $addon->required ? ' required' : '' ) . '>';
@@ -937,7 +943,9 @@ class UPAD_Display {
         $interval = $time_interval * 60;
         
         for ( $time = $start; $time <= $end; $time += $interval ) {
+            // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- Time slots for form value; local timezone is correct.
             $time_value = date( 'H:i', $time );
+            // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- Time slots for form display; local timezone is correct.
             $time_display = date( $time_format, $time );
             echo '<option value="' . esc_attr( $time_value ) . '">' . esc_html( $time_display ) . '</option>';
         }
@@ -1122,6 +1130,7 @@ class UPAD_Display {
         }
         
         if ( isset( $data['low_stock'] ) && $data['low_stock'] && isset( $data['stock_quantity'] ) ) {
+            /* translators: %d: quantity remaining in stock */
             return '<span class="upad-stock-badge upad-low-stock-badge">' . sprintf( __( 'Only %d left', 'unstoppable-product-addons' ), $data['stock_quantity'] ) . '</span>';
         }
         

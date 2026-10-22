@@ -255,7 +255,9 @@ class UPAD_Install {
     }
 
     /**
-     * Recursively delete a directory
+     * Recursively delete a directory.
+     *
+     * @param string $dir Directory path.
      */
     private static function delete_directory( $dir ) {
         if ( ! is_dir( $dir ) ) {
@@ -265,8 +267,13 @@ class UPAD_Install {
         $files = array_diff( scandir( $dir ), array( '.', '..' ) );
         foreach ( $files as $file ) {
             $path = $dir . '/' . $file;
-            is_dir( $path ) ? self::delete_directory( $path ) : unlink( $path );
+            if ( is_dir( $path ) ) {
+                self::delete_directory( $path );
+            } else {
+                wp_delete_file( $path );
+            }
         }
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Uninstall cleanup; WP_Filesystem requires credentials.
         rmdir( $dir );
     }
 }

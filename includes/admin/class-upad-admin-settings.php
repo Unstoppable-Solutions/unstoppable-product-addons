@@ -49,23 +49,63 @@ class UPAD_Admin_Settings {
      * Register settings.
      */
     public function register_settings() {
-        // File Upload Settings
-        register_setting( 'upad_settings', 'upad_file_upload_enabled' );
-        register_setting( 'upad_settings', 'upad_allowed_file_types' );
-        register_setting( 'upad_settings', 'upad_max_file_size' );
-        register_setting( 'upad_settings', 'upad_secure_uploads' );
+        // File Upload Settings.
+        register_setting(
+            'upad_settings',
+            'upad_file_upload_enabled',
+            array( 'sanitize_callback' => 'sanitize_text_field' )
+        );
+        register_setting(
+            'upad_settings',
+            'upad_allowed_file_types',
+            array( 'sanitize_callback' => 'sanitize_text_field' )
+        );
+        register_setting(
+            'upad_settings',
+            'upad_max_file_size',
+            array( 'sanitize_callback' => 'absint' )
+        );
+        register_setting(
+            'upad_settings',
+            'upad_secure_uploads',
+            array( 'sanitize_callback' => 'sanitize_text_field' )
+        );
 
-        // Display Settings
-        register_setting( 'upad_settings', 'upad_display_option_prices' );
-        register_setting( 'upad_settings', 'upad_display_totals' );
+        // Display Settings.
+        register_setting(
+            'upad_settings',
+            'upad_display_option_prices',
+            array( 'sanitize_callback' => 'sanitize_text_field' )
+        );
+        register_setting(
+            'upad_settings',
+            'upad_display_totals',
+            array( 'sanitize_callback' => 'sanitize_text_field' )
+        );
 
-        // Inventory Settings
-        register_setting( 'upad_settings', 'upad_enable_inventory_tracking' );
-        register_setting( 'upad_settings', 'upad_add_as_line_items' );
+        // Inventory Settings.
+        register_setting(
+            'upad_settings',
+            'upad_enable_inventory_tracking',
+            array( 'sanitize_callback' => 'sanitize_text_field' )
+        );
+        register_setting(
+            'upad_settings',
+            'upad_add_as_line_items',
+            array( 'sanitize_callback' => 'sanitize_text_field' )
+        );
 
-        // General Settings
-        register_setting( 'upad_settings', 'upad_inherit_global_addons' );
-        register_setting( 'upad_settings', 'upad_delete_data_on_uninstall' );
+        // General Settings.
+        register_setting(
+            'upad_settings',
+            'upad_inherit_global_addons',
+            array( 'sanitize_callback' => 'sanitize_text_field' )
+        );
+        register_setting(
+            'upad_settings',
+            'upad_delete_data_on_uninstall',
+            array( 'sanitize_callback' => 'sanitize_text_field' )
+        );
     }
 
     /**

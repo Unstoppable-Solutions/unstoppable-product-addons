@@ -36,12 +36,15 @@ class UPAD_Global_Addons {
 
         $args = wp_parse_args( $args, $defaults );
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table, object cache not applicable.
         $sql = "SELECT * FROM {$wpdb->prefix}upad_global_groups WHERE 1=1";
 
         if ( $args['enabled'] !== null ) {
             $sql .= $wpdb->prepare( " AND enabled = %d", $args['enabled'] ? 1 : 0 );
         }
 
+        // Orderby and order are from hardcoded defaults, not user input.
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Safe identifier from defaults array.
         $sql .= " ORDER BY {$args['orderby']} {$args['order']}";
 
         $results = $wpdb->get_results( $sql );

@@ -151,6 +151,7 @@ class UPAD_Import_Export {
         }
 
         wp_send_json_success( array(
+            /* translators: %d: number of imported addons */
             'message' => sprintf( __( 'Successfully imported %d addon(s).', 'unstoppable-product-addons' ), $imported ),
         ) );
     }

@@ -54,12 +54,14 @@ $addon_types = UPAD_Addon_Types::instance()->get_types();
                                 <?php if ( empty( $category_names ) ) : ?>
                                     <em><?php esc_html_e( 'Applies to: All Products', 'unstoppable-product-addons' ); ?></em>
                                 <?php else : ?>
+                                    <?php /* translators: %s: list of category names */ ?>
                                     <em><?php echo esc_html( sprintf( __( 'Applies to: %s', 'unstoppable-product-addons' ), implode( ', ', $category_names ) ) ); ?></em>
                                 <?php endif; ?>
                             </span>
                         </div>
                         <div class="upad-group-actions">
                             <span class="upad-priority">
+                                <?php /* translators: %d: priority number */ ?>
                                 <?php echo esc_html( sprintf( __( 'Priority: %d', 'unstoppable-product-addons' ), $group->priority ?? 10 ) ); ?>
                             </span>
                             <span class="upad-status <?php echo ! empty( $group->enabled ) ? 'active' : 'inactive'; ?>">

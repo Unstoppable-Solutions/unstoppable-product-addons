@@ -141,10 +141,11 @@ class UPAD_File_Upload {
             ? floatval( $settings['max_file_size'] ) * 1024 * 1024 // Convert MB to bytes
             : $this->get_global_max_file_size() * 1024 * 1024;
 
-        // Validate file extension
+        // Validate file extension.
         $file_ext = strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
         if ( ! in_array( $file_ext, $allowed_extensions, true ) ) {
             wp_send_json_error( array(
+                /* translators: %s: list of allowed file extensions */
                 'message' => sprintf(
                     __( 'File type not allowed. Allowed types: %s', 'unstoppable-product-addons' ),
                     implode( ', ', $allowed_extensions )
@@ -152,9 +153,10 @@ class UPAD_File_Upload {
             ) );
         }
 
-        // Validate file size
+        // Validate file size.
         if ( $file['size'] > $max_file_size ) {
             wp_send_json_error( array(
+                /* translators: %s: maximum file size in megabytes */
                 'message' => sprintf(
                     __( 'File is too large. Maximum size: %s MB', 'unstoppable-product-addons' ),
                     number_format( $max_file_size / 1024 / 1024, 1 )
@@ -306,12 +308,12 @@ class UPAD_File_Upload {
             ) );
         }
 
-        // Delete physical file
+        // Delete physical file.
         if ( file_exists( $upload->file_path ) ) {
-            unlink( $upload->file_path );
+            wp_delete_file( $upload->file_path );
         }
 
-        // Delete database record
+        // Delete database record.
         $wpdb->delete(
             $wpdb->prefix . 'upad_uploads',
             array( 'id' => $upload->id ),
@@ -356,13 +358,14 @@ class UPAD_File_Upload {
             }
         }
 
-        // Serve file
+        // Serve file.
         header( 'Content-Type: application/octet-stream' );
         header( 'Content-Disposition: attachment; filename="' . $upload->file_name . '"' );
         header( 'Content-Length: ' . filesize( $upload->file_path ) );
         header( 'Cache-Control: no-cache, must-revalidate' );
         header( 'Pragma: no-cache' );
-        
+
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- Streaming download; WP_Filesystem is not applicable.
         readfile( $upload->file_path );
         exit;
     }
@@ -417,32 +420,40 @@ class UPAD_File_Upload {
             if ( count( $min ) === 2 ) {
                 $min_width = absint( $min[0] );
                 $min_height = absint( $min[1] );
-                
+
                 if ( $width < $min_width || $height < $min_height ) {
-                    return new WP_Error( 
-                        'image_too_small', 
+                    return new WP_Error(
+                        'image_too_small',
                         sprintf(
-                            __( 'Image is too small. Minimum dimensions: %dx%d pixels. Your image: %dx%d pixels.', 'unstoppable-product-addons' ),
-                            $min_width, $min_height, $width, $height
+                            /* translators: %1$d: min width, %2$d: min height, %3$d: actual width, %4$d: actual height */
+                            __( 'Image is too small. Minimum dimensions: %1$dx%2$d pixels. Your image: %3$dx%4$d pixels.', 'unstoppable-product-addons' ),
+                            $min_width,
+                            $min_height,
+                            $width,
+                            $height
                         )
                     );
                 }
             }
         }
 
-        // Check maximum dimensions
+        // Check maximum dimensions.
         if ( ! empty( $settings['max_dimensions'] ) ) {
             $max = explode( 'x', strtolower( $settings['max_dimensions'] ) );
             if ( count( $max ) === 2 ) {
                 $max_width = absint( $max[0] );
                 $max_height = absint( $max[1] );
-                
+
                 if ( $width > $max_width || $height > $max_height ) {
-                    return new WP_Error( 
-                        'image_too_large', 
+                    return new WP_Error(
+                        'image_too_large',
                         sprintf(
-                            __( 'Image is too large. Maximum dimensions: %dx%d pixels. Your image: %dx%d pixels.', 'unstoppable-product-addons' ),
-                            $max_width, $max_height, $width, $height
+                            /* translators: %1$d: max width, %2$d: max height, %3$d: actual width, %4$d: actual height */
+                            __( 'Image is too large. Maximum dimensions: %1$dx%2$d pixels. Your image: %3$dx%4$d pixels.', 'unstoppable-product-addons' ),
+                            $max_width,
+                            $max_height,
+                            $width,
+                            $height
                         )
                     );
                 }
@@ -557,8 +568,8 @@ class UPAD_File_Upload {
     public function cleanup_temp_uploads() {
         global $wpdb;
 
-        // Delete pending uploads older than 24 hours
-        $cutoff = date( 'Y-m-d H:i:s', strtotime( '-24 hours' ) );
+        // Delete pending uploads older than 24 hours.
+        $cutoff = gmdate( 'Y-m-d H:i:s', strtotime( '-24 hours' ) );
 
         $old_uploads = $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}upad_uploads WHERE status = 'pending' AND created_at < %s",
@@ -566,12 +577,12 @@ class UPAD_File_Upload {
         ) );
 
         foreach ( $old_uploads as $upload ) {
-            // Delete physical file
+            // Delete physical file.
             if ( file_exists( $upload->file_path ) ) {
-                unlink( $upload->file_path );
+                wp_delete_file( $upload->file_path );
             }
 
-            // Delete database record
+            // Delete database record.
             $wpdb->delete(
                 $wpdb->prefix . 'upad_uploads',
                 array( 'id' => $upload->id ),
@@ -579,17 +590,18 @@ class UPAD_File_Upload {
             );
         }
 
-        // Clean up empty session directories
+        // Clean up empty session directories.
         $upload_dir = $this->get_upload_directory();
         if ( is_dir( $upload_dir ) ) {
             $dirs = glob( $upload_dir . '/*', GLOB_ONLYDIR );
             foreach ( $dirs as $dir ) {
                 $files = glob( $dir . '/*' );
-                // Only index.php remains
+                // Only index.php remains.
                 if ( count( $files ) <= 1 ) {
-                    // Check if directory is older than 24 hours
+                    // Check if directory is older than 24 hours.
                     if ( filemtime( $dir ) < strtotime( '-24 hours' ) ) {
-                        array_map( 'unlink', $files );
+                        array_map( 'wp_delete_file', $files );
+                        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Removing temp upload directory; WP_Filesystem requires credentials.
                         rmdir( $dir );
                     }
                 }
