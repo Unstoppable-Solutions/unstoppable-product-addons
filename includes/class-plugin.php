@@ -2,7 +2,7 @@
 /**
  * Main plugin class.
  *
- * @package __PLUGIN_PACKAGE__
+ * @package Unstoppable_Product_Addons
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * Plugin bootstrap. Rename class and prefix throughout as part of your
  * find-and-replace step when scaffolding a new plugin from this template.
  */
-final class __PREFIX___Plugin {
+final class UPAD_Plugin {
 
 	/**
 	 * Hook subsystems into WordPress.
@@ -28,10 +28,10 @@ final class __PREFIX___Plugin {
 	 */
 	public static function register_admin_menu() {
 		add_menu_page(
-			esc_html__( '__PLUGIN_NAME__', '__PLUGIN_SLUG__' ),
-			esc_html__( '__PLUGIN_NAME__', '__PLUGIN_SLUG__' ),
+			esc_html__( 'Unstoppable Product Addons', 'unstoppable-product-addons' ),
+			esc_html__( 'Unstoppable Product Addons', 'unstoppable-product-addons' ),
 			'manage_options',
-			'__PLUGIN_SLUG__',
+			'unstoppable-product-addons',
 			array( __CLASS__, 'render_admin_page' ),
 			'dashicons-admin-generic',
 			80
@@ -43,10 +43,10 @@ final class __PREFIX___Plugin {
 	 */
 	public static function render_admin_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have permission to access this page.', '__PLUGIN_SLUG__' ) );
+			wp_die( esc_html__( 'You do not have permission to access this page.', 'unstoppable-product-addons' ) );
 		}
-		echo '<div class="wrap"><h1>' . esc_html__( '__PLUGIN_NAME__', '__PLUGIN_SLUG__' ) . '</h1>';
-		echo '<p>' . esc_html__( 'Replace this stub with your plugin\'s admin UI.', '__PLUGIN_SLUG__' ) . '</p>';
+		echo '<div class="wrap"><h1>' . esc_html__( 'Unstoppable Product Addons', 'unstoppable-product-addons' ) . '</h1>';
+		echo '<p>' . esc_html__( 'Replace this stub with your plugin\'s admin UI.', 'unstoppable-product-addons' ) . '</p>';
 		echo '</div>';
 	}
 
@@ -61,6 +61,6 @@ final class __PREFIX___Plugin {
 	 * Fires on plugin deactivation. Clear scheduled hooks, etc.
 	 */
 	public static function deactivate() {
-		// e.g. wp_clear_scheduled_hook( '__prefix___cron' );
+		// e.g. wp_clear_scheduled_hook( 'upad_cron' );
 	}
 }

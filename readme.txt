@@ -1,6 +1,6 @@
-=== __PLUGIN_NAME__ ===
+=== Unstoppable Product Addons ===
 Contributors: paramedic192
-Tags: __TAG1__, __TAG2__, __TAG3__, __TAG4__, __TAG5__
+Tags: woocommerce, product-addons, extras, gift-wrap, personalization
 Requires at least: 5.8
 Tested up to: 7.1
 Stable tag: 0.1.0
@@ -8,7 +8,7 @@ Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-__PLUGIN_SHORT_DESCRIPTION__
+Add optional extras to WooCommerce products at purchase — gift wrap, engraving, personalization, custom text fields. One admin page, no theme edits, no per-product configuration slog.
 
 == Description ==
 
@@ -18,13 +18,13 @@ Write the long-form description here. This is what WordPress.org visitors read o
 
 1. Upload the plugin folder to `/wp-content/plugins/` or install via the WordPress plugin directory.
 2. Activate the plugin through the Plugins menu in WordPress.
-3. Configure under __PLUGIN_NAME__ in the admin menu.
+3. Configure under Unstoppable Product Addons in the admin menu.
 
 == Frequently Asked Questions ==
 
 = Does this require any other plugin? =
 
-No. __PLUGIN_NAME__ is standalone.
+No. Unstoppable Product Addons is standalone.
 
 == Screenshots ==
 
