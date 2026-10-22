@@ -1,0 +1,859 @@
+/**
+ * WooCommerce Options Studio - Frontend Styles
+ * Native WooCommerce styling for seamless integration
+ */
+
+/* Wrapper */
+.wcos-addons-wrapper {
+    margin: 1.5em 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+/* Single Addon */
+.wcos-addons-wrapper .wcos-addon {
+    margin-bottom: 1.5em !important;
+    padding-bottom: 1em !important;
+    border-bottom: 1px solid #eee !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+.wcos-addons-wrapper .wcos-addon:last-child {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+}
+
+/* Title */
+.wcos-addons-wrapper .wcos-addon-title {
+    display: block !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5em !important;
+    color: #333 !important;
+    font-size: 1em !important;
+}
+
+.wcos-addons-wrapper .wcos-addon-title .wcos-required {
+    color: #e2401c !important;
+    margin-left: 3px !important;
+}
+
+/* Description */
+.wcos-addons-wrapper .wcos-addon-description {
+    font-size: 0.9em !important;
+    color: #666 !important;
+    margin-bottom: 0.75em !important;
+    display: block !important;
+}
+
+/* Fields */
+.wcos-field {
+    width: 100%;
+    max-width: 100%;
+}
+
+.wcos-dropdown {
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background: #fff;
+}
+
+/* Radio & Checkbox Groups */
+.wcos-addons-wrapper .wcos-radio-group,
+.wcos-addons-wrapper .wcos-checkbox-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5em !important;
+    width: 100% !important;
+}
+
+.wcos-addons-wrapper .wcos-radio-label,
+.wcos-addons-wrapper .wcos-checkbox-label {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.75em !important;
+    cursor: pointer;
+    padding: 0.75em 1em !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    transition: border-color 0.2s, background-color 0.2s;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    background: #fff !important;
+}
+
+.wcos-addons-wrapper .wcos-radio-label:hover,
+.wcos-addons-wrapper .wcos-checkbox-label:hover {
+    border-color: #999 !important;
+    background-color: #f9f9f9 !important;
+}
+
+.wcos-addons-wrapper .wcos-radio-label input[type="radio"],
+.wcos-addons-wrapper .wcos-checkbox-label input[type="checkbox"] {
+    flex-shrink: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    position: relative !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.wcos-addons-wrapper .wcos-radio-text,
+.wcos-addons-wrapper .wcos-checkbox-text {
+    flex: 1 !important;
+    font-weight: 400 !important;
+    color: #333 !important;
+}
+
+.wcos-addons-wrapper .wcos-radio-label input:checked + .wcos-radio-text,
+.wcos-addons-wrapper .wcos-checkbox-label input:checked + .wcos-checkbox-text {
+    font-weight: 600 !important;
+}
+
+.wcos-addons-wrapper .wcos-option-price {
+    margin-left: auto !important;
+    color: #666 !important;
+    font-size: 0.9em !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+}
+
+/* Image Selection */
+.wcos-image-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.wcos-image-label {
+    flex: 0 0 calc(25% - 0.75em);
+    max-width: calc(25% - 0.75em);
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid #eee;
+    border-radius: 5px;
+    padding: 0.5em;
+    transition: border-color 0.2s;
+}
+
+.wcos-image-label:hover {
+    border-color: #999;
+}
+
+.wcos-image-label input {
+    position: absolute;
+    opacity: 0;
+}
+
+.wcos-image-label input:checked + .wcos-image-wrap {
+    outline: 2px solid #0073aa;
+    outline-offset: 2px;
+}
+
+.wcos-image-wrap {
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+.wcos-image-wrap img {
+    width: 100%;
+    height: auto;
+    border-radius: 3px;
+}
+
+.wcos-image-text {
+    display: block;
+    font-size: 0.85em;
+    color: #333;
+}
+
+/* Text Inputs */
+.wcos-addons-wrapper .wcos-text-input,
+.wcos-addons-wrapper .wcos-textarea,
+.wcos-addons-wrapper input[type="text"].wcos-field,
+.wcos-addons-wrapper input[type="number"].wcos-field,
+.wcos-addons-wrapper input[type="email"].wcos-field,
+.wcos-addons-wrapper textarea.wcos-field {
+    width: 100% !important;
+    padding: 0.75em !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+    font-size: 1em !important;
+    line-height: 1.4 !important;
+    box-sizing: border-box !important;
+}
+
+.wcos-addons-wrapper .wcos-text-input:focus,
+.wcos-addons-wrapper .wcos-textarea:focus,
+.wcos-addons-wrapper input.wcos-field:focus,
+.wcos-addons-wrapper textarea.wcos-field:focus {
+    border-color: #0073aa !important;
+    outline: none !important;
+    box-shadow: 0 0 0 1px #0073aa !important;
+}
+
+.wcos-addons-wrapper .wcos-textarea {
+    resize: vertical;
+    min-height: 100px !important;
+}
+
+.wcos-char-counter {
+    font-size: 0.85em;
+    color: #666;
+    text-align: right;
+    margin-top: 0.25em;
+}
+
+/* Price Input */
+.wcos-price-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.wcos-currency-symbol {
+    font-weight: 600;
+    color: #333;
+}
+
+.wcos-price-input {
+    width: 120px;
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+/* Quantity */
+.wcos-quantity-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    max-width: 150px;
+}
+
+.wcos-qty-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ddd;
+    background: #f7f7f7;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wcos-qty-btn:hover {
+    background: #eee;
+}
+
+.wcos-qty-minus {
+    border-radius: 3px 0 0 3px;
+}
+
+.wcos-qty-plus {
+    border-radius: 0 3px 3px 0;
+}
+
+.wcos-quantity-input {
+    width: 60px;
+    height: 36px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    -moz-appearance: textfield;
+}
+
+.wcos-quantity-input::-webkit-outer-spin-button,
+.wcos-quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Date Picker */
+.wcos-datepicker {
+    width: 200px;
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* Color Picker */
+.wcos-color-picker {
+    width: 60px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* File Upload */
+.wcos-file-upload-wrapper {
+    margin: 0.5em 0;
+}
+
+.wcos-file-dropzone {
+    border: 2px dashed #ddd;
+    border-radius: 5px;
+    padding: 2em;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+    position: relative;
+}
+
+.wcos-file-dropzone:hover,
+.wcos-file-dropzone.dragover {
+    border-color: #0073aa;
+    background-color: #f0f7fc;
+}
+
+.wcos-file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.wcos-dropzone-icon {
+    font-size: 40px;
+    color: #999;
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+.wcos-dropzone-text {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25em;
+}
+
+.wcos-dropzone-info {
+    display: block;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.wcos-uploaded-files-list {
+    margin-top: 1em;
+}
+
+.wcos-uploaded-file {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.5em;
+    background: #f7f7f7;
+    border-radius: 3px;
+    margin-bottom: 0.5em;
+}
+
+.wcos-uploaded-file .file-name {
+    flex: 1;
+}
+
+.wcos-uploaded-file .file-size {
+    color: #666;
+    font-size: 0.85em;
+}
+
+.wcos-uploaded-file .remove-file {
+    color: #e2401c;
+    cursor: pointer;
+    padding: 0.25em;
+}
+
+/* Field Price Info */
+.wcos-field-price-info {
+    display: inline-block;
+    margin-left: 0.5em;
+    color: #0073aa;
+    font-weight: 600;
+}
+
+/* Stock Badges */
+.wcos-stock-badge {
+    display: inline-block;
+    padding: 0.15em 0.5em;
+    font-size: 0.75em;
+    border-radius: 3px;
+    margin-left: 0.5em;
+}
+
+.wcos-out-of-stock-badge {
+    background: #fce4e4;
+    color: #a00;
+}
+
+.wcos-low-stock-badge {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.wcos-out-of-stock {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Totals */
+.wcos-totals-wrapper {
+    margin: 1.5em 0;
+    padding: 1em;
+    background: #f7f7f7;
+    border-radius: 5px;
+}
+
+.wcos-product-addon-totals {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0.5em 1em;
+    margin: 0;
+}
+
+.wcos-product-addon-totals dt {
+    font-weight: 400;
+    color: #666;
+}
+
+.wcos-product-addon-totals dd {
+    text-align: right;
+    margin: 0;
+}
+
+.wcos-grand-total-label,
+.wcos-grand-total-value {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #333;
+    padding-top: 0.5em;
+    border-top: 1px solid #ddd;
+}
+
+/* Validation Errors */
+.wcos-addon.has-error .wcos-addon-title {
+    color: #e2401c;
+}
+
+.wcos-addon.has-error .wcos-field {
+    border-color: #e2401c;
+}
+
+.wcos-error-message {
+    color: #e2401c;
+    font-size: 0.85em;
+    margin-top: 0.25em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wcos-image-label {
+        flex: 0 0 calc(50% - 0.5em);
+        max-width: calc(50% - 0.5em);
+    }
+}
+
+@media (max-width: 480px) {
+    .wcos-image-label {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Hidden addons (variation-restricted) */
+.wcos-addon.wcos-addon-hidden {
+    display: none !important;
+}
+
+/* Selection hint for min/max */
+.wcos-selection-hint {
+    font-size: 0.875em;
+    color: #666;
+    margin: 0 0 0.75em 0;
+    font-style: italic;
+}
+
+/* Error state */
+.wcos-addon.wcos-addon-error {
+    border-left: 3px solid #d63638;
+    padding-left: 1em;
+    background-color: #fcf0f1;
+}
+
+.wcos-addon.wcos-addon-error .wcos-addon-title {
+    color: #d63638;
+}
+
+/* Disabled checkbox styling */
+.wcos-checkbox:disabled + .wcos-checkbox-text {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.wcos-checkbox-label:has(.wcos-checkbox:disabled) {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Quantity-linked option selector */
+.wcos-qty-option {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    padding: 0.75em;
+    margin-bottom: 0.5em;
+    background: #f9f9f9;
+    border-radius: 4px;
+    flex-wrap: wrap;
+}
+
+.wcos-qty-option .wcos-option-label {
+    flex: 1;
+    font-weight: 500;
+    min-width: 120px;
+}
+
+.wcos-qty-option .wcos-option-price {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.wcos-qty-selector {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.wcos-option-qty-minus,
+.wcos-option-qty-plus {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: background 0.2s;
+}
+
+.wcos-option-qty-minus:hover,
+.wcos-option-qty-plus:hover {
+    background: #f0f0f0;
+}
+
+.wcos-option-qty-minus:disabled,
+.wcos-option-qty-plus:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.wcos-option-qty-minus {
+    border-radius: 4px 0 0 4px;
+}
+
+.wcos-option-qty-plus {
+    border-radius: 0 4px 4px 0;
+}
+
+.wcos-option-qty-input {
+    width: 50px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    font-size: 14px;
+    -moz-appearance: textfield;
+}
+
+.wcos-option-qty-input::-webkit-outer-spin-button,
+.wcos-option-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Quantity total counter */
+.wcos-qty-total {
+    margin-top: 1em;
+    padding: 0.75em;
+    background: #fff3cd;
+    border-radius: 4px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.wcos-qty-total.wcos-qty-complete {
+    background: #d4edda;
+    color: #155724;
+}
+
+.wcos-qty-total.wcos-qty-incomplete {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.wcos-qty-total-count {
+    font-weight: 700;
+}
+
+/* =====================================================
+   IMAGE SWATCHES
+   ===================================================== */
+.wcos-swatches-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.wcos-swatch-label {
+    position: relative;
+    cursor: pointer;
+    border: 2px solid #ddd;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wcos-swatches-square .wcos-swatch-label {
+    border-radius: 4px;
+}
+
+.wcos-swatches-rounded .wcos-swatch-label {
+    border-radius: 8px;
+}
+
+.wcos-swatches-circle .wcos-swatch-label {
+    border-radius: 50%;
+}
+
+.wcos-swatch-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.wcos-swatch-input:checked + .wcos-swatch-visual {
+    border-color: #2271b1;
+}
+
+.wcos-swatch-label:has(.wcos-swatch-input:checked) {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.3);
+}
+
+.wcos-swatch-visual {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.wcos-swatch-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.wcos-swatch-color {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.wcos-swatch-placeholder {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.wcos-swatch-text {
+    font-size: 11px;
+    text-align: center;
+    padding: 2px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.wcos-swatch-price {
+    font-size: 10px;
+    color: #666;
+}
+
+/* =====================================================
+   DATETIME PICKER
+   ===================================================== */
+.wcos-datetime-wrapper {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+.wcos-datetime-date,
+.wcos-datetime-time {
+    flex: 1;
+    min-width: 150px;
+}
+
+.wcos-datetime-date label,
+.wcos-datetime-time label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.25em;
+    font-size: 0.9em;
+}
+
+.wcos-datetime-date-input,
+.wcos-datetime-time-input {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* =====================================================
+   DIMENSIONS / FORMULA
+   ===================================================== */
+.wcos-dimensions-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    align-items: flex-end;
+}
+
+.wcos-dimension-input {
+    flex: 1;
+    min-width: 100px;
+}
+
+.wcos-dimension-input label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.25em;
+    font-size: 0.9em;
+}
+
+.wcos-dimension-input input {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.wcos-dimension-price {
+    flex: 0 0 100%;
+    padding: 0.75em;
+    background: #f5f5f5;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-top: 0.5em;
+}
+
+.wcos-dimension-price-value {
+    color: #2271b1;
+    font-size: 1.1em;
+}
+
+/* =====================================================
+   SECTION / ACCORDION
+   ===================================================== */
+.wcos-section-wrapper {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1em;
+    overflow: hidden;
+}
+
+.wcos-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em;
+    background: #f9f9f9;
+    cursor: pointer;
+    user-select: none;
+}
+
+.wcos-section-header:hover {
+    background: #f0f0f0;
+}
+
+.wcos-section-title {
+    font-weight: 600;
+    margin: 0;
+}
+
+.wcos-section-toggle {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.wcos-section-toggle::after {
+    content: '';
+    border: solid #666;
+    border-width: 0 2px 2px 0;
+    padding: 4px;
+    transform: rotate(45deg);
+}
+
+.wcos-section-wrapper.collapsed .wcos-section-toggle::after {
+    transform: rotate(-45deg);
+}
+
+.wcos-section-content {
+    padding: 1em;
+    border-top: 1px solid #ddd;
+}
+
+.wcos-section-wrapper.collapsed .wcos-section-content {
+    display: none;
+}
+
+.wcos-section-count {
+    font-size: 0.85em;
+    color: #666;
+    margin-left: 0.5em;
+}
+
+/* =====================================================
+   CONDITIONAL LOGIC - HIDDEN STATE
+   ===================================================== */
+.wcos-condition-hidden {
+    display: none !important;
+}
+
+/* =====================================================
+   CHARACTER PRICING INFO
+   ===================================================== */
+.wcos-char-price-info {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 0.5em;
+}
+
+.wcos-char-price-current {
+    color: #2271b1;
+    font-weight: 500;
+}

@@ -1,0 +1,525 @@
+/**
+ * WooCommerce Options Studio - Admin Styles
+ */
+
+/* Settings Page */
+.wcos-settings-wrap .nav-tab-wrapper {
+    margin-bottom: 1em;
+}
+
+/* Global Addons Page */
+.wcos-global-addons-wrap {
+    max-width: 1200px;
+}
+
+.wcos-groups-container {
+    margin-top: 1.5em;
+}
+
+.wcos-group-card {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    margin-bottom: 1.5em;
+}
+
+.wcos-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1em;
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+}
+
+.wcos-group-header h3 {
+    margin: 0;
+}
+
+.wcos-group-title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    flex: 1;
+}
+
+.wcos-group-categories {
+    font-size: 12px;
+    color: #666;
+}
+
+.wcos-group-categories em {
+    font-style: normal;
+}
+
+.wcos-group-actions {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.wcos-status.active {
+    background: #d4edda;
+    color: #155724;
+    padding: 0.25em 0.75em;
+    border-radius: 3px;
+}
+
+.wcos-status.inactive {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 0.25em 0.75em;
+    border-radius: 3px;
+}
+
+.wcos-group-addons {
+    padding: 1em;
+}
+
+.wcos-addons-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.wcos-addons-table th,
+.wcos-addons-table td {
+    padding: 0.75em;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+/* Product Tab */
+.wcos-product-addons-wrapper {
+    padding: 1em;
+}
+
+.wcos-addon-item {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 0.5em;
+}
+
+.wcos-addon-header {
+    display: flex;
+    align-items: center;
+    padding: 0.75em;
+    gap: 0.75em;
+}
+
+.wcos-addon-drag-handle {
+    cursor: move;
+    color: #999;
+}
+
+.wcos-addon-title {
+    flex: 1;
+    font-weight: 600;
+}
+
+/* Modal */
+.wcos-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wcos-modal {
+    background: #fff;
+    border-radius: 4px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow: visible;
+    position: relative;
+    z-index: 100001;
+}
+
+.wcos-modal-header {
+    display: flex;
+    padding: 1em;
+    border-bottom: 1px solid #ddd;
+}
+
+.wcos-modal-header h2 {
+    margin: 0;
+    flex: 1;
+}
+
+.wcos-modal-body {
+    padding: 1em;
+    overflow: visible;
+}
+
+.wcos-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
+    padding: 1em;
+    border-top: 1px solid #ddd;
+}
+
+/* Fix Select2 dropdown z-index in modal */
+.select2-container--open {
+    z-index: 100002 !important;
+}
+
+.select2-dropdown {
+    z-index: 100002 !important;
+}
+
+/* Make sure Select2 in modal displays properly */
+.wcos-modal .select2-container {
+    width: 100% !important;
+}
+
+.wcos-modal .select2-container--default .select2-selection--multiple {
+    min-height: 38px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+}
+
+.wcos-modal .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #2271b1;
+    border: none;
+    color: #fff;
+    padding: 2px 8px;
+    margin: 4px;
+}
+
+.wcos-modal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #fff;
+    margin-right: 5px;
+}
+
+.wcos-modal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: #fff;
+    background: transparent;
+}
+
+/* Form styling in modal */
+.wcos-modal .wcos-group-form p {
+    margin-bottom: 1.5em;
+}
+
+.wcos-modal .wcos-group-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+}
+
+.wcos-modal .wcos-group-form input[type="text"],
+.wcos-modal .wcos-group-form input[type="number"] {
+    width: 100%;
+    padding: 8px;
+}
+
+.wcos-modal .wcos-group-form input[type="number"] {
+    width: 80px;
+}
+
+.wcos-modal .wcos-group-form .description {
+    color: #666;
+    font-style: italic;
+    margin-top: 0.25em;
+}
+
+/* Addon Modal Specific */
+.wcos-addon-modal {
+    max-width: 700px;
+}
+
+.wcos-addon-modal .wcos-modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.wcos-form-row {
+    margin-bottom: 1.25em;
+}
+
+.wcos-form-row label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+}
+
+.wcos-form-row.wcos-checkboxes {
+    display: flex;
+    gap: 2em;
+}
+
+.wcos-form-row.wcos-checkboxes label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-weight: normal;
+}
+
+/* Options Section */
+.wcos-options-section {
+    margin-top: 1.5em;
+    padding-top: 1.5em;
+    border-top: 1px solid #ddd;
+}
+
+.wcos-options-section h4 {
+    margin: 0 0 1em 0;
+}
+
+.wcos-options-list {
+    margin-bottom: 1em;
+}
+
+.wcos-option-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.5em;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 0.5em;
+}
+
+.wcos-option-drag {
+    cursor: move;
+    color: #999;
+}
+
+.wcos-option-label {
+    flex: 1;
+    min-width: 150px;
+}
+
+.wcos-option-price {
+    width: 80px !important;
+}
+
+.wcos-option-price-type {
+    width: 100px !important;
+}
+
+.wcos-option-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+.wcos-remove-option {
+    color: #a00 !important;
+    text-decoration: none;
+}
+
+.wcos-remove-option:hover {
+    color: #dc3232 !important;
+}
+
+.wcos-add-option-btn {
+    margin-top: 0.5em;
+}
+
+/* No addons message */
+.wcos-no-addons {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 1em;
+}
+
+/* Group footer */
+.wcos-group-footer {
+    padding: 1em;
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.5em;
+}
+
+/* Variation selector in modal */
+.wcos-variations-row select {
+    height: auto;
+    min-height: 100px;
+    padding: 8px;
+}
+
+.wcos-variations-row .description {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+}
+
+/* =====================================================
+   CONDITIONAL LOGIC SECTION
+   ===================================================== */
+.wcos-conditional-logic-section {
+    margin: 1.5em 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0;
+}
+
+.wcos-conditional-logic-section h4 {
+    margin: 0;
+    padding: 10px 15px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+    font-size: 13px;
+}
+
+.wcos-conditional-logic-section h4 label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.wcos-conditional-rules {
+    padding: 15px;
+}
+
+.wcos-condition-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.wcos-condition-header select {
+    padding: 4px 8px;
+}
+
+.wcos-condition-rules-list {
+    margin-bottom: 10px;
+}
+
+.wcos-condition-rule {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.wcos-condition-rule select,
+.wcos-condition-rule input {
+    padding: 4px 8px;
+}
+
+.wcos-condition-addon {
+    min-width: 150px;
+}
+
+.wcos-condition-operator {
+    min-width: 120px;
+}
+
+.wcos-condition-value {
+    min-width: 100px;
+    flex: 1;
+}
+
+.wcos-remove-condition-rule {
+    padding: 2px 8px !important;
+    min-height: 28px;
+    color: #a00;
+}
+
+.wcos-add-condition-rule {
+    font-size: 12px;
+}
+
+/* =====================================================
+   TIERED PRICING 
+   ===================================================== */
+.wcos-tiered-pricing-section {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.wcos-tiered-pricing-section h5 {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+}
+
+.wcos-tier-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.wcos-tier-row label {
+    font-size: 11px;
+    color: #666;
+}
+
+.wcos-tier-row input {
+    width: 70px;
+    padding: 4px;
+}
+
+.wcos-tier-remove {
+    color: #a00;
+    cursor: pointer;
+}
+
+/* =====================================================
+   IMAGE/COLOR SWATCH OPTION FIELDS
+   ===================================================== */
+.wcos-option-swatch-fields {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.wcos-option-image-preview {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.wcos-option-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.wcos-option-color-picker {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Parent option selector for dependent dropdowns */
+.wcos-parent-option-select {
+    margin-top: 8px;
+}
+
+.wcos-parent-option-select label {
+    display: block;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 4px;
+}
