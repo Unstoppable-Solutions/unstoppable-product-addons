@@ -465,10 +465,11 @@ class UPAD_Admin_Migrate {
             $fields = get_post_meta( $post->ID, '_orderable_addon_fields', true );
             $addon_count = is_array( $fields ) ? count( $fields ) : 0;
             
-            // Debug: capture the raw structure of the first field
+            // Debug: capture the raw structure of the first field for migration preview.
             $debug_structure = '';
             if ( is_array( $fields ) && ! empty( $fields ) ) {
                 $first_field = reset( $fields );
+                // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Used for admin migration preview, not logging.
                 $debug_structure = print_r( $first_field, true );
             }
             

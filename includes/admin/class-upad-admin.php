@@ -228,9 +228,9 @@ class UPAD_Admin {
             ),
         ) );
 
-        // Select2 - use WooCommerce's if available
+        // Select2 - use WooCommerce's if available.
         if ( function_exists( 'WC' ) && WC()->plugin_url() ) {
-            wp_enqueue_style( 'select2', WC()->plugin_url() . '/assets/css/select2.css' );
+            wp_enqueue_style( 'select2', WC()->plugin_url() . '/assets/css/select2.css', array(), WC()->version );
         }
         wp_enqueue_script( 'select2' );
 
