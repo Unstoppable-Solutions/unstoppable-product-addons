@@ -1,4 +1,4 @@
-=== Unstoppable Product Addons ===
+=== Unstoppable Product Add-Ons for WooCommerce ===
 Contributors: paramedic192
 Tags: woocommerce, product options, custom fields, addons, product addons
 Requires at least: 6.5
@@ -12,7 +12,7 @@ Create custom product options for WooCommerce. Add text fields, dropdowns, check
 
 == Description ==
 
-**Unstoppable Product Addons for WooCommerce** lets you add custom options and fields to any WooCommerce product. Whether you need text personalization, dropdown selections, file uploads, or date picking, this plugin provides the tools to create truly customizable products.
+**Unstoppable Product Add-Ons for WooCommerce** lets you add custom options and fields to any WooCommerce product. Whether you need text personalization, dropdown selections, file uploads, or date picking, this plugin provides the tools to create truly customizable products.
 
 = Key Features =
 

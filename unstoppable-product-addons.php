@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:          Unstoppable Product Addons
+ * Plugin Name:          Unstoppable Product Add-Ons for WooCommerce
  * Plugin URI:           https://unstoppablesolutions.app/plugins/unstoppable-product-addons/
  * Description:          Create custom product options for WooCommerce. Add text fields, dropdowns, checkboxes, file uploads, date pickers, and more to any product.
  * Version:              1.0.7
