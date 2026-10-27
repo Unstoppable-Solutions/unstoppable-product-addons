@@ -267,45 +267,66 @@ class UPAD_Admin {
         if ( ! $screen || $screen->id !== 'plugins' ) {
             return;
         }
-        ?>
-        <script>
-        jQuery(function($) {
-            $('.upad-check-updates-link').on('click', function(e) {
-                e.preventDefault();
-                var $link = $(this);
-                var originalText = $link.text();
-                
-                $link.text('<?php echo esc_js( __( 'Checking...', 'unstoppable-product-addons' ) ); ?>');
-                
-                $.post(ajaxurl, {
-                    action: 'upad_check_updates',
-                    nonce: '<?php echo esc_js( wp_create_nonce( 'upad_check_updates' ) ); ?>'
-                }, function(response) {
-                    if (response.success) {
-                        if (response.data.update_available) {
-                            $link.text('<?php echo esc_js( __( 'Update Available!', 'unstoppable-product-addons' ) ); ?>').css('color', '#d63638');
-                            alert('<?php echo esc_js( __( 'Update available! Version', 'unstoppable-product-addons' ) ); ?> ' + response.data.new_version + ' <?php echo esc_js( __( 'is ready. Refresh this page to see the update.', 'unstoppable-product-addons' ) ); ?>');
-                            location.reload();
+
+        // Register a dummy script handle for inline script attachment.
+        wp_register_script( 'upad-update-check', false, array( 'jquery' ), UPAD_VERSION, true );
+        wp_enqueue_script( 'upad-update-check' );
+
+        // Pass PHP data to JavaScript.
+        wp_localize_script(
+            'upad-update-check',
+            'upadUpdateCheck',
+            array(
+                'nonce'            => wp_create_nonce( 'upad_check_updates' ),
+                'checking'         => __( 'Checking...', 'unstoppable-product-addons' ),
+                'updateAvailable'  => __( 'Update Available!', 'unstoppable-product-addons' ),
+                'upToDate'         => __( 'Up to date ✓', 'unstoppable-product-addons' ),
+                'checkFailed'      => __( 'Check failed', 'unstoppable-product-addons' ),
+                'connectionFailed' => __( 'Connection failed. Please try again.', 'unstoppable-product-addons' ),
+                'versionReady'     => __( 'Update available! Version', 'unstoppable-product-addons' ),
+                'refreshPage'      => __( 'is ready. Refresh this page to see the update.', 'unstoppable-product-addons' ),
+            )
+        );
+
+        $inline_script = "
+            jQuery(function($) {
+                $('.upad-check-updates-link').on('click', function(e) {
+                    e.preventDefault();
+                    var link = $(this);
+                    var originalText = link.text();
+
+                    link.text(upadUpdateCheck.checking);
+
+                    $.post(ajaxurl, {
+                        action: 'upad_check_updates',
+                        nonce: upadUpdateCheck.nonce
+                    }, function(response) {
+                        if (response.success) {
+                            if (response.data.update_available) {
+                                link.text(upadUpdateCheck.updateAvailable).css('color', '#d63638');
+                                alert(upadUpdateCheck.versionReady + ' ' + response.data.new_version + ' ' + upadUpdateCheck.refreshPage);
+                                location.reload();
+                            } else {
+                                link.text(upadUpdateCheck.upToDate).css('color', '#00a32a');
+                                setTimeout(function() {
+                                    link.text(originalText).css('color', '#2271b1');
+                                }, 3000);
+                            }
                         } else {
-                            $link.text('<?php echo esc_js( __( 'Up to date ✓', 'unstoppable-product-addons' ) ); ?>').css('color', '#00a32a');
+                            link.text(upadUpdateCheck.checkFailed).css('color', '#d63638');
                             setTimeout(function() {
-                                $link.text(originalText).css('color', '#2271b1');
+                                link.text(originalText).css('color', '#2271b1');
                             }, 3000);
                         }
-                    } else {
-                        $link.text('<?php echo esc_js( __( 'Check failed', 'unstoppable-product-addons' ) ); ?>').css('color', '#d63638');
-                        setTimeout(function() {
-                            $link.text(originalText).css('color', '#2271b1');
-                        }, 3000);
-                    }
-                }).fail(function() {
-                    $link.text(originalText);
-                    alert('<?php echo esc_js( __( 'Connection failed. Please try again.', 'unstoppable-product-addons' ) ); ?>');
+                    }).fail(function() {
+                        link.text(originalText);
+                        alert(upadUpdateCheck.connectionFailed);
+                    });
                 });
             });
-        });
-        </script>
-        <?php
+        ";
+
+        wp_add_inline_script( 'upad-update-check', $inline_script );
     }
 
     /**

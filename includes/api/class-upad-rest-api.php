@@ -65,7 +65,15 @@ class UPAD_REST_API {
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( $this, 'get_product_addons' ),
-                'permission_callback' => '__return_true',
+                'permission_callback' => array( $this, 'product_read_permission' ),
+                'args'                => array(
+                    'product_id' => array(
+                        'required'          => true,
+                        'validate_callback' => function( $param ) {
+                            return is_numeric( $param ) && $param > 0;
+                        },
+                    ),
+                ),
             ),
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
@@ -98,6 +106,56 @@ class UPAD_REST_API {
      */
     public function manage_permission() {
         return current_user_can( 'manage_woocommerce' );
+    }
+
+    /**
+     * Check if product is publicly readable.
+     *
+     * Verifies the product exists and is published/viewable before
+     * allowing add-on data to be retrieved.
+     *
+     * @param WP_REST_Request $request Request object.
+     * @return bool|WP_Error True if accessible, WP_Error otherwise.
+     */
+    public function product_read_permission( $request ) {
+        $product_id = absint( $request['product_id'] );
+
+        if ( ! $product_id ) {
+            return new WP_Error(
+                'invalid_product',
+                __( 'Invalid product ID.', 'unstoppable-product-addons' ),
+                array( 'status' => 400 )
+            );
+        }
+
+        $product = wc_get_product( $product_id );
+
+        if ( ! $product ) {
+            return new WP_Error(
+                'product_not_found',
+                __( 'Product not found.', 'unstoppable-product-addons' ),
+                array( 'status' => 404 )
+            );
+        }
+
+        // Check if product is publicly visible.
+        $post_status = get_post_status( $product_id );
+
+        // Allow access if product is published.
+        if ( 'publish' === $post_status ) {
+            return true;
+        }
+
+        // Allow access if user can edit this product (admin/shop manager viewing draft/private).
+        if ( current_user_can( 'edit_post', $product_id ) ) {
+            return true;
+        }
+
+        return new WP_Error(
+            'product_not_accessible',
+            __( 'Product is not publicly accessible.', 'unstoppable-product-addons' ),
+            array( 'status' => 403 )
+        );
     }
 
     /**

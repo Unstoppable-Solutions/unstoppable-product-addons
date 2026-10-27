@@ -3,7 +3,7 @@ Contributors: paramedic192
 Tags: woocommerce, product options, custom fields, addons, product addons
 Requires at least: 6.5
 Tested up to: 7.1.3
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -46,7 +46,26 @@ Extend the plugin with filters and actions. Register custom add-on types, modify
 
 == External Services ==
 
-This plugin does not connect to any external services. All data is stored locally on your WordPress installation.
+This plugin connects to the Unstoppable Solutions Plugin Hub to check for plugin updates.
+
+= Update Check Service =
+
+When you click "Check for Updates" on the Plugins page, the plugin sends a request to our update server to verify if a newer version is available.
+
+**What data is sent:**
+* Your site URL (to identify the request source)
+* Current plugin version (to compare against available updates)
+* License key (if entered, for premium update access)
+
+**When data is sent:**
+* Only when you manually click the "Check for Updates" link on the Plugins page
+* Data is never sent automatically or in the background
+
+**Service provider:** Unstoppable Solutions
+* [Terms of Service](https://unstoppablesolutions.app/terms)
+* [Privacy Policy](https://unstoppablesolutions.app/privacy)
+
+All other plugin functionality operates entirely on your WordPress installation with no external connections.
 
 == Installation ==
 
@@ -86,6 +105,12 @@ The plugin uses semantic HTML and minimal styling, so it works with most themes.
 5. Date picker on product page
 
 == Changelog ==
+
+= 1.0.8 =
+* Replaced inline script tags with wp_add_inline_script() for WordPress.org compliance
+* Added recursive sanitization for import data settings
+* Added proper REST API permission callback to verify product visibility
+* Documented external update check service in readme
 
 = 1.0.7 =
 * Fixed InterpolatedNotPrepared warnings with inline phpcs:ignore on SQL strings

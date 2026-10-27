@@ -61,6 +61,222 @@ class UPAD_Admin_Migrate {
         // AJAX handlers only - no menu (handled by main admin class via tabs)
         add_action( 'wp_ajax_upad_scan_migration', array( $this, 'ajax_scan_migration' ) );
         add_action( 'wp_ajax_upad_run_migration', array( $this, 'ajax_run_migration' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_migrate_script' ) );
+    }
+
+    /**
+     * Enqueue migration page scripts.
+     *
+     * @param string $hook Current admin page hook.
+     */
+    public function enqueue_migrate_script( $hook ) {
+        // Only load on our settings page with migrate tab.
+        if ( 'options-studio_page_upad-settings' !== $hook ) {
+            return;
+        }
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab detection for script loading, no data processing.
+        $current_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'addons';
+        if ( 'migrate' !== $current_tab ) {
+            return;
+        }
+
+        // Register a script handle for inline script attachment.
+        wp_register_script( 'upad-migrate', false, array( 'jquery' ), UPAD_VERSION, true );
+        wp_enqueue_script( 'upad-migrate' );
+
+        // Pass PHP data to JavaScript.
+        wp_localize_script(
+            'upad-migrate',
+            'upadMigrate',
+            array(
+                'nonce'                => wp_create_nonce( 'upad_migrate_nonce' ),
+                'settingsUrl'          => admin_url( 'admin.php?page=upad-settings' ),
+                'i18n'                 => array(
+                    'scanning'             => __( 'Scanning...', 'unstoppable-product-addons' ),
+                    'scanPreview'          => __( 'Scan & Preview', 'unstoppable-product-addons' ),
+                    'scanFailed'           => __( 'Scan failed.', 'unstoppable-product-addons' ),
+                    'requestFailed'        => __( 'Request failed. Please try again.', 'unstoppable-product-addons' ),
+                    'type'                 => __( 'Type', 'unstoppable-product-addons' ),
+                    'name'                 => __( 'Name', 'unstoppable-product-addons' ),
+                    'addons'               => __( 'Add-ons', 'unstoppable-product-addons' ),
+                    'product'              => __( 'Product', 'unstoppable-product-addons' ),
+                    'global'               => __( 'Global', 'unstoppable-product-addons' ),
+                    'debugStructure'       => __( 'Debug: Raw Field Structure', 'unstoppable-product-addons' ),
+                    'noAddonsFound'        => __( 'No add-ons found to migrate.', 'unstoppable-product-addons' ),
+                    'confirmMigration'     => __( 'Are you sure you want to run the migration? This will create new add-ons in Unstoppable Product Addons.', 'unstoppable-product-addons' ),
+                    'migrationFailed'      => __( 'Migration failed.', 'unstoppable-product-addons' ),
+                    'migrationSuccess'     => __( 'Migration completed successfully!', 'unstoppable-product-addons' ),
+                    'globalsMigrated'      => __( 'global add-on groups migrated', 'unstoppable-product-addons' ),
+                    'productsMigrated'     => __( 'product add-ons migrated', 'unstoppable-product-addons' ),
+                    'totalAddons'          => __( 'total add-on fields created', 'unstoppable-product-addons' ),
+                    'errorsOccurred'       => __( 'Some items had errors:', 'unstoppable-product-addons' ),
+                    'viewMigrated'         => __( 'View Migrated Add-ons', 'unstoppable-product-addons' ),
+                ),
+            )
+        );
+
+        $inline_script = "
+            jQuery(document).ready(function($) {
+                var currentSource = '';
+                var scanData = null;
+
+                // Scan button
+                $('.upad-scan-btn').on('click', function() {
+                    currentSource = $(this).data('source');
+                    var btn = $(this);
+
+                    btn.prop('disabled', true).text(upadMigrate.i18n.scanning);
+
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'upad_scan_migration',
+                            source: currentSource,
+                            nonce: upadMigrate.nonce
+                        },
+                        success: function(response) {
+                            btn.prop('disabled', false).text(upadMigrate.i18n.scanPreview);
+
+                            if (response.success) {
+                                scanData = response.data;
+                                showPreview(response.data);
+                            } else {
+                                alert(response.data.message || upadMigrate.i18n.scanFailed);
+                            }
+                        },
+                        error: function() {
+                            btn.prop('disabled', false).text(upadMigrate.i18n.scanPreview);
+                            alert(upadMigrate.i18n.requestFailed);
+                        }
+                    });
+                });
+
+                function showPreview(data) {
+                    console.log('Migration scan data:', data);
+                    if (data.globals && data.globals.length && data.globals[0].debug_structure) {
+                        console.log('First field structure:', data.globals[0].debug_structure);
+                    }
+
+                    var html = '<table class=\"upad-preview-table\">';
+                    html += '<thead><tr><th>' + upadMigrate.i18n.type + '</th><th>' + upadMigrate.i18n.name + '</th><th>' + upadMigrate.i18n.addons + '</th><th>' + upadMigrate.i18n.product + '</th></tr></thead>';
+                    html += '<tbody>';
+
+                    if (data.globals && data.globals.length) {
+                        data.globals.forEach(function(item) {
+                            html += '<tr>';
+                            html += '<td><span class=\"dashicons dashicons-admin-site\"></span> ' + upadMigrate.i18n.global + '</td>';
+                            html += '<td>' + item.name + '</td>';
+                            html += '<td>' + item.addon_count + '</td>';
+                            html += '<td>—</td>';
+                            html += '</tr>';
+                            if (item.debug_structure) {
+                                html += '<tr><td colspan=\"4\"><details><summary>' + upadMigrate.i18n.debugStructure + '</summary><pre style=\"background:#f5f5f5;padding:10px;font-size:11px;max-height:300px;overflow:auto;\">' + item.debug_structure + '</pre></details></td></tr>';
+                            }
+                        });
+                    }
+
+                    if (data.products && data.products.length) {
+                        data.products.forEach(function(item) {
+                            html += '<tr>';
+                            html += '<td><span class=\"dashicons dashicons-cart\"></span> ' + upadMigrate.i18n.product + '</td>';
+                            html += '<td>' + item.product_name + '</td>';
+                            html += '<td>' + item.addon_count + '</td>';
+                            html += '<td>#' + item.product_id + '</td>';
+                            html += '</tr>';
+                        });
+                    }
+
+                    html += '</tbody></table>';
+
+                    if ((!data.globals || !data.globals.length) && (!data.products || !data.products.length)) {
+                        html = '<p>' + upadMigrate.i18n.noAddonsFound + '</p>';
+                    }
+
+                    $('.upad-preview-content').html(html);
+                    $('.upad-migrate-preview').show();
+                    $('.upad-migrate-results').hide();
+                }
+
+                // Cancel button
+                $('.upad-cancel-btn').on('click', function() {
+                    $('.upad-migrate-preview').hide();
+                    scanData = null;
+                });
+
+                // Migrate button
+                $('.upad-migrate-btn').on('click', function() {
+                    if (!scanData) return;
+
+                    var deleteSource = $('input[name=\"delete_source\"]').is(':checked') ? 1 : 0;
+
+                    if (!confirm(upadMigrate.i18n.confirmMigration)) {
+                        return;
+                    }
+
+                    var btn = $(this);
+                    btn.prop('disabled', true);
+                    $('.upad-migrate-progress').show();
+
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'upad_run_migration',
+                            source: currentSource,
+                            delete_source: deleteSource,
+                            nonce: upadMigrate.nonce
+                        },
+                        success: function(response) {
+                            btn.prop('disabled', false);
+                            $('.upad-migrate-progress').hide();
+
+                            if (response.success) {
+                                showResults(response.data);
+                            } else {
+                                alert(response.data.message || upadMigrate.i18n.migrationFailed);
+                            }
+                        },
+                        error: function() {
+                            btn.prop('disabled', false);
+                            $('.upad-migrate-progress').hide();
+                            alert(upadMigrate.i18n.requestFailed);
+                        }
+                    });
+                });
+
+                function showResults(data) {
+                    var html = '<div class=\"success\">';
+                    html += '<p><strong>' + upadMigrate.i18n.migrationSuccess + '</strong></p>';
+                    html += '<ul>';
+                    html += '<li>' + data.globals_migrated + ' ' + upadMigrate.i18n.globalsMigrated + '</li>';
+                    html += '<li>' + data.products_migrated + ' ' + upadMigrate.i18n.productsMigrated + '</li>';
+                    html += '<li>' + data.total_addons + ' ' + upadMigrate.i18n.totalAddons + '</li>';
+                    html += '</ul>';
+                    html += '</div>';
+
+                    if (data.errors && data.errors.length) {
+                        html += '<div class=\"error\">';
+                        html += '<p><strong>' + upadMigrate.i18n.errorsOccurred + '</strong></p>';
+                        html += '<ul>';
+                        data.errors.forEach(function(error) {
+                            html += '<li>' + error + '</li>';
+                        });
+                        html += '</ul>';
+                        html += '</div>';
+                    }
+
+                    html += '<p><a href=\"' + upadMigrate.settingsUrl + '\" class=\"button button-primary\">' + upadMigrate.i18n.viewMigrated + '</a></p>';
+
+                    $('.upad-results-content').html(html);
+                    $('.upad-migrate-preview').hide();
+                    $('.upad-migrate-results').show();
+                }
+            });
+        ";
+
+        wp_add_inline_script( 'upad-migrate', $inline_script );
     }
 
     /**
@@ -138,168 +354,6 @@ class UPAD_Admin_Migrate {
                 <div class="upad-results-content"></div>
             </div>
         </div>
-
-        <script>
-        jQuery(document).ready(function($) {
-            var currentSource = '';
-            var scanData = null;
-
-            // Scan button
-            $('.upad-scan-btn').on('click', function() {
-                currentSource = $(this).data('source');
-                var $btn = $(this);
-                
-                $btn.prop('disabled', true).text('<?php esc_html_e( 'Scanning...', 'unstoppable-product-addons' ); ?>');
-                
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'upad_scan_migration',
-                        source: currentSource,
-                        nonce: '<?php echo esc_js( wp_create_nonce( 'upad_migrate_nonce' ) ); ?>'
-                    },
-                    success: function(response) {
-                        $btn.prop('disabled', false).text('<?php esc_html_e( 'Scan & Preview', 'unstoppable-product-addons' ); ?>');
-                        
-                        if (response.success) {
-                            scanData = response.data;
-                            showPreview(response.data);
-                        } else {
-                            alert(response.data.message || '<?php esc_html_e( 'Scan failed.', 'unstoppable-product-addons' ); ?>');
-                        }
-                    },
-                    error: function() {
-                        $btn.prop('disabled', false).text('<?php esc_html_e( 'Scan & Preview', 'unstoppable-product-addons' ); ?>');
-                        alert('<?php esc_html_e( 'Request failed. Please try again.', 'unstoppable-product-addons' ); ?>');
-                    }
-                });
-            });
-
-            function showPreview(data) {
-                // Debug: log raw structure to console
-                console.log('Migration scan data:', data);
-                if (data.globals && data.globals.length && data.globals[0].debug_structure) {
-                    console.log('First field structure:', data.globals[0].debug_structure);
-                }
-                
-                var html = '<table class="upad-preview-table">';
-                html += '<thead><tr><th><?php esc_html_e( 'Type', 'unstoppable-product-addons' ); ?></th><th><?php esc_html_e( 'Name', 'unstoppable-product-addons' ); ?></th><th><?php esc_html_e( 'Add-ons', 'unstoppable-product-addons' ); ?></th><th><?php esc_html_e( 'Product', 'unstoppable-product-addons' ); ?></th></tr></thead>';
-                html += '<tbody>';
-                
-                if (data.globals && data.globals.length) {
-                    data.globals.forEach(function(item) {
-                        html += '<tr>';
-                        html += '<td><span class="dashicons dashicons-admin-site"></span> <?php esc_html_e( 'Global', 'unstoppable-product-addons' ); ?></td>';
-                        html += '<td>' + item.name + '</td>';
-                        html += '<td>' + item.addon_count + '</td>';
-                        html += '<td>—</td>';
-                        html += '</tr>';
-                        // Show debug structure if available
-                        if (item.debug_structure) {
-                            html += '<tr><td colspan="4"><details><summary><?php esc_html_e( 'Debug: Raw Field Structure', 'unstoppable-product-addons' ); ?></summary><pre style="background:#f5f5f5;padding:10px;font-size:11px;max-height:300px;overflow:auto;">' + item.debug_structure + '</pre></details></td></tr>';
-                        }
-                    });
-                }
-                
-                if (data.products && data.products.length) {
-                    data.products.forEach(function(item) {
-                        html += '<tr>';
-                        html += '<td><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'Product', 'unstoppable-product-addons' ); ?></td>';
-                        html += '<td>' + item.product_name + '</td>';
-                        html += '<td>' + item.addon_count + '</td>';
-                        html += '<td>#' + item.product_id + '</td>';
-                        html += '</tr>';
-                    });
-                }
-                
-                html += '</tbody></table>';
-                
-                if ((!data.globals || !data.globals.length) && (!data.products || !data.products.length)) {
-                    html = '<p><?php esc_html_e( 'No add-ons found to migrate.', 'unstoppable-product-addons' ); ?></p>';
-                }
-                
-                $('.upad-preview-content').html(html);
-                $('.upad-migrate-preview').show();
-                $('.upad-migrate-results').hide();
-            }
-
-            // Cancel button
-            $('.upad-cancel-btn').on('click', function() {
-                $('.upad-migrate-preview').hide();
-                scanData = null;
-            });
-
-            // Migrate button
-            $('.upad-migrate-btn').on('click', function() {
-                if (!scanData) return;
-                
-                var deleteSource = $('input[name="delete_source"]').is(':checked') ? 1 : 0;
-                
-                if (!confirm('<?php esc_html_e( 'Are you sure you want to run the migration? This will create new add-ons in Unstoppable Product Addons.', 'unstoppable-product-addons' ); ?>')) {
-                    return;
-                }
-                
-                var $btn = $(this);
-                $btn.prop('disabled', true);
-                $('.upad-migrate-progress').show();
-                
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'upad_run_migration',
-                        source: currentSource,
-                        delete_source: deleteSource,
-                        nonce: '<?php echo esc_js( wp_create_nonce( 'upad_migrate_nonce' ) ); ?>'
-                    },
-                    success: function(response) {
-                        $btn.prop('disabled', false);
-                        $('.upad-migrate-progress').hide();
-                        
-                        if (response.success) {
-                            showResults(response.data);
-                        } else {
-                            alert(response.data.message || '<?php esc_html_e( 'Migration failed.', 'unstoppable-product-addons' ); ?>');
-                        }
-                    },
-                    error: function() {
-                        $btn.prop('disabled', false);
-                        $('.upad-migrate-progress').hide();
-                        alert('<?php esc_html_e( 'Request failed. Please try again.', 'unstoppable-product-addons' ); ?>');
-                    }
-                });
-            });
-
-            function showResults(data) {
-                var html = '<div class="success">';
-                html += '<p><strong><?php esc_html_e( 'Migration completed successfully!', 'unstoppable-product-addons' ); ?></strong></p>';
-                html += '<ul>';
-                html += '<li>' + data.globals_migrated + ' <?php esc_html_e( 'global add-on groups migrated', 'unstoppable-product-addons' ); ?></li>';
-                html += '<li>' + data.products_migrated + ' <?php esc_html_e( 'product add-ons migrated', 'unstoppable-product-addons' ); ?></li>';
-                html += '<li>' + data.total_addons + ' <?php esc_html_e( 'total add-on fields created', 'unstoppable-product-addons' ); ?></li>';
-                html += '</ul>';
-                html += '</div>';
-                
-                if (data.errors && data.errors.length) {
-                    html += '<div class="error">';
-                    html += '<p><strong><?php esc_html_e( 'Some items had errors:', 'unstoppable-product-addons' ); ?></strong></p>';
-                    html += '<ul>';
-                    data.errors.forEach(function(error) {
-                        html += '<li>' + error + '</li>';
-                    });
-                    html += '</ul>';
-                    html += '</div>';
-                }
-                
-                html += '<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=upad-settings' ) ); ?>" class="button button-primary"><?php esc_html_e( 'View Migrated Add-ons', 'unstoppable-product-addons' ); ?></a></p>';
-                
-                $('.upad-results-content').html(html);
-                $('.upad-migrate-preview').hide();
-                $('.upad-migrate-results').show();
-            }
-        });
-        </script>
         <?php
     }
 

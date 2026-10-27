@@ -103,7 +103,7 @@ class UPAD_Import_Export {
         // Decode
         $decoded = json_decode( base64_decode( $import_data ), true );
 
-        if ( ! $decoded || ! isset( $decoded['addons'] ) ) {
+        if ( ! $decoded || ! isset( $decoded['addons'] ) || ! is_array( $decoded['addons'] ) ) {
             wp_send_json_error( array( 'message' => __( 'Invalid import data format.', 'unstoppable-product-addons' ) ) );
         }
 
@@ -111,6 +111,16 @@ class UPAD_Import_Export {
         $imported = 0;
 
         foreach ( $decoded['addons'] as $addon_data ) {
+            // Validate required fields exist.
+            if ( ! isset( $addon_data['addon_type'], $addon_data['title'] ) ) {
+                continue;
+            }
+
+            // Recursively sanitize settings array.
+            $sanitized_settings = isset( $addon_data['settings'] ) && is_array( $addon_data['settings'] )
+                ? $this->sanitize_settings_recursive( $addon_data['settings'] )
+                : array();
+
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
             $wpdb->insert(
                 $wpdb->prefix . 'upad_addons',
@@ -119,12 +129,12 @@ class UPAD_Import_Export {
                     'product_id'   => $product_id ?: null,
                     'addon_type'   => sanitize_key( $addon_data['addon_type'] ),
                     'title'        => sanitize_text_field( $addon_data['title'] ),
-                    'title_format' => sanitize_key( $addon_data['title_format'] ),
-                    'description'  => wp_kses_post( $addon_data['description'] ),
-                    'required'     => (int) $addon_data['required'],
-                    'position'     => (int) $addon_data['position'],
-                    'settings'     => maybe_serialize( $addon_data['settings'] ),
-                    'enabled'      => (int) $addon_data['enabled'],
+                    'title_format' => isset( $addon_data['title_format'] ) ? sanitize_key( $addon_data['title_format'] ) : 'label',
+                    'description'  => isset( $addon_data['description'] ) ? wp_kses_post( $addon_data['description'] ) : '',
+                    'required'     => isset( $addon_data['required'] ) ? (int) $addon_data['required'] : 0,
+                    'position'     => isset( $addon_data['position'] ) ? (int) $addon_data['position'] : 0,
+                    'settings'     => maybe_serialize( $sanitized_settings ),
+                    'enabled'      => isset( $addon_data['enabled'] ) ? (int) $addon_data['enabled'] : 1,
                 ),
                 array( '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d' )
             );
@@ -158,5 +168,47 @@ class UPAD_Import_Export {
             /* translators: %d: number of imported addons */
             'message' => sprintf( __( 'Successfully imported %d addon(s).', 'unstoppable-product-addons' ), $imported ),
         ) );
+    }
+
+    /**
+     * Recursively sanitize settings array.
+     *
+     * @param array $settings Settings array to sanitize.
+     * @return array Sanitized settings.
+     */
+    private function sanitize_settings_recursive( $settings ) {
+        if ( ! is_array( $settings ) ) {
+            return array();
+        }
+
+        $sanitized = array();
+
+        foreach ( $settings as $key => $value ) {
+            // Sanitize the key.
+            $clean_key = sanitize_key( $key );
+
+            if ( is_array( $value ) ) {
+                // Recursively sanitize nested arrays.
+                $sanitized[ $clean_key ] = $this->sanitize_settings_recursive( $value );
+            } elseif ( is_bool( $value ) ) {
+                $sanitized[ $clean_key ] = (bool) $value;
+            } elseif ( is_int( $value ) ) {
+                $sanitized[ $clean_key ] = (int) $value;
+            } elseif ( is_float( $value ) ) {
+                $sanitized[ $clean_key ] = (float) $value;
+            } elseif ( is_string( $value ) ) {
+                // Check if it looks like HTML content.
+                if ( preg_match( '/<[^>]+>/', $value ) ) {
+                    $sanitized[ $clean_key ] = wp_kses_post( $value );
+                } else {
+                    $sanitized[ $clean_key ] = sanitize_text_field( $value );
+                }
+            } else {
+                // Skip unknown types for security.
+                continue;
+            }
+        }
+
+        return $sanitized;
     }
 }
