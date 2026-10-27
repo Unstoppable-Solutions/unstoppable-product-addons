@@ -2,7 +2,7 @@
 Contributors: paramedic192
 Tags: woocommerce, product options, custom fields, addons, product addons
 Requires at least: 6.5
-Tested up to: 7.1.3
+Tested up to: 7.1
 Stable tag: 1.0.8
 Requires PHP: 7.4
 License: GPL-2.0-or-later
