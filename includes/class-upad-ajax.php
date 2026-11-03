@@ -798,11 +798,13 @@ class UPAD_Ajax {
      * @since 1.0.0
      */
     public function calculate_price() {
-        // Frontend AJAX action - nonce verification is optional but recommended.
-        // phpcs:disable WordPress.Security.NonceVerification.Missing
-
-        // Verify nonce for frontend (optional but recommended)
-        $nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+        // Verify nonce for frontend price calculation.
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'upad_frontend_nonce' ) ) {
+            wp_send_json_error( array(
+                'message' => esc_html__( 'Security check failed.', 'unstoppable-product-addons' ),
+            ) );
+            return;
+        }
 
         $product_id = isset( $_POST['product_id'] ) ? absint( wp_unslash( $_POST['product_id'] ) ) : 0;
         
@@ -821,8 +823,6 @@ class UPAD_Ajax {
             ) );
             return;
         }
-
-        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         wp_send_json_success( array(
             'base_price' => floatval( $product->get_price() ),

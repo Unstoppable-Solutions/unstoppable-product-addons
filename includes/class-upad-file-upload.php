@@ -75,8 +75,16 @@ class UPAD_File_Upload {
         add_action( 'wp_ajax_nopriv_upad_remove_file', array( $this, 'handle_remove' ) );
         add_action( 'wp_ajax_upad_download_file', array( $this, 'handle_download' ) );
         add_action( 'upad_cleanup_temp_uploads', array( $this, 'cleanup_temp_uploads' ) );
-        
-        // Schedule cleanup if not scheduled
+
+        // Schedule cleanup on init hook to avoid early cron scheduling.
+        add_action( 'init', array( $this, 'schedule_cleanup' ) );
+    }
+
+    /**
+     * Schedule cleanup cron event.
+     * Called on init hook to avoid scheduling before WordPress is fully loaded.
+     */
+    public function schedule_cleanup() {
         if ( ! wp_next_scheduled( 'upad_cleanup_temp_uploads' ) ) {
             wp_schedule_event( time(), 'daily', 'upad_cleanup_temp_uploads' );
         }

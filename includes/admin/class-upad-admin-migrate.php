@@ -43,25 +43,38 @@ class UPAD_Admin_Migrate {
      * Constructor.
      */
     public function __construct() {
-        $this->supported_sources = array(
-            'wc_product_addons' => array(
-                'name'        => __( 'WooCommerce Product Add-Ons (Official)', 'unstoppable-product-addons' ),
-                'detect'      => array( $this, 'detect_wc_product_addons' ),
-                'migrate'     => array( $this, 'migrate_wc_product_addons' ),
-                'description' => __( 'Import from the official WooCommerce Product Add-Ons extension.', 'unstoppable-product-addons' ),
-            ),
-            'orderable' => array(
-                'name'        => __( 'Orderable Product Addons', 'unstoppable-product-addons' ),
-                'detect'      => array( $this, 'detect_orderable' ),
-                'migrate'     => array( $this, 'migrate_orderable' ),
-                'description' => __( 'Import from Orderable plugin product addons.', 'unstoppable-product-addons' ),
-            ),
-        );
+        // Defer translation strings to avoid early loading before init hook.
+        // $this->supported_sources is populated in get_supported_sources().
 
         // AJAX handlers only - no menu (handled by main admin class via tabs)
         add_action( 'wp_ajax_upad_scan_migration', array( $this, 'ajax_scan_migration' ) );
         add_action( 'wp_ajax_upad_run_migration', array( $this, 'ajax_run_migration' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_migrate_script' ) );
+    }
+
+    /**
+     * Get supported migration sources (lazy loaded to avoid early translation).
+     *
+     * @return array
+     */
+    private function get_supported_sources() {
+        if ( empty( $this->supported_sources ) ) {
+            $this->supported_sources = array(
+                'wc_product_addons' => array(
+                    'name'        => __( 'WooCommerce Product Add-Ons (Official)', 'unstoppable-product-addons' ),
+                    'detect'      => array( $this, 'detect_wc_product_addons' ),
+                    'migrate'     => array( $this, 'migrate_wc_product_addons' ),
+                    'description' => __( 'Import from the official WooCommerce Product Add-Ons extension.', 'unstoppable-product-addons' ),
+                ),
+                'orderable' => array(
+                    'name'        => __( 'Orderable Product Addons', 'unstoppable-product-addons' ),
+                    'detect'      => array( $this, 'detect_orderable' ),
+                    'migrate'     => array( $this, 'migrate_orderable' ),
+                    'description' => __( 'Import from Orderable plugin product addons.', 'unstoppable-product-addons' ),
+                ),
+            );
+        }
+        return $this->supported_sources;
     }
 
     /**
@@ -291,7 +304,7 @@ class UPAD_Admin_Migrate {
             <div class="upad-migrate-sources">
                 <h3><?php esc_html_e( 'Select Source Plugin', 'unstoppable-product-addons' ); ?></h3>
                 
-                <?php foreach ( $this->supported_sources as $key => $source ) : ?>
+                <?php foreach ( $this->get_supported_sources() as $key => $source ) : ?>
                     <?php 
                     $detected = call_user_func( $source['detect'] );
                     $status_class = $detected['found'] ? 'detected' : 'not-detected';
@@ -432,7 +445,8 @@ class UPAD_Admin_Migrate {
 
         $source = isset( $_POST['source'] ) ? sanitize_key( $_POST['source'] ) : '';
 
-        if ( ! isset( $this->supported_sources[ $source ] ) ) {
+        $sources = $this->get_supported_sources();
+        if ( ! isset( $sources[ $source ] ) ) {
             wp_send_json_error( array( 'message' => __( 'Invalid source.', 'unstoppable-product-addons' ) ) );
         }
 
@@ -557,11 +571,12 @@ class UPAD_Admin_Migrate {
         $source = isset( $_POST['source'] ) ? sanitize_key( $_POST['source'] ) : '';
         $delete_source = isset( $_POST['delete_source'] ) && $_POST['delete_source'] === '1';
 
-        if ( ! isset( $this->supported_sources[ $source ] ) ) {
+        $sources = $this->get_supported_sources();
+        if ( ! isset( $sources[ $source ] ) ) {
             wp_send_json_error( array( 'message' => __( 'Invalid source.', 'unstoppable-product-addons' ) ) );
         }
 
-        $migrate_callback = $this->supported_sources[ $source ]['migrate'];
+        $migrate_callback = $sources[ $source ]['migrate'];
         if ( is_callable( $migrate_callback ) ) {
             $result = call_user_func( $migrate_callback, $delete_source );
             wp_send_json_success( $result );
@@ -970,5 +985,5 @@ class UPAD_Admin_Migrate {
     }
 }
 
-// Initialize
-UPAD_Admin_Migrate::instance();
+// Class is instantiated via UPAD_Admin::instance() on plugins_loaded, not here.
+// Instantiating here causes early translation loading before init hook.

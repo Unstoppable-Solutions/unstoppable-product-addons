@@ -18,6 +18,7 @@ $fields = $settings->get_fields();
 
 // Remove license from settings sections (it's now its own tab)
 $settings_sections = array_diff_key( $sections, array( 'license' => '' ) );
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Section navigation is read-only display logic, no data modification.
 $current_section = isset( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : 'general';
 
 // Handle settings save

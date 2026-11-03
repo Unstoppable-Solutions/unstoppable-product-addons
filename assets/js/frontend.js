@@ -121,7 +121,7 @@
                         if (totalSelected !== productQty) {
                             isValid = false;
                             $addon.addClass('upad-addon-error');
-                            errorMessages.push(addonTitle + ': ' + wcos_params.i18n.select_qty_total.replace('%d', productQty).replace('%n', totalSelected));
+                            errorMessages.push(addonTitle + ': ' + upad_params.i18n.select_qty_total.replace('%d', productQty).replace('%n', totalSelected));
                         }
                     } else {
                         // Standard checkbox count must match product quantity
@@ -129,7 +129,7 @@
                         if (checkedCount !== productQty) {
                             isValid = false;
                             $addon.addClass('upad-addon-error');
-                            errorMessages.push(addonTitle + ': ' + wcos_params.i18n.select_qty_options.replace('%d', productQty));
+                            errorMessages.push(addonTitle + ': ' + upad_params.i18n.select_qty_options.replace('%d', productQty));
                         }
                     }
                 } else {
@@ -142,9 +142,9 @@
                         isValid = false;
                         $addon.addClass('upad-addon-error');
                         if (minSelections === maxSelections) {
-                            errorMessages.push(addonTitle + ': ' + wcos_params.i18n.select_exactly.replace('%d', minSelections));
+                            errorMessages.push(addonTitle + ': ' + upad_params.i18n.select_exactly.replace('%d', minSelections));
                         } else {
-                            errorMessages.push(addonTitle + ': ' + wcos_params.i18n.select_minimum.replace('%d', minSelections));
+                            errorMessages.push(addonTitle + ': ' + upad_params.i18n.select_minimum.replace('%d', minSelections));
                         }
                     }
                 }
@@ -332,7 +332,7 @@
                     // Update hint text
                     var $hint = $group.find('.upad-qty-linked-hint');
                     if ($hint.length) {
-                        $hint.text(wcos_params.i18n.select_qty_options.replace('%d', productQty));
+                        $hint.text(upad_params.i18n.select_qty_options.replace('%d', productQty));
                     }
                     
                     // Re-enforce limits
@@ -421,16 +421,16 @@
             $.each(files, function(i, file) {
                 var formData = new FormData();
                 formData.append('action', 'wcos_upload_file');
-                formData.append('nonce', wcos_params.upload_nonce);
+                formData.append('nonce', upad_params.upload_nonce);
                 formData.append('file', file);
                 formData.append('addon_id', addonId);
                 formData.append('product_id', self.productId);
 
-                var fileItem = $('<div class="upad-uploaded-file uploading"><span class="file-name">' + file.name + '</span><span class="file-size">' + wcos_params.i18n.uploading + '</span></div>');
+                var fileItem = $('<div class="upad-uploaded-file uploading"><span class="file-name">' + file.name + '</span><span class="file-size">' + upad_params.i18n.uploading + '</span></div>');
                 filesList.append(fileItem);
 
                 $.ajax({
-                    url: wcos_params.ajax_url,
+                    url: upad_params.ajax_url,
                     type: 'POST',
                     data: formData,
                     processData: false,
@@ -449,12 +449,12 @@
                             self.updateTotals();
                         } else {
                             fileItem.remove();
-                            alert(response.data.message || wcos_params.i18n.upload_error);
+                            alert(response.data.message || upad_params.i18n.upload_error);
                         }
                     },
                     error: function() {
                         fileItem.remove();
-                        alert(wcos_params.i18n.upload_error);
+                        alert(upad_params.i18n.upload_error);
                     }
                 });
             });
@@ -539,11 +539,11 @@
         },
 
         formatPrice: function(price) {
-            var formatted = price.toFixed(wcos_params.decimals);
-            formatted = formatted.replace('.', wcos_params.decimal_sep);
+            var formatted = price.toFixed(upad_params.decimals);
+            formatted = formatted.replace('.', upad_params.decimal_sep);
             
-            var format = wcos_params.price_format;
-            return format.replace('%1$s', wcos_params.currency).replace('%2$s', formatted);
+            var format = upad_params.price_format;
+            return format.replace('%1$s', upad_params.currency).replace('%2$s', formatted);
         },
         
         /**
@@ -975,7 +975,7 @@
             
             // Clear and repopulate
             $select.empty();
-            $select.append('<option value="">' + wcos_params.i18n.select_option + '</option>');
+            $select.append('<option value="">' + upad_params.i18n.select_option + '</option>');
             
             allOptions.each(function() {
                 var $opt = $(this);

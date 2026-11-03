@@ -3,7 +3,7 @@
  * Plugin Name:          Unstoppable Product Add-Ons for WooCommerce
  * Plugin URI:           https://unstoppablesolutions.app/plugins/unstoppable-product-addons/
  * Description:          Create custom product options for WooCommerce. Add text fields, dropdowns, checkboxes, file uploads, date pickers, and more to any product.
- * Version:              1.0.8
+ * Version:              1.0.9
  * Author:               Unstoppable Solutions
  * Author URI:           https://unstoppablesolutions.app
  * License:              GPL-2.0-or-later
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants using UPAD_ prefix (not wc/wp/woo).
-define( 'UPAD_VERSION', '1.0.8' );
+define( 'UPAD_VERSION', '1.0.9' );
 define( 'UPAD_PLUGIN_FILE', __FILE__ );
 define( 'UPAD_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'UPAD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -329,6 +329,7 @@ final class UPAD_Plugin {
 
         if ( is_admin() ) {
             UPAD_Admin::instance();
+            UPAD_Admin_Migrate::instance();
         }
 
         // Declare HPOS compatibility.

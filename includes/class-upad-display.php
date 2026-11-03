@@ -215,7 +215,12 @@ class UPAD_Display {
      * AJAX handler to get product addons HTML.
      */
     public function ajax_get_product_addons_html() {
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only public product display, no state change.
+        // Verify nonce for frontend AJAX request.
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'upad_frontend_nonce' ) ) {
+            wp_send_json_error( array( 'message' => 'Security check failed.' ) );
+            return;
+        }
+
         $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
 
         if ( ! $product_id ) {
@@ -287,6 +292,7 @@ class UPAD_Display {
 
         wp_localize_script( 'upad-frontend', 'upad_params', array(
             'ajax_url'       => admin_url( 'admin-ajax.php' ),
+            'nonce'          => wp_create_nonce( 'upad_frontend_nonce' ),
             'upload_nonce'   => wp_create_nonce( 'upad_upload_nonce' ),
             'currency'       => get_woocommerce_currency_symbol(),
             'price_format'   => get_woocommerce_price_format(),
