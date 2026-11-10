@@ -479,18 +479,23 @@ class UPAD_Cart {
     }
 
     /**
-     * Add addon data to cart item
+     * Add addon data to cart item.
+     *
+     * This method is hooked to woocommerce_add_cart_item_data filter.
+     * WooCommerce verifies the woocommerce-add-to-cart nonce before calling
+     * this filter (see WC_Form_Handler::add_to_cart_action), so we don't
+     * verify it again here.
      */
     public function add_cart_item_data( $cart_item_data, $product_id, $variation_id ) {
         $addons = UPAD_Product_Addons::instance()->get_product_addons( $product_id );
-        
+
         if ( empty( $addons ) ) {
             return $cart_item_data;
         }
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce add_to_cart flow.
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies add-to-cart nonce in WC_Form_Handler::add_to_cart_action() before this filter runs.
         $posted_addons = isset( $_POST['upad_addon'] ) ? map_deep( wp_unslash( $_POST['upad_addon'] ), 'sanitize_text_field' ) : array();
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce add_to_cart flow.
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies add-to-cart nonce in WC_Form_Handler::add_to_cart_action() before this filter runs.
         $posted_addon_qty = isset( $_POST['upad_addon_qty'] ) ? map_deep( wp_unslash( $_POST['upad_addon_qty'] ), 'absint' ) : array();
         $addon_data = array();
 

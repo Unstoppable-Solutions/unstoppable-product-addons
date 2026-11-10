@@ -3,7 +3,7 @@ Contributors: paramedic192
 Tags: woocommerce, product options, custom fields, addons, product addons
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -50,7 +50,10 @@ This plugin connects to the Unstoppable Solutions Plugin Hub to check for plugin
 
 = Update Check Service =
 
-When you click "Check for Updates" on the Plugins page, the plugin sends a request to our update server to verify if a newer version is available.
+When you click "Check for Updates" on the Plugins page, the plugin sends a request to our update server at `fm-web-solutions-plugin-hub-d05f2182.base44.app` to verify if a newer version is available.
+
+**Service endpoint:**
+`https://fm-web-solutions-plugin-hub-d05f2182.base44.app/functions/pluginUpdateChecker`
 
 **What data is sent:**
 * Your site URL (to identify the request source)
@@ -61,7 +64,7 @@ When you click "Check for Updates" on the Plugins page, the plugin sends a reque
 * Only when you manually click the "Check for Updates" link on the Plugins page
 * Data is never sent automatically or in the background
 
-**Service provider:** Unstoppable Solutions
+**Service provider:** Unstoppable Solutions (hosted on Base44)
 * [Terms of Service](https://unstoppablesolutions.app/terms)
 * [Privacy Policy](https://unstoppablesolutions.app/privacy)
 
@@ -105,6 +108,14 @@ The plugin uses semantic HTML and minimal styling, so it works with most themes.
 5. Date picker on product page
 
 == Changelog ==
+
+= 1.0.10 =
+* Fixed early translation loading by moving class initialization from plugins_loaded to init hook
+* Added full external service endpoint URL to External Services documentation
+* Replaced phpcs:ignore escaping comments with proper wp_kses_post() wrapping for all HTML output
+* Improved $_FILES handling with proper field-by-field sanitization
+* Improved $_POST['categories'] handling with wp_unslash() and array_map()
+* Enhanced docblocks for WooCommerce filter hooks explaining nonce verification context
 
 = 1.0.9 =
 * Fixed early translation loading by deferring __() calls until after init hook

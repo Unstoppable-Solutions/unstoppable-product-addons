@@ -498,8 +498,7 @@ class UPAD_Display {
                     echo '<option value="' . esc_attr( $option->id ) . '" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $selected . ' ' . $stock_attrs . '>';
                     echo esc_html( $option->label );
                     if ( $price_display ) {
-                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
-                        echo ' ' . $price_display;
+                        echo ' ' . wp_kses_post( $price_display );
                     }
                     echo '</option>';
                 }
@@ -530,14 +529,12 @@ class UPAD_Display {
                     echo '<input type="radio" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-radio" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
                     echo '<span class="upad-radio-text">' . esc_html( $option->label ) . '</span>';
                     if ( $price_display ) {
-                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
-                        echo '<span class="upad-option-price">' . $price_display . '</span>';
+                        echo '<span class="upad-option-price">' . wp_kses_post( $price_display ) . '</span>';
                     }
-                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_stock_badge() returns escaped HTML.
-                    echo $this->get_stock_badge( $option );
+                    echo wp_kses_post( $this->get_stock_badge( $option ) );
                     echo '</label>';
                 }
-                
+
                 echo '</div>';
                 break;
 
@@ -556,11 +553,10 @@ class UPAD_Display {
                     echo '<img src="' . esc_url( $image_url ) . '" alt="' . esc_attr( $option->label ) . '">';
                     echo '</span>';
                     echo '<span class="upad-image-text">' . esc_html( $option->label ) . '</span>';
-                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_stock_badge() returns escaped HTML.
-                    echo $this->get_stock_badge( $option );
+                    echo wp_kses_post( $this->get_stock_badge( $option ) );
                     echo '</label>';
                 }
-                
+
                 echo '</div>';
                 break;
         }
@@ -650,16 +646,14 @@ class UPAD_Display {
                 echo '<div class="upad-qty-option ' . esc_attr( $stock_class ) . '" data-option-id="' . esc_attr( $option->id ) . '">';
                 echo '<span class="upad-option-label">' . esc_html( $option->label ) . '</span>';
                 if ( $price_display ) {
-                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
-                    echo '<span class="upad-option-price">' . $price_display . ' ' . esc_html__( 'each', 'unstoppable-product-addons' ) . '</span>';
+                    echo '<span class="upad-option-price">' . wp_kses_post( $price_display ) . ' ' . esc_html__( 'each', 'unstoppable-product-addons' ) . '</span>';
                 }
                 echo '<div class="upad-qty-selector">';
                 echo '<button type="button" class="upad-option-qty-minus">−</button>';
                 echo '<input type="number" name="' . esc_attr( $qty_field_name ) . '[' . esc_attr( $option->id ) . ']" value="0" min="0" class="upad-option-qty-input upad-field" data-option-id="' . esc_attr( $option->id ) . '" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '">';
                 echo '<button type="button" class="upad-option-qty-plus">+</button>';
                 echo '</div>';
-                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_stock_badge() returns escaped HTML.
-                echo $this->get_stock_badge( $option );
+                echo wp_kses_post( $this->get_stock_badge( $option ) );
                 echo '</div>';
             }
             
@@ -680,11 +674,9 @@ class UPAD_Display {
                 echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $option->id ) . '" class="upad-field upad-checkbox" data-price="' . esc_attr( $option->price ) . '" data-price-type="' . esc_attr( $option->price_type ) . '" ' . $checked . '>';
                 echo '<span class="upad-checkbox-text">' . esc_html( $option->label ) . '</span>';
                 if ( $price_display ) {
-                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
-                    echo '<span class="upad-option-price">' . $price_display . '</span>';
+                    echo '<span class="upad-option-price">' . wp_kses_post( $price_display ) . '</span>';
                 }
-                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_stock_badge() returns escaped HTML.
-                echo $this->get_stock_badge( $option );
+                echo wp_kses_post( $this->get_stock_badge( $option ) );
                 echo '</label>';
             }
         }
@@ -930,8 +922,7 @@ class UPAD_Display {
                 echo '<span class="upad-swatch-text">' . esc_html( $option->label ) . '</span>';
             }
             if ( $price_display ) {
-                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $price_display contains wc_price() HTML output.
-                echo '<span class="upad-swatch-price">' . $price_display . '</span>';
+                echo '<span class="upad-swatch-price">' . wp_kses_post( $price_display ) . '</span>';
             }
             echo '</label>';
         }

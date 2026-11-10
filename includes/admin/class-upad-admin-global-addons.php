@@ -97,9 +97,8 @@ class UPAD_Admin_Global_Addons {
         // Sanitize categories - ensure all are valid term IDs
         $categories = array();
         if ( isset( $_POST['categories'] ) && is_array( $_POST['categories'] ) ) {
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each value sanitized with absint() in loop.
-            foreach ( $_POST['categories'] as $cat_id ) {
-                $cat_id = absint( $cat_id );
+            $raw_categories = array_map( 'absint', wp_unslash( $_POST['categories'] ) );
+            foreach ( $raw_categories as $cat_id ) {
                 if ( $cat_id > 0 ) {
                     // Verify the term exists
                     $term = get_term( $cat_id, 'product_cat' );

@@ -119,16 +119,22 @@ class UPAD_File_Upload {
             ) );
         }
 
-        // Check if file was uploaded
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- File upload handling uses WordPress core functions.
-        if ( empty( $_FILES['file'] ) ) {
+        // Check if file was uploaded.
+        // Note: $_FILES cannot be wp_unslash'd or sanitized as a whole - individual fields are validated below.
+        if ( empty( $_FILES['file'] ) || ! isset( $_FILES['file']['tmp_name'] ) ) {
             wp_send_json_error( array(
                 'message' => __( 'No file was uploaded.', 'unstoppable-product-addons' ),
             ) );
         }
 
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- File upload handling uses WordPress core functions.
-        $file = $_FILES['file'];
+        // Extract and validate file data.
+        $file = array(
+            'name'     => isset( $_FILES['file']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['file']['name'] ) ) : '',
+            'type'     => isset( $_FILES['file']['type'] ) ? sanitize_mime_type( wp_unslash( $_FILES['file']['type'] ) ) : '',
+            'tmp_name' => isset( $_FILES['file']['tmp_name'] ) ? sanitize_text_field( $_FILES['file']['tmp_name'] ) : '',
+            'error'    => isset( $_FILES['file']['error'] ) ? absint( $_FILES['file']['error'] ) : UPLOAD_ERR_NO_FILE,
+            'size'     => isset( $_FILES['file']['size'] ) ? absint( $_FILES['file']['size'] ) : 0,
+        );
 
         // Check for upload errors
         if ( $file['error'] !== UPLOAD_ERR_OK ) {
