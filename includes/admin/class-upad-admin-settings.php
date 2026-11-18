@@ -166,9 +166,9 @@ class UPAD_Admin_Settings {
                     'title'   => __( 'Default Max File Size (MB)', 'unstoppable-product-addons' ),
                     'type'    => 'number',
                     'default' => 5,
-                    'min'     => 0.1,
+                    'min'     => 1,
                     'max'     => 100,
-                    'step'    => 0.1,
+                    'step'    => 1,
                     'desc'    => __( 'Maximum file upload size in megabytes.', 'unstoppable-product-addons' ),
                 ),
                 array(
