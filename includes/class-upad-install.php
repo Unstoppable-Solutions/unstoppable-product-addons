@@ -269,18 +269,47 @@ class UPAD_Install {
     /**
      * Recursively delete a directory.
      *
-     * @param string $dir Directory path.
+     * Skips symbolic links and verifies all paths resolve within the intended
+     * upad-uploads directory before deleting to prevent directory traversal.
+     *
+     * @param string $dir       Directory path.
+     * @param string $base_path Optional. The base directory to restrict deletion to.
      */
-    private static function delete_directory( $dir ) {
+    private static function delete_directory( $dir, $base_path = '' ) {
+        // Skip symbolic links to prevent following links outside intended directory.
+        if ( is_link( $dir ) ) {
+            return;
+        }
+
         if ( ! is_dir( $dir ) ) {
             return;
+        }
+
+        // Set base path on initial call.
+        if ( empty( $base_path ) ) {
+            $base_path = realpath( $dir );
+            if ( false === $base_path ) {
+                return;
+            }
         }
 
         $files = array_diff( scandir( $dir ), array( '.', '..' ) );
         foreach ( $files as $file ) {
             $path = $dir . '/' . $file;
+
+            // Skip symbolic links.
+            if ( is_link( $path ) ) {
+                continue;
+            }
+
+            // Verify real path is within our base directory.
+            $real_path = realpath( $path );
+            if ( false === $real_path || 0 !== strpos( $real_path, $base_path ) ) {
+                continue;
+            }
+
             if ( is_dir( $path ) ) {
-                self::delete_directory( $path );
+                self::delete_directory( $path, $base_path );
             } else {
                 wp_delete_file( $path );
             }

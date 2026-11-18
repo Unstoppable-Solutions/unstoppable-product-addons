@@ -93,26 +93,54 @@ class UPAD_Import_Export {
 
         $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
         $group_id = isset( $_POST['group_id'] ) ? absint( $_POST['group_id'] ) : 0;
+
+        // Validate import_data is a string.
+        if ( ! isset( $_POST['import_data'] ) || ! is_string( $_POST['import_data'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Import data must be a string.', 'unstoppable-product-addons' ) ) );
+        }
+
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Data is base64 decoded and JSON parsed, not used directly.
-        $import_data = isset( $_POST['import_data'] ) ? wp_unslash( $_POST['import_data'] ) : '';
+        $import_data = wp_unslash( $_POST['import_data'] );
 
         if ( empty( $import_data ) ) {
             wp_send_json_error( array( 'message' => __( 'No import data provided.', 'unstoppable-product-addons' ) ) );
         }
 
-        // Decode
-        $decoded = json_decode( base64_decode( $import_data ), true );
+        // Use strict mode for base64 decoding.
+        $base64_decoded = base64_decode( $import_data, true );
+        if ( false === $base64_decoded ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid Base64 encoding in import data.', 'unstoppable-product-addons' ) ) );
+        }
 
-        if ( ! $decoded || ! isset( $decoded['addons'] ) || ! is_array( $decoded['addons'] ) ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid import data format.', 'unstoppable-product-addons' ) ) );
+        // Decode JSON.
+        $decoded = json_decode( $base64_decoded, true );
+        if ( null === $decoded && JSON_ERROR_NONE !== json_last_error() ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid JSON in import data.', 'unstoppable-product-addons' ) ) );
+        }
+
+        // Validate structure.
+        if ( ! is_array( $decoded ) || ! isset( $decoded['addons'] ) || ! is_array( $decoded['addons'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid import data format: missing addons array.', 'unstoppable-product-addons' ) ) );
         }
 
         global $wpdb;
         $imported = 0;
+        $skipped  = 0;
 
         foreach ( $decoded['addons'] as $addon_data ) {
-            // Validate required fields exist.
-            if ( ! isset( $addon_data['addon_type'], $addon_data['title'] ) ) {
+            // Validate addon_data is an array.
+            if ( ! is_array( $addon_data ) ) {
+                ++$skipped;
+                continue;
+            }
+
+            // Validate required fields exist and have correct types.
+            if ( ! isset( $addon_data['addon_type'] ) || ! is_string( $addon_data['addon_type'] ) ) {
+                ++$skipped;
+                continue;
+            }
+            if ( ! isset( $addon_data['title'] ) || ! is_string( $addon_data['title'] ) ) {
+                ++$skipped;
                 continue;
             }
 
@@ -122,46 +150,71 @@ class UPAD_Import_Export {
                 : array();
 
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
-            $wpdb->insert(
+            $addon_result = $wpdb->insert(
                 $wpdb->prefix . 'upad_addons',
                 array(
                     'group_id'     => $group_id ?: null,
                     'product_id'   => $product_id ?: null,
                     'addon_type'   => sanitize_key( $addon_data['addon_type'] ),
                     'title'        => sanitize_text_field( $addon_data['title'] ),
-                    'title_format' => isset( $addon_data['title_format'] ) ? sanitize_key( $addon_data['title_format'] ) : 'label',
-                    'description'  => isset( $addon_data['description'] ) ? wp_kses_post( $addon_data['description'] ) : '',
-                    'required'     => isset( $addon_data['required'] ) ? (int) $addon_data['required'] : 0,
-                    'position'     => isset( $addon_data['position'] ) ? (int) $addon_data['position'] : 0,
+                    'title_format' => isset( $addon_data['title_format'] ) && is_string( $addon_data['title_format'] ) ? sanitize_key( $addon_data['title_format'] ) : 'label',
+                    'description'  => isset( $addon_data['description'] ) && is_string( $addon_data['description'] ) ? wp_kses_post( $addon_data['description'] ) : '',
+                    'required'     => isset( $addon_data['required'] ) ? absint( $addon_data['required'] ) : 0,
+                    'position'     => isset( $addon_data['position'] ) ? absint( $addon_data['position'] ) : 0,
                     'settings'     => maybe_serialize( $sanitized_settings ),
-                    'enabled'      => isset( $addon_data['enabled'] ) ? (int) $addon_data['enabled'] : 1,
+                    'enabled'      => isset( $addon_data['enabled'] ) ? absint( $addon_data['enabled'] ) : 1,
                 ),
                 array( '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d' )
             );
 
-            $addon_id = $wpdb->insert_id;
+            // Check if addon insert succeeded.
+            if ( false === $addon_result ) {
+                ++$skipped;
+                continue;
+            }
 
-            // Insert options
-            if ( ! empty( $addon_data['options'] ) && $addon_id ) {
+            $addon_id = $wpdb->insert_id;
+            if ( ! $addon_id ) {
+                ++$skipped;
+                continue;
+            }
+
+            // Insert options.
+            if ( ! empty( $addon_data['options'] ) && is_array( $addon_data['options'] ) ) {
                 foreach ( $addon_data['options'] as $option ) {
+                    // Validate option is an array with required fields.
+                    if ( ! is_array( $option ) ) {
+                        continue;
+                    }
+                    if ( ! isset( $option['label'] ) || ! is_string( $option['label'] ) ) {
+                        continue;
+                    }
+                    if ( ! isset( $option['price_type'] ) || ! is_string( $option['price_type'] ) ) {
+                        continue;
+                    }
+
                     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table requires direct query.
                     $wpdb->insert(
                         $wpdb->prefix . 'upad_addon_options',
                         array(
                             'addon_id'   => $addon_id,
                             'label'      => sanitize_text_field( $option['label'] ),
-                            'price'      => isset( $option['price'] ) ? floatval( $option['price'] ) : null,
+                            'price'      => isset( $option['price'] ) && is_numeric( $option['price'] ) ? floatval( $option['price'] ) : null,
                             'price_type' => sanitize_key( $option['price_type'] ),
-                            'is_default' => (int) $option['is_default'],
-                            'is_hidden'  => (int) $option['is_hidden'],
-                            'position'   => (int) $option['position'],
+                            'is_default' => isset( $option['is_default'] ) ? absint( $option['is_default'] ) : 0,
+                            'is_hidden'  => isset( $option['is_hidden'] ) ? absint( $option['is_hidden'] ) : 0,
+                            'position'   => isset( $option['position'] ) ? absint( $option['position'] ) : 0,
                         ),
                         array( '%d', '%s', '%s', '%s', '%d', '%d', '%d' )
                     );
                 }
             }
 
-            $imported++;
+            ++$imported;
+        }
+
+        if ( 0 === $imported ) {
+            wp_send_json_error( array( 'message' => __( 'No addons were imported. Please check the import data format.', 'unstoppable-product-addons' ) ) );
         }
 
         wp_send_json_success( array(

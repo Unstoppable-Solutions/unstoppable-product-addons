@@ -619,15 +619,24 @@ class UPAD_File_Upload {
             $dirs = glob( $upload_dir . '/*', GLOB_ONLYDIR );
             foreach ( $dirs as $dir ) {
                 $files = glob( $dir . '/*' );
-                // Only index.php remains.
-                if ( count( $files ) <= 1 ) {
-                    // Check if directory is older than 24 hours.
-                    if ( filemtime( $dir ) < strtotime( '-24 hours' ) ) {
-                        array_map( 'wp_delete_file', $files );
-                        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Removing temp upload directory; WP_Filesystem requires credentials.
-                        rmdir( $dir );
-                    }
+
+                // Check if directory is older than 24 hours.
+                if ( filemtime( $dir ) >= strtotime( '-24 hours' ) ) {
+                    continue;
                 }
+
+                // Only remove directory if it's empty or contains only our index.php.
+                if ( empty( $files ) ) {
+                    // Directory is empty, safe to remove.
+                    // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Removing temp upload directory; WP_Filesystem requires credentials.
+                    rmdir( $dir );
+                } elseif ( 1 === count( $files ) && 'index.php' === basename( $files[0] ) ) {
+                    // Only index.php remains, delete it and remove directory.
+                    wp_delete_file( $files[0] );
+                    // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Removing temp upload directory; WP_Filesystem requires credentials.
+                    rmdir( $dir );
+                }
+                // If directory contains customer uploads, leave it intact.
             }
         }
     }
