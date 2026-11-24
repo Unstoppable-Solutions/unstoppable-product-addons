@@ -482,9 +482,13 @@ class UPAD_Cart {
      * Add addon data to cart item.
      *
      * This method is hooked to woocommerce_add_cart_item_data filter.
-     * WooCommerce verifies the woocommerce-add-to-cart nonce before calling
-     * this filter (see WC_Form_Handler::add_to_cart_action), so we don't
-     * verify it again here.
+     * We verify our own nonce to ensure the addon data originated from
+     * a legitimate product form submission.
+     *
+     * @param array $cart_item_data Cart item data.
+     * @param int   $product_id     Product ID.
+     * @param int   $variation_id   Variation ID.
+     * @return array Modified cart item data.
      */
     public function add_cart_item_data( $cart_item_data, $product_id, $variation_id ) {
         $addons = UPAD_Product_Addons::instance()->get_product_addons( $product_id );
@@ -493,9 +497,16 @@ class UPAD_Cart {
             return $cart_item_data;
         }
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies add-to-cart nonce in WC_Form_Handler::add_to_cart_action() before this filter runs.
+        // Verify our addon nonce to ensure data came from a legitimate form.
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce value is verified, not used as data.
+        $nonce = isset( $_POST['upad_addon_nonce'] ) ? wp_unslash( $_POST['upad_addon_nonce'] ) : '';
+        if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'upad_add_to_cart_' . $product_id ) ) {
+            // No valid addon nonce found - skip addon processing.
+            // This can happen on AJAX requests or when no addons were interacted with.
+            return $cart_item_data;
+        }
+
         $posted_addons = isset( $_POST['upad_addon'] ) ? map_deep( wp_unslash( $_POST['upad_addon'] ), 'sanitize_text_field' ) : array();
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies add-to-cart nonce in WC_Form_Handler::add_to_cart_action() before this filter runs.
         $posted_addon_qty = isset( $_POST['upad_addon_qty'] ) ? map_deep( wp_unslash( $_POST['upad_addon_qty'] ), 'absint' ) : array();
         $addon_data = array();
 

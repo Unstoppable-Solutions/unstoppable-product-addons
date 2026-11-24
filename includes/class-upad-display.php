@@ -258,6 +258,9 @@ class UPAD_Display {
         $is_variable = $product->is_type( 'variable' ) ? 'true' : 'false';
         echo '<div class="upad-addons-wrapper" data-product-id="' . esc_attr( $product->get_id() ) . '" data-product-price="' . esc_attr( $product->get_price() ) . '" data-is-variable="' . esc_attr( $is_variable ) . '">';
 
+        // Add nonce field for addon form submission verification.
+        wp_nonce_field( 'upad_add_to_cart_' . $product->get_id(), 'upad_addon_nonce', false );
+
         foreach ( $addons as $addon ) {
             $this->render_addon( $addon, $product );
         }

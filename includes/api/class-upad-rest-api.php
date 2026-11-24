@@ -112,7 +112,8 @@ class UPAD_REST_API {
      * Check if product is publicly readable.
      *
      * Verifies the product exists and is published/viewable before
-     * allowing add-on data to be retrieved.
+     * allowing add-on data to be retrieved. Password-protected products
+     * require the correct password or edit capability.
      *
      * @param WP_REST_Request $request Request object.
      * @return bool|WP_Error True if accessible, WP_Error otherwise.
@@ -138,24 +139,40 @@ class UPAD_REST_API {
             );
         }
 
-        // Check if product is publicly visible.
-        $post_status = get_post_status( $product_id );
-
-        // Allow access if product is published.
-        if ( 'publish' === $post_status ) {
-            return true;
-        }
-
-        // Allow access if user can edit this product (admin/shop manager viewing draft/private).
+        // Allow access if user can edit this product (admin/shop manager).
         if ( current_user_can( 'edit_post', $product_id ) ) {
             return true;
         }
 
-        return new WP_Error(
-            'product_not_accessible',
-            __( 'Product is not publicly accessible.', 'unstoppable-product-addons' ),
-            array( 'status' => 403 )
-        );
+        // Check if product is publicly visible.
+        $post_status = get_post_status( $product_id );
+
+        // Only allow published products for non-editors.
+        if ( 'publish' !== $post_status ) {
+            return new WP_Error(
+                'product_not_accessible',
+                __( 'Product is not publicly accessible.', 'unstoppable-product-addons' ),
+                array( 'status' => 403 )
+            );
+        }
+
+        // Check for password-protected products.
+        $post = get_post( $product_id );
+        if ( ! empty( $post->post_password ) ) {
+            // Check if the correct password cookie is set.
+            if ( ! post_password_required( $product_id ) ) {
+                // Password was provided correctly.
+                return true;
+            }
+
+            return new WP_Error(
+                'product_password_required',
+                __( 'This product is password protected.', 'unstoppable-product-addons' ),
+                array( 'status' => 403 )
+            );
+        }
+
+        return true;
     }
 
     /**

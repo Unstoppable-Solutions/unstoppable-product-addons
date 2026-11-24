@@ -43,7 +43,6 @@ class UPAD_Admin {
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
         add_filter( 'plugin_action_links_' . UPAD_PLUGIN_BASENAME, array( $this, 'plugin_action_links' ) );
-        add_action( 'wp_ajax_upad_check_updates', array( $this, 'ajax_check_updates' ) );
     }
 
     /**
@@ -250,136 +249,8 @@ class UPAD_Admin {
         $plugin_links = array(
             '<a href="' . esc_url( admin_url( 'admin.php?page=upad-settings&tab=settings' ) ) . '">' . esc_html__( 'Settings', 'unstoppable-product-addons' ) . '</a>',
             '<a href="' . esc_url( admin_url( 'admin.php?page=upad-settings' ) ) . '">' . esc_html__( 'Add-ons', 'unstoppable-product-addons' ) . '</a>',
-            '<a href="#" class="upad-check-updates-link" style="color: #2271b1;">' . esc_html__( 'Check for Updates', 'unstoppable-product-addons' ) . '</a>',
         );
-        
-        // Add inline script for the check updates link
-        add_action( 'admin_footer', array( $this, 'plugin_page_update_script' ) );
-        
+
         return array_merge( $plugin_links, $links );
-    }
-
-    /**
-     * Output update check script on plugins page.
-     */
-    public function plugin_page_update_script() {
-        $screen = get_current_screen();
-        if ( ! $screen || $screen->id !== 'plugins' ) {
-            return;
-        }
-
-        // Register a dummy script handle for inline script attachment.
-        wp_register_script( 'upad-update-check', false, array( 'jquery' ), UPAD_VERSION, true );
-        wp_enqueue_script( 'upad-update-check' );
-
-        // Pass PHP data to JavaScript.
-        wp_localize_script(
-            'upad-update-check',
-            'upadUpdateCheck',
-            array(
-                'nonce'            => wp_create_nonce( 'upad_check_updates' ),
-                'checking'         => __( 'Checking...', 'unstoppable-product-addons' ),
-                'updateAvailable'  => __( 'Update Available!', 'unstoppable-product-addons' ),
-                'upToDate'         => __( 'Up to date ✓', 'unstoppable-product-addons' ),
-                'checkFailed'      => __( 'Check failed', 'unstoppable-product-addons' ),
-                'connectionFailed' => __( 'Connection failed. Please try again.', 'unstoppable-product-addons' ),
-                'versionReady'     => __( 'Update available! Version', 'unstoppable-product-addons' ),
-                'refreshPage'      => __( 'is ready. Refresh this page to see the update.', 'unstoppable-product-addons' ),
-            )
-        );
-
-        $inline_script = "
-            jQuery(function($) {
-                $('.upad-check-updates-link').on('click', function(e) {
-                    e.preventDefault();
-                    var link = $(this);
-                    var originalText = link.text();
-
-                    link.text(upadUpdateCheck.checking);
-
-                    $.post(ajaxurl, {
-                        action: 'upad_check_updates',
-                        nonce: upadUpdateCheck.nonce
-                    }, function(response) {
-                        if (response.success) {
-                            if (response.data.update_available) {
-                                link.text(upadUpdateCheck.updateAvailable).css('color', '#d63638');
-                                alert(upadUpdateCheck.versionReady + ' ' + response.data.new_version + ' ' + upadUpdateCheck.refreshPage);
-                                location.reload();
-                            } else {
-                                link.text(upadUpdateCheck.upToDate).css('color', '#00a32a');
-                                setTimeout(function() {
-                                    link.text(originalText).css('color', '#2271b1');
-                                }, 3000);
-                            }
-                        } else {
-                            link.text(upadUpdateCheck.checkFailed).css('color', '#d63638');
-                            setTimeout(function() {
-                                link.text(originalText).css('color', '#2271b1');
-                            }, 3000);
-                        }
-                    }).fail(function() {
-                        link.text(originalText);
-                        alert(upadUpdateCheck.connectionFailed);
-                    });
-                });
-            });
-        ";
-
-        wp_add_inline_script( 'upad-update-check', $inline_script );
-    }
-
-    /**
-     * AJAX handler for checking updates.
-     */
-    public function ajax_check_updates() {
-        check_ajax_referer( 'upad_check_updates', 'nonce' );
-
-        if ( ! current_user_can( 'update_plugins' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'unstoppable-product-addons' ) ) );
-        }
-
-        // Clear the update cache
-        delete_site_transient( 'update_plugins' );
-        delete_transient( 'upad_update_data' );
-
-        // Force WordPress to check for updates
-        wp_clean_plugins_cache();
-
-        // Make direct API request to check
-        $response = wp_remote_post( 'https://fm-web-solutions-plugin-hub-d05f2182.base44.app/functions/pluginUpdateChecker', array(
-            'timeout'   => 15,
-            'sslverify' => true,
-            'headers'   => array(
-                'Content-Type' => 'application/json',
-            ),
-            'body'      => wp_json_encode( array(
-                'plugin_slug'     => 'unstoppable-product-addons',
-                'current_version' => UPAD_VERSION,
-                'site_url'        => home_url(),
-                'license_key'     => get_option( 'upad_license_key', '' ),
-            ) ),
-        ) );
-
-        if ( is_wp_error( $response ) ) {
-            wp_send_json_error( array( 'message' => $response->get_error_message() ) );
-        }
-
-        $body = wp_remote_retrieve_body( $response );
-        $data = json_decode( $body, true );
-
-        if ( ! isset( $data['status'] ) || 'success' !== $data['status'] ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid API response.', 'unstoppable-product-addons' ) ) );
-        }
-
-        $new_version = isset( $data['version'] ) ? $data['version'] : '';
-        $update_available = version_compare( UPAD_VERSION, $new_version, '<' );
-
-        wp_send_json_success( array(
-            'update_available' => $update_available,
-            'current_version'  => UPAD_VERSION,
-            'new_version'      => $new_version,
-            'update_url'       => admin_url( 'update-core.php' ),
-        ) );
     }
 }

@@ -26,16 +26,14 @@ if ( isset( $_POST['upad_save_settings'] ) ) {
     if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'upad_settings' ) ) {
         wp_die( esc_html__( 'Security check failed.', 'unstoppable-product-addons' ) );
     }
-    
+
     if ( ! current_user_can( 'manage_woocommerce' ) ) {
         wp_die( esc_html__( 'You do not have permission to save settings.', 'unstoppable-product-addons' ) );
     }
-    
-    foreach ( $fields as $section_id => $section_fields ) {
-        if ( $section_id === 'license' ) {
-            continue; // Skip license fields
-        }
-        foreach ( $section_fields as $field ) {
+
+    // Only save fields for the current section to avoid resetting other sections.
+    if ( isset( $fields[ $current_section ] ) && 'license' !== $current_section ) {
+        foreach ( $fields[ $current_section ] as $field ) {
             if ( $field['type'] === 'checkbox' ) {
                 $value = isset( $_POST[ $field['id'] ] ) ? 'yes' : 'no';
             } else {

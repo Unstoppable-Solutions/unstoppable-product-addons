@@ -3,7 +3,7 @@ Contributors: paramedic192
 Tags: woocommerce, product options, custom fields, addons, product addons
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 1.0.12
+Stable tag: 1.0.13
 Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -44,32 +44,6 @@ The intuitive admin interface makes it simple to create and manage add-ons. Drag
 
 Extend the plugin with filters and actions. Register custom add-on types, modify pricing calculations, or integrate with your own systems.
 
-== External Services ==
-
-This plugin connects to the Unstoppable Solutions Plugin Hub to check for plugin updates.
-
-= Update Check Service =
-
-When you click "Check for Updates" on the Plugins page, the plugin sends a request to our update server at `fm-web-solutions-plugin-hub-d05f2182.base44.app` to verify if a newer version is available.
-
-**Service endpoint:**
-`https://fm-web-solutions-plugin-hub-d05f2182.base44.app/functions/pluginUpdateChecker`
-
-**What data is sent:**
-* Your site URL (to identify the request source)
-* Current plugin version (to compare against available updates)
-* License key (if entered, for premium update access)
-
-**When data is sent:**
-* Only when you manually click the "Check for Updates" link on the Plugins page
-* Data is never sent automatically or in the background
-
-**Service provider:** Unstoppable Solutions (hosted on Base44)
-* [Terms of Service](https://unstoppablesolutions.app/terms)
-* [Privacy Policy](https://unstoppablesolutions.app/privacy)
-
-All other plugin functionality operates entirely on your WordPress installation with no external connections.
-
 == Installation ==
 
 1. Upload the plugin files to `/wp-content/plugins/unstoppable-product-addons`, or install directly through the WordPress plugins screen.
@@ -108,6 +82,12 @@ The plugin uses semantic HTML and minimal styling, so it works with most themes.
 5. Date picker on product page
 
 == Changelog ==
+
+= 1.0.13 =
+* Removed external update check service - plugin updates are now handled entirely through WordPress.org
+* Fixed REST API to block access to password-protected product add-ons without proper authentication
+* Fixed settings save to only update current section fields, preventing other sections from being reset
+* Added nonce verification for add-to-cart addon form submissions
 
 = 1.0.12 =
 * Fixed uninstall.php calling wrong class name (WCOS_Install → UPAD_Install)
