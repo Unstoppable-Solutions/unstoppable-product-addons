@@ -201,7 +201,37 @@ if ( $is_variable ) {
                             <?php esc_html_e( 'Enabled', 'unstoppable-product-addons' ); ?>
                         </label>
                     </div>
-                    
+
+                    <!-- Conditional Logic Section -->
+                    <div class="upad-conditional-logic-section">
+                        <h4>
+                            <label>
+                                <input type="checkbox" name="conditional_logic[enabled]" class="upad-conditional-toggle" value="1">
+                                <?php esc_html_e( 'Conditional Logic', 'unstoppable-product-addons' ); ?>
+                            </label>
+                        </h4>
+                        <div class="upad-conditional-rules" style="display: none;">
+                            <div class="upad-condition-header">
+                                <select name="conditional_logic[action]" class="upad-condition-action-select">
+                                    <option value="show"><?php esc_html_e( 'Show', 'unstoppable-product-addons' ); ?></option>
+                                    <option value="hide"><?php esc_html_e( 'Hide', 'unstoppable-product-addons' ); ?></option>
+                                </select>
+                                <span><?php esc_html_e( 'this add-on if', 'unstoppable-product-addons' ); ?></span>
+                                <select name="conditional_logic[relation]" class="upad-condition-relation-select">
+                                    <option value="all"><?php esc_html_e( 'all', 'unstoppable-product-addons' ); ?></option>
+                                    <option value="any"><?php esc_html_e( 'any', 'unstoppable-product-addons' ); ?></option>
+                                </select>
+                                <span><?php esc_html_e( 'of the following match:', 'unstoppable-product-addons' ); ?></span>
+                            </div>
+                            <div class="upad-condition-rules-list">
+                                <!-- Rules will be added here dynamically -->
+                            </div>
+                            <button type="button" class="button upad-add-condition-rule">
+                                <?php esc_html_e( '+ Add Condition', 'unstoppable-product-addons' ); ?>
+                            </button>
+                        </div>
+                    </div>
+
                     <?php if ( $is_variable && ! empty( $variations ) ) : ?>
                     <div class="upad-form-row upad-variations-row">
                         <label><?php esc_html_e( 'Apply to Variations', 'unstoppable-product-addons' ); ?></label>

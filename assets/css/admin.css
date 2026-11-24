@@ -464,10 +464,47 @@
     flex-wrap: wrap;
     margin-bottom: 15px;
     font-size: 13px;
+    line-height: 1.5;
+}
+
+.upad-condition-header span {
+    color: #50575e;
 }
 
 .upad-condition-header select {
-    padding: 4px 8px;
+    padding: 6px 24px 6px 10px;
+    min-height: 32px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    background-size: 16px 16px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: #2c3338;
+}
+
+.upad-condition-header select:hover {
+    border-color: #2271b1;
+}
+
+.upad-condition-header select:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+.upad-condition-action-select {
+    min-width: 70px;
+}
+
+.upad-condition-relation-select {
+    min-width: 55px;
 }
 
 .upad-condition-rules-list {
@@ -486,7 +523,36 @@
 
 .upad-condition-rule select,
 .upad-condition-rule input {
-    padding: 4px 8px;
+    padding: 6px 10px;
+    min-height: 32px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.upad-condition-rule select {
+    padding-right: 24px;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    background-size: 16px 16px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.upad-condition-rule select:hover,
+.upad-condition-rule input:hover {
+    border-color: #2271b1;
+}
+
+.upad-condition-rule select:focus,
+.upad-condition-rule input:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
 }
 
 .upad-condition-addon {
@@ -509,7 +575,15 @@
 }
 
 .upad-add-condition-rule {
-    font-size: 12px;
+    font-size: 13px;
+    color: #2271b1;
+    border-color: #2271b1;
+}
+
+.upad-add-condition-rule:hover {
+    background: #f0f7fc;
+    border-color: #0a4b78;
+    color: #0a4b78;
 }
 
 /* =====================================================
