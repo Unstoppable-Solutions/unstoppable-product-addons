@@ -393,6 +393,11 @@
             } else {
                 $('body').append(template(data));
                 this.initSelect2();
+
+                // Set the addon type from the selection made before clicking Add
+                if (addonType) {
+                    $('.upad-addon-type-field').val(addonType);
+                }
                 $('.upad-addon-type-field').trigger('change');
             }
         },
